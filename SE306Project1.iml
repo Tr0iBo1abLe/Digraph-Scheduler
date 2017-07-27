@@ -23,7 +23,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.scala-lang:scala-library:2.11.11" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.typesafe:config:1.3.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.scala-lang.modules:scala-java8-compat_2.11:0.7.0" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jgrapht:jgrapht-core:1.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.jgrapht:jgrapht-core:1.0.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.functionaljava:functionaljava:4.7" level="project" />
   </component>
 </module>
