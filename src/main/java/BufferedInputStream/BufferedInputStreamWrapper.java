@@ -8,14 +8,14 @@ import java.io.*;
  * Wrapper for BufferedInputStream for reading from System.in quickly.
  * LMK if it doesn't work was originally all static private methods I haven't tested this with files.
  */
-public class BIS {
+public class BufferedInputStreamWrapper {
 
     private BufferedInputStream bis;
 
     /**
      * Creates a BufferedInputStreamWrapper for System.in.
      */
-    public BIS(){
+    public BufferedInputStreamWrapper(){
         bis = new BufferedInputStream((System.in));
     }
 
@@ -23,7 +23,7 @@ public class BIS {
      * Creates a BufferedInputStreamWrapper for a given file.
      * @param file - file to read from.
      */
-    public BIS(File file){
+    public BufferedInputStreamWrapper(File file){
         try {
             bis = new BufferedInputStream(new FileInputStream(file));
         } catch (FileNotFoundException e) {
