@@ -25,5 +25,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.scala-lang.modules:scala-java8-compat_2.11:0.7.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jgrapht:jgrapht-core:1.0.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.functionaljava:functionaljava:4.7" level="project" />
+    <orderEntry type="library" name="Maven: jgrapht:jgrapht:0.8.3" level="project" />
   </component>
 </module>
