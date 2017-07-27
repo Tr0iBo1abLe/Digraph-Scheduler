@@ -13,10 +13,10 @@
       <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-simple/1.7.13/slf4j-simple-1.7.13.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/jooq/jool/0.9.12/jool-0.9.12.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/reactivestreams/reactive-streams/1.0.0/reactive-streams-1.0.0.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/aol/cyclops/cyclops-higherkindedtypes/8.4.2/cyclops-higherkindedtypes-8.4.2.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/derive4j/hkt/hkt/0.9.1/hkt-0.9.1.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/functionaljava/functionaljava-java8/4.5/functionaljava-java8-4.5.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/functionaljava/functionaljava/4.5/functionaljava-4.5.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/aol/cyclops/cyclops-higherkindedtypes/8.4.2/cyclops-higherkindedtypes-8.4.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/derive4j/hkt/hkt/0.9.1/hkt-0.9.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
