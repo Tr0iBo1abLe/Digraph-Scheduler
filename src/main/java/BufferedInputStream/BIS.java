@@ -1,21 +1,34 @@
 package BufferedInputStream;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by Will on 2017-07-27.
  *
  * Wrapper for BufferedInputStream for reading from System.in quickly.
- * LMK if it doesn't work was originally all static private methods I haven't tested this.
+ * LMK if it doesn't work was originally all static private methods I haven't tested this with files.
  */
 public class BIS {
 
     private BufferedInputStream bis;
 
+    /**
+     * Creates a BufferedInputStreamWrapper for System.in.
+     */
     public BIS(){
-        bis = new BufferedInputStream(System.in);
+        bis = new BufferedInputStream((System.in));
+    }
+
+    /**
+     * Creates a BufferedInputStreamWrapper for a given file.
+     * @param file - file to read from.
+     */
+    public BIS(File file){
+        try {
+            bis = new BufferedInputStream(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
