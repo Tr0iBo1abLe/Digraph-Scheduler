@@ -15,5 +15,6 @@
     <orderEntry type="library" name="scala-sdk-2.12.2" level="project" />
     <orderEntry type="library" name="com.typesafe.akka:akka-actor_2.11:2.5.2" level="project" />
     <orderEntry type="library" name="com.aol.cyclops:cyclops-functionaljava:8.4.2" level="project" />
+    <orderEntry type="library" name="org.projectlombok:lombok:1.16.16" level="project" />
   </component>
 </module>

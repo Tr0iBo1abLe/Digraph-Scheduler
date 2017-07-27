@@ -2,3 +2,8 @@
 tags
 **/*.swp
 **/*.swo
+.idea/libraries/org_projectlombok_lombok_1_16_16.xml
+lib/
+src/main/resources/
+src/test/
+target/
