@@ -1,0 +1,3 @@
+digraph example {
+    a [Weight=1];
+}
