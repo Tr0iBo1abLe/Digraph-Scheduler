@@ -8,8 +8,6 @@ import java.util.Map;
 public class MyEdge {
     private final MyVertex from;
     private final MyVertex to;
-    private final String name;
+    private final String id;
     private final int cost;
-    private int processor;
-    private int startTime;
 }

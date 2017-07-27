@@ -1,18 +1,15 @@
-import GraphHandler.EProvider;
-import GraphHandler.MyEdge;
-import GraphHandler.MyVertex;
-import GraphHandler.VProvider;
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
+import GraphHandler.*;
 import org.jgrapht.Graph;
 import org.jgrapht.experimental.dag.DirectedAcyclicGraph;
+import org.jgrapht.ext.DOTExporter;
 import org.jgrapht.ext.DOTImporter;
-import org.jgrapht.ext.EdgeProvider;
 import org.jgrapht.ext.ImportException;
-import org.jgrapht.ext.VertexProvider;
-import org.jgrapht.graph.DefaultDirectedGraph;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.util.Map;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.Set;
 
 public class Main {
 
@@ -32,14 +29,37 @@ public class Main {
             System.err.println("Can't open file");
         }
 
-        DirectedAcyclicGraph<MyVertex, MyEdge> g = new DirectedAcyclicGraph<MyVertex, MyEdge>(MyEdge.class);
+        Graph<MyVertex, MyEdge> g = new DirectedAcyclicGraph<MyVertex, MyEdge>(MyEdge.class);
         try {
-            new DOTImporter<MyVertex, MyEdge>(new VProvider(), new EProvider()).importGraph(g, inputFile);
+            DOTImporter<MyVertex, MyEdge> im = new DOTImporter<MyVertex, MyEdge>(new VProvider(), new EProvider());
+            im.importGraph(g, inputFile);
         } catch (ImportException e) {
             e.printStackTrace();
         }
 
-        System.err.println(g.toString());
+        Set<MyVertex> set = g.vertexSet();
+        for(MyVertex v : set) {
+            v.setProcessor(1);
+            v.setStartTime(1);
+            System.err.println(v.toString());
+        }
+
+        Set<MyEdge> eset = g.edgeSet();
+        for(MyEdge v : eset) {
+            System.err.println(v.toString());
+        }
+
+
+        Writer w = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        new DOTExporter<MyVertex, MyEdge>(
+                new MyVertexIdProvider(),
+                null,
+                null,
+                new MyVertexAttributeProvider(),
+                null
+        ).exportGraph(g, w);
+
 
     }
 
