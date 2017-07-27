@@ -28,10 +28,18 @@
             <version>2.5.3</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+            <version>1.0.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.functionaljava</groupId>
+            <artifactId>functionaljava</artifactId>
+            <version>4.7</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
-
-
-
-    
 </project>
