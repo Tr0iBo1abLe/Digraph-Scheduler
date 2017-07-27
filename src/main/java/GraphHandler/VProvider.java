@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class VProvider implements VertexProvider<MyVertex>{
     @Override
-    public MyVertex buildVertex(String s, Map<String, String> map) {
+    public MyVertex buildVertex(final String s, final Map<String, String> map) {
         return new MyVertex(s, Integer.parseInt(map.get("Weight")));
     }
 }
