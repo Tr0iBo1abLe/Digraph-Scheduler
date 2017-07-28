@@ -45,6 +45,11 @@
             <artifactId>lombok</artifactId>
             <version>RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>org.functionaljava</groupId>
+            <artifactId>functionaljava</artifactId>
+            <version>4.7</version>
+        </dependency>
 
     </dependencies>
 
