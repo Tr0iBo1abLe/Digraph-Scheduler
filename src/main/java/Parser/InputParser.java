@@ -16,18 +16,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
 /**
  * Created by edward on 7/27/17.
  */
 public class InputParser<V extends Vertex, E extends SimpleEdge<V>> {
 
-    private enum STATE {HEADER, BODY, VERTEX, EDGE, ATTRIBUTE, NEXT};
+    private enum STATE {HEADER, BODY, VERTEX, EDGE, ATTRIBUTE, NEXT, LINE};
+    private enum LINE_STATE { COMMENT, VETEX, EDGE, HEADER }
     private IVertexCtor<V> vertexCtor;
     private IEdgeCtor<V, E> edgeCtor;
 
     /* Parser Buffer and states */
-    private List<StringBuffer> sBuf;
+    private List<String> tokenBuffer;
+    private String strBuffer;
     private STATE currState = STATE.HEADER;
+    private LINE_STATE currLineState = LINE_STATE.HEADER;
     private int pos = 0;
     private String input;
     private Map<String, String> attrBuf;
@@ -38,15 +42,16 @@ public class InputParser<V extends Vertex, E extends SimpleEdge<V>> {
     {
         this.vertexCtor = vertexCtor;
         this.edgeCtor = edgeCtor;
-        this.sBuf = new LinkedList<>();
+        this.tokenBuffer = new LinkedList<>();
     }
 
     public void doParse(Graph<V, E> graph, @NonNull BufferedReader reader) throws ParserException {
         this.graph = graph;
         input = reader.lines().collect(Collectors.joining());
+        STATE lastState = currState;
         switch(currState) {
-            case HEADER:
-                currState = processHeader();
+            case NEXT:
+                currState = processOne();
         }
     }
 
@@ -58,18 +63,22 @@ public class InputParser<V extends Vertex, E extends SimpleEdge<V>> {
     }
 
     private void processFullHeader() throws ParserException {
-        if(sBuf.isEmpty()) throw new ParserException("Empty Header");
+        if(tokenBuffer.isEmpty()) throw new ParserException("Empty Header");
     }
-
-
 
     public STATE processOne(){
         @NonNull char c = input.charAt(pos);
-        if(c == ' ')
-    }
-
-    public STATE processOneToken() {
-
+        if(c == ' ') {
+            if(strBuffer.isEmpty()) {
+                return STATE.NEXT;
+            }
+            else {
+                tokenBuffer.add(strBuffer);
+            }
+        }
+        else if (c == '{') {
+            this.currLineState = LINE_STATE.HEADER;
+        }
     }
 
 }
