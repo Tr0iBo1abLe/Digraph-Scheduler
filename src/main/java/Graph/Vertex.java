@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class Vertex implements IHasCost {
-    private final String Id;
-    private final int cost;
+    protected final String Id;
+    protected final int cost;
 }
