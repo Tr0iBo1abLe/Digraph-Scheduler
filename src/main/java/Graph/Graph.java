@@ -41,5 +41,13 @@ public class Graph<V extends Vertex, E extends SimpleEdge<V>> {
         return es.stream().map(e -> e.getFrom()).collect(Collectors.toList());
     }
 
+    public V lookUpVertexById(@NonNull V v) {
+        V[] vs = (V[]) vertices.stream().filter(i -> i.getId().equals(v.getId())).toArray();
+        if(vs.length != 1) {
+            return null;
+        }
+        return vs[0];
+    }
+
 
 }
