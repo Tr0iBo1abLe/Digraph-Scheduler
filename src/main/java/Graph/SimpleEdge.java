@@ -17,4 +17,10 @@ public class SimpleEdge<V> implements IEdge<V>{
         return getTo();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        SimpleEdge<V> e = (SimpleEdge<V>) o;
+        return this.from.equals(e.from) && this.to.equals(e.to);
+    }
+
 }

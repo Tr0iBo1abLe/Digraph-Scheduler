@@ -1,5 +1,6 @@
 package Graph;
 
+import Parser.IVertexCtor;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -31,23 +32,39 @@ public class Graph<V extends Vertex, E extends SimpleEdge<V>> {
         this.reverseEdge.add(new SimpleEdge<V>(e.getFromVertex(), e.getToVertex()));
     }
 
-    public List<V> getForwardVertices(@NonNull V v) {
+    public List<V> getForwardVertices(@NonNull final V v) {
         Set<E> es = forwardEdge.stream().filter(e -> e.getFrom().equals(v)).collect(Collectors.toSet());
         return es.stream().map(e -> e.getTo()).collect(Collectors.toList());
     }
 
-    public List<V> getReverseVertices(@NonNull V v) {
+    public List<V> getReverseVertices(@NonNull final V v) {
         Set<E> es = forwardEdge.stream().filter(e -> e.getTo().equals(v)).collect(Collectors.toSet());
         return es.stream().map(e -> e.getFrom()).collect(Collectors.toList());
     }
 
-    public V lookUpVertexById(@NonNull V v) {
-        V[] vs = (V[]) vertices.stream().filter(i -> i.getId().equals(v.getId())).toArray();
-        if(vs.length != 1) {
+    public V lookUpVertexById(@NonNull final String id) {
+        List<V> vs = vertices.stream().filter(i -> i.getId().equals(id)).collect(Collectors.toList());
+        if(vs.size() != 1) {
             return null;
         }
-        return vs[0];
+        return vs.get(0);
     }
 
+    public V ensureVertex(@NonNull final String id, @NonNull final IVertexCtor<V> ctor) {
+        V res = lookUpVertexById(id);
+        if(res == null) {
+            // Vertex does not exist yet
+            V newVertex = ctor.makeVertex(id);
+            this.addVertex(newVertex);
+            return newVertex;
+        }
+        else return res;
+    }
 
+    @Override
+    public String toString() {
+        String a = vertices.toString();
+        String b = forwardEdge.toString();
+        return a.concat(b);
+    }
 }
