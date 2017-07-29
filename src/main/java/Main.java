@@ -1,4 +1,6 @@
+import Exporter.GraphExporter;
 import Graph.EdgeWithCost;
+import Graph.Exceptions.GraphException;
 import Graph.Graph;
 import Graph.Vertex;
 import Parser.EdgeCtor;
@@ -6,10 +8,7 @@ import Parser.Exceptions.ParserException;
 import Parser.InputParser;
 import Parser.VertexCtor;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 
 public class Main {
 
@@ -41,6 +40,10 @@ public class Main {
         }
 
         System.out.print(graph.toString());
+
+        final GraphExporter<Vertex,EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;
+        vertexEdgeWithCostGraphExporter = new GraphExporter<Vertex, EdgeWithCost<Vertex>>();
+        vertexEdgeWithCostGraphExporter.doExport(graph, new BufferedWriter(new OutputStreamWriter(System.out)));
 
     }
 

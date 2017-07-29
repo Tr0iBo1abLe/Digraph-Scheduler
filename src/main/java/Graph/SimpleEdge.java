@@ -1,9 +1,14 @@
 package Graph;
 
+import Graph.Interfaces.ICollectibleAttribute;
+import Graph.Interfaces.IEdge;
 import lombok.Data;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @Data
-public class SimpleEdge<V> implements IEdge<V>{
+public class SimpleEdge<V extends Vertex> implements IEdge<V>, ICollectibleAttribute {
     protected final V from;
     protected final V to;
 
@@ -23,4 +28,8 @@ public class SimpleEdge<V> implements IEdge<V>{
         return this.from.equals(e.from) && this.to.equals(e.to);
     }
 
+    @Override
+    public Map<String, String> getAttributes() {
+        return new LinkedHashMap<>();
+    }
 }

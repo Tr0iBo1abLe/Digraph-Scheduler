@@ -1,9 +1,12 @@
 package Parser;
 
+import Graph.Exceptions.GraphException;
 import Graph.Graph;
 import Graph.SimpleEdge;
 import Graph.Vertex;
 import Parser.Exceptions.ParserException;
+import Parser.Interfaces.IEdgeCtor;
+import Parser.Interfaces.IVertexCtor;
 import lombok.NonNull;
 
 import java.io.BufferedReader;
@@ -28,7 +31,6 @@ public class InputParser<V extends Vertex, E extends SimpleEdge<V>> {
     private String input;
     private Graph<V, E> graph;
     private boolean hasHeader = false;
-    private char nextTokenToFind;
     private LINE_STATE lineState = LINE_STATE.HEADER;
 
     public InputParser(@NonNull IVertexCtor<V> vertexCtor,
@@ -54,17 +56,25 @@ public class InputParser<V extends Vertex, E extends SimpleEdge<V>> {
             switch(currState) {
                 case NEXT:
                 case HEADER:
-                    currState = processOne();
+                        currState = processOne();
                     break;
                 case SEMICOLON:
-                    currState = processLine();
+                    try {
+                        currState = processLine();
+                    } catch (GraphException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case LINEFEED:
-                    currState = STATE.NEXT;
+                    currState = processLineFeed();
                     break;
             }
             pos++;
         }
+    }
+
+    private STATE processLineFeed() {
+        return STATE.NEXT;
     }
 
     private STATE processTilLine() {
@@ -74,7 +84,7 @@ public class InputParser<V extends Vertex, E extends SimpleEdge<V>> {
             return STATE.LINEFEED;
     }
 
-    private STATE processLine() throws ParserException {
+    private STATE processLine() throws ParserException, GraphException {
         if(this.tokenBuffer.size() == 0) {
             flushBuffer();
             return STATE.NEXT;
@@ -127,9 +137,11 @@ public class InputParser<V extends Vertex, E extends SimpleEdge<V>> {
         return attrMap;
     }
 
-
     private STATE processFullHeader() throws ParserException {
         if(tokenBuffer.isEmpty()) throw new ParserException("Empty Header");
+        if(tokenBuffer.size() != 2) throw new ParserException("Invalid Header");
+        if(!tokenBuffer.get(0).matches("[Dd][Ii][Gg][Rr][Aa][Pp][Hh]")) throw new ParserException("Not a diagraph");
+        this.graph.setName(tokenBuffer.get(1));
         if(hasHeader) throw new ParserException("Malformed dot file");
         this.hasHeader = true;
         flushBuffer();

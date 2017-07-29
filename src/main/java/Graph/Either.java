@@ -14,7 +14,7 @@ public class Either<A, B> {
         public A left() { return a; }
     }
 
-    public static class Right<A, B> extends Either<A, B> {
+    public final static class Right<A, B> extends Either<A, B> {
         private B b;
         public Right(B b) { this.b = b; }
         public B right() { return b; }

@@ -1,13 +1,17 @@
 package Graph;
 
+import Graph.Interfaces.IHasCost;
 import lombok.Data;
 import lombok.NonNull;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by e on 28/07/17.
  */
 @Data
-public class EdgeWithCost<V> extends SimpleEdge<V> implements IHasCost {
+public class EdgeWithCost<V extends Vertex> extends SimpleEdge<V> implements IHasCost {
     private final int cost;
     public EdgeWithCost(@NonNull final V from,
                         @NonNull final V to,
@@ -23,7 +27,14 @@ public class EdgeWithCost<V> extends SimpleEdge<V> implements IHasCost {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@NonNull final Object o) {
         return super.equals(o);
+    }
+
+    @Override
+    public Map<String, String> getAttributes() {
+        Map<String, String> attrs = new LinkedHashMap<>();
+        attrs.put("Weight", String.valueOf(this.cost));
+        return attrs;
     }
 }

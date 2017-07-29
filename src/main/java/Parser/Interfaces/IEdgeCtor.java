@@ -1,6 +1,6 @@
-package Parser;
+package Parser.Interfaces;
 
-import Graph.IEdge;
+import Graph.Interfaces.IEdge;
 import lombok.NonNull;
 
 import java.util.Map;
