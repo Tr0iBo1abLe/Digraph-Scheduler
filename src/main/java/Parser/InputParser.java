@@ -140,7 +140,7 @@ public class InputParser<V extends Vertex, E extends SimpleEdge<V>> {
     private STATE processFullHeader() throws ParserException {
         if(tokenBuffer.isEmpty()) throw new ParserException("Empty Header");
         if(tokenBuffer.size() != 2) throw new ParserException("Invalid Header");
-        if(!tokenBuffer.get(0).matches("[Dd][Ii][Gg][Rr][Aa][Pp][Hh]")) throw new ParserException("Not a diagraph");
+        if(!tokenBuffer.get(0).matches("[Dd][Ii][Gg][Rr][Aa][Pp][Hh]")) throw new ParserException("Not a digraph");
         this.graph.setName(tokenBuffer.get(1));
         if(hasHeader) throw new ParserException("Malformed dot file");
         this.hasHeader = true;

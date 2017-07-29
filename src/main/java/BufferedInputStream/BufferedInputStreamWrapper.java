@@ -87,7 +87,7 @@ public class BufferedInputStreamWrapper {
         int c;
 
         while ((c = bis.read()) != '\n' ){
-            if (c == '\r'){continue;}//filter
+            if (c == '\r'){continue;}//filter out
             byteOut.write((byte)c);
 
         }

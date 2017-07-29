@@ -24,4 +24,9 @@ public class Vertex implements IHasCost, ICollectibleAttribute {
         attrs.put("Weight", String.valueOf(this.cost));
         return attrs;
     }
+
+    @Override
+    public int getCost() {
+        return cost;
+    }
 }
