@@ -2,8 +2,8 @@ package Parser;
 
 import Graph.Exceptions.GraphException;
 import Graph.Graph;
-import Graph.SimpleEdge;
 import Graph.Vertex;
+import Graph.Edge;
 import Parser.Exceptions.ParserException;
 import Parser.Interfaces.IEdgeCtor;
 import Parser.Interfaces.IVertexCtor;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class InputParser<V extends Vertex, E extends SimpleEdge<V>> {
+public class InputParser<V extends Vertex, E extends Edge<V>> {
 
     private enum STATE {HEADER, BODY, NEXT, LINEFEED, SEMICOLON}
     private enum LINE_STATE { COMMENT, VERTEX, EDGE, HEADER }

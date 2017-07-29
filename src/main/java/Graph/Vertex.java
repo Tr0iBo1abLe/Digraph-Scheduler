@@ -3,6 +3,7 @@ package Graph;
 import Graph.Interfaces.ICollectibleAttribute;
 import Graph.Interfaces.IHasCost;
 import lombok.Data;
+import lombok.NonNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,9 +14,12 @@ public class Vertex implements IHasCost, ICollectibleAttribute {
     protected final int cost;
 
     @Override
-    public boolean equals(Object o) {
-        Vertex v = (Vertex) o;
-        return id.equals(v.getId());
+    public boolean equals(@NonNull final Object o) {
+        if(o instanceof Vertex) {
+            Vertex v = (Vertex) o;
+            return id.equals(v.getId());
+        }
+        else return false;
     }
 
     @Override

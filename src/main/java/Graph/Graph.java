@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Graph<V extends Vertex, E extends SimpleEdge<V>> {
+public class Graph<V extends Vertex, E extends Edge<V>> {
     @Getter @Setter
     private String name;
     @Getter
@@ -17,7 +17,7 @@ public class Graph<V extends Vertex, E extends SimpleEdge<V>> {
     @Getter
     private Set<E> forwardEdge;
     @Getter
-    private Set<SimpleEdge<V>> reverseEdge;
+    private Set<Edge<V>> reverseEdge;
     @Getter
     private List<Object> order;
 
@@ -41,7 +41,7 @@ public class Graph<V extends Vertex, E extends SimpleEdge<V>> {
                     " Use ensureVertex() to to ensure it exists.");
         }
         this.forwardEdge.add(e);
-        this.reverseEdge.add(new SimpleEdge<V>(e.getFromVertex(), e.getToVertex()));
+        this.reverseEdge.add(new Edge<V>(e.getFromVertex(), e.getToVertex()));
         this.order.add(e);
     }
 

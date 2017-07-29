@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Data
-public class SimpleEdge<V extends Vertex> implements IEdge<V>, ICollectibleAttribute {
+public class Edge<V extends Vertex> implements IEdge<V>, ICollectibleAttribute {
     protected final V from;
     protected final V to;
 
@@ -24,7 +24,7 @@ public class SimpleEdge<V extends Vertex> implements IEdge<V>, ICollectibleAttri
 
     @Override
     public boolean equals(Object o) {
-        SimpleEdge<V> e = (SimpleEdge<V>) o;
+        Edge<V> e = (Edge<V>) o;
         return this.from.equals(e.from) && this.to.equals(e.to);
     }
 

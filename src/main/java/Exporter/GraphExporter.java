@@ -2,8 +2,8 @@ package Exporter;
 
 import Graph.Graph;
 import Graph.Interfaces.ICollectibleAttribute;
-import Graph.SimpleEdge;
 import Graph.Vertex;
+import Graph.Edge;
 import lombok.NonNull;
 
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-public class GraphExporter<V extends Vertex, E extends SimpleEdge<V>> {
+public class GraphExporter<V extends Vertex, E extends Edge<V>> {
 
     public GraphExporter() {
     }
@@ -25,13 +25,13 @@ public class GraphExporter<V extends Vertex, E extends SimpleEdge<V>> {
                 if(orderObj instanceof Vertex) {
                     final Vertex v = (Vertex) orderObj;
                     writer.write(v.getId() + " ");
-                    writeAttrbuites(v, writer);
+                    writeAttributes(v, writer);
                     writer.write("\n");
                 }
-                else if(orderObj instanceof SimpleEdge) {
-                    final SimpleEdge<Vertex> e = (SimpleEdge<Vertex>) orderObj;
+                else if(orderObj instanceof Edge) {
+                    final Edge<Vertex> e = (Edge<Vertex>) orderObj;
                     writer.write(e.getFrom().getId() + " -> " + e.getTo().getId() + " ");
-                    writeAttrbuites(e, writer);
+                    writeAttributes(e, writer);
                     writer.write("\n");
                 }
             }
@@ -42,7 +42,7 @@ public class GraphExporter<V extends Vertex, E extends SimpleEdge<V>> {
         }
     }
 
-    private void writeAttrbuites(@NonNull final ICollectibleAttribute ica, @NonNull final Writer writer) throws IOException {
+    private void writeAttributes(@NonNull final ICollectibleAttribute ica, @NonNull final Writer writer) throws IOException {
         final Set<Map.Entry<String, String>> entries = ica.getAttributes().entrySet();
         if(entries.isEmpty()) {
             return;

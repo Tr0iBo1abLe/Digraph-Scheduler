@@ -11,7 +11,7 @@ import java.util.Map;
  * Created by e on 28/07/17.
  */
 @Data
-public class EdgeWithCost<V extends Vertex> extends SimpleEdge<V> implements IHasCost {
+public class EdgeWithCost<V extends Vertex> extends Edge<V> implements IHasCost {
     private final int cost;
     public EdgeWithCost(@NonNull final V from,
                         @NonNull final V to,
