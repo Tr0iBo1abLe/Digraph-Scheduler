@@ -6,3 +6,41 @@ tags
 lib/
 src/main/resources/
 target/
+
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# eclipse trashes
+**/*.class
+*.log
+**/.metadata/
+**/.recommenders/
+**/RemoteSystemsTempFiles/
+**/.metadata/**
+**/.recommenders/**
+**/RemoteSystemsTempFiles/**
+**/.metadata/*
+**/.recommenders/*
+**/RemoteSystemsTempFiles/*
+**/.metadata/.*
+**/.recommenders/.*
+**/RemoteSystemsTempFiles/.*
+**/.classpath
+**/.project
+**/.settings
+**/.settings/**
+**/.settings/*
+**/.settings/.*
+.classpath
+.project
+.settings
+bin
+**/bin
+**/bin/**
