@@ -19,7 +19,7 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Unit tests for the input parser.
+ * Unit tests for the input parser
  * Tests that the data structures store the correct objects for various input orders/types.
  *
  * Created by will on 7/29/17.
