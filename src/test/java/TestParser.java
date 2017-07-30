@@ -1,6 +1,7 @@
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
+import Graph.Edge;
 import Parser.EdgeCtor;
 import Parser.Exceptions.ParserException;
 import Parser.InputParser;
@@ -41,18 +42,44 @@ public class TestParser {
         }
     }
 
+    /**
+     * Tests a simple input with all Vertices being parsed before Edges.
+     */
     @Test
-    public void testNodesBeforeEdges(){
+    public void testVerticesBeforeEdges(){
         doParse("nodesBeforeEdges.dot");
-        Set<Vertex> actual = graph.getVertices();
-        Set<Vertex> expected = new HashSet();
-        expected.add(new Vertex("a", 2));
-        expected.add(new Vertex("b", 3));
-        expected.add(new Vertex("c", 3));
-        expected.add(new Vertex("d", 2));
 
-        assertEquals(expected, actual);
+        Vertex a2 = new Vertex("a", 2);
+        Vertex b3 = new Vertex("b", 3);
+        Vertex c3 = new Vertex("c", 3);
+        Vertex d2 = new Vertex("d", 2);
 
+        // Test set of stored Vertices is correct.
+        Set<Vertex> actualVertices = graph.getVertices();
+        Set<Vertex> expectedVertices = new HashSet();
+        expectedVertices.add(a2);
+        expectedVertices.add(b3);
+        expectedVertices.add(c3);
+        expectedVertices.add(d2);
+        assertEquals(expectedVertices, actualVertices);
+
+        // Test set of ForwardEdges is correct; note they include the edge cost.
+        Set<EdgeWithCost<Vertex>> actualFwd = graph.getForwardEdges();
+        Set<EdgeWithCost<Vertex>> expectedFwd = new HashSet<EdgeWithCost<Vertex>>();
+        expectedFwd.add(new EdgeWithCost<Vertex>(a2, b3,1));
+        expectedFwd.add(new EdgeWithCost<Vertex>(a2, c3,2));
+        expectedFwd.add(new EdgeWithCost<Vertex>(b3, d2,2));
+        expectedFwd.add(new EdgeWithCost<Vertex>(c3, d2,1));
+        assertEquals(expectedFwd, actualFwd);
+
+        // Test set of ReverseEdges is correct; note they don't store the cost.
+        Set<Edge<Vertex>> actualReverse = graph.getReverseEdges();
+        Set<Edge<Vertex>> expectedReverse = new HashSet<Edge<Vertex>>();
+        expectedReverse.add(new Edge<Vertex>(b3, a2));
+        expectedReverse.add(new Edge<Vertex>(c3, a2));
+        expectedReverse.add(new Edge<Vertex>(d2, b3));
+        expectedReverse.add(new Edge<Vertex>(d2, c3));
+        assertEquals(expectedReverse, actualReverse);
     }
 
 }
