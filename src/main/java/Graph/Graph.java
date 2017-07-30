@@ -16,16 +16,16 @@ public class Graph<V extends Vertex, E extends Edge<V>> {
     @Getter
     private Set<V> vertices;
     @Getter
-    private Set<E> forwardEdges;
+    private Set<E> forwardEdge;
     @Getter
-    private Set<Edge<V>> reverseEdges;
+    private Set<Edge<V>> reverseEdge;
     @Getter
     private List<Object> order;
 
     public Graph() {
         this.vertices = new HashSet<>();
-        this.forwardEdges = new HashSet<>();
-        this.reverseEdges = new HashSet<>();
+        this.forwardEdge = new HashSet<>();
+        this.reverseEdge = new HashSet<>();
         this.order = new LinkedList<>();
     }
 
@@ -41,18 +41,18 @@ public class Graph<V extends Vertex, E extends Edge<V>> {
             throw new GraphException("Non existing vertex is being added to the graph." +
                     " Use ensureVertex() to to ensure it exists.");
         }
-        this.forwardEdges.add(e);
-        this.reverseEdges.add(new Edge<V>(e.getFromVertex(), e.getToVertex()));
+        this.forwardEdge.add(e);
+        this.reverseEdge.add(new Edge<V>(e.getToVertex(), e.getFromVertex()));
         this.order.add(e);
     }
 
     public List<V> getForwardVertices(@NonNull final V v) {
-        Set<E> es = forwardEdges.stream().filter(e -> e.getFrom().equals(v)).collect(Collectors.toSet());
+        Set<E> es = forwardEdge.stream().filter(e -> e.getFrom().equals(v)).collect(Collectors.toSet());
         return es.stream().map(e -> e.getTo()).collect(Collectors.toList());
     }
 
     public List<V> getReverseVertices(@NonNull final V v) {
-        Set<E> es = forwardEdges.stream().filter(e -> e.getTo().equals(v)).collect(Collectors.toSet());
+        Set<E> es = forwardEdge.stream().filter(e -> e.getTo().equals(v)).collect(Collectors.toSet());
         return es.stream().map(e -> e.getFrom()).collect(Collectors.toList());
     }
 
@@ -111,7 +111,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> {
 
     public E getForwardEdge(@NonNull final V from,
                             @NonNull final V to) {
-        for(E e : forwardEdges) {
+        for(E e : forwardEdge) {
             if(e.getFrom().equals(from) && e.getTo().equals(to)) {
                 return e;
             }
@@ -121,7 +121,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> {
 
     public E getReverseEdge(@NonNull final V from,
                             @NonNull final V to) {
-        for(E e : forwardEdges) {
+        for(E e : forwardEdge) {
             if(e.getFrom().equals(from) && e.getTo().equals(to)) {
                 return e;
             }
@@ -132,7 +132,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> {
     @Override
     public String toString() {
         String a = vertices.toString();
-        String b = forwardEdges.toString();
+        String b = forwardEdge.toString();
         return a.concat(b);
     }
 
