@@ -61,7 +61,7 @@ public class TestParser {
      */
     private void nodesBeforeEdgesSetup(){
         // Parse file to graph
-        doParse("nodesBeforeEdges.dot");
+        doParse("verticesBeforeEdges.dot");
 
         // Create expected vertices
         vertices = new Vertex[4];
@@ -127,7 +127,7 @@ public class TestParser {
      */
     private void verticesBeforeEdgesSetup(){
         // Parse file to graph
-        doParse("edgesBeforeNodes.dot");
+        doParse("edgesBeforeVertices.dot");
 
         // Create expected vertices
         vertices = new Vertex[4];
