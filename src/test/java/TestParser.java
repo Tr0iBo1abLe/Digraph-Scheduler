@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit tests for the input parser.
@@ -56,11 +57,10 @@ public class TestParser {
         Set<EdgeWithCost<Vertex>> actualFrom = graph.getForwardEdges();
         Set<EdgeWithCost<Vertex>> expectedFrom = new HashSet<EdgeWithCost<Vertex>>();
         expectedFrom.add(new EdgeWithCost<Vertex>(new Vertex("a",2),new Vertex("b",3),1));
-        expectedFrom.add(new EdgeWithCost<Vertex>(new Vertex("a",2),new Vertex("b",3),1));
-        expectedFrom.add(new EdgeWithCost<Vertex>(new Vertex("a",2),new Vertex("b",3),1));
-        expectedFrom.add(new EdgeWithCost<Vertex>(new Vertex("a",2),new Vertex("b",3),1));
+        expectedFrom.add(new EdgeWithCost<Vertex>(new Vertex("a",2),new Vertex("c",3),2));
+        expectedFrom.add(new EdgeWithCost<Vertex>(new Vertex("b",3),new Vertex("d",2),2));
+        expectedFrom.add(new EdgeWithCost<Vertex>(new Vertex("c",3),new Vertex("d",2),1));
         assertEquals(expectedFrom, actualFrom);
-
     }
 
 }
