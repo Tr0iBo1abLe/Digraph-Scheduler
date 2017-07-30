@@ -44,14 +44,22 @@ public class TestParser {
     @Test
     public void testNodesBeforeEdges(){
         doParse("nodesBeforeEdges.dot");
-        Set<Vertex> actual = graph.getVertices();
-        Set<Vertex> expected = new HashSet();
-        expected.add(new Vertex("a", 2));
-        expected.add(new Vertex("b", 3));
-        expected.add(new Vertex("c", 3));
-        expected.add(new Vertex("d", 2));
 
-        assertEquals(expected, actual);
+        Set<Vertex> actualVertices = graph.getVertices();
+        Set<Vertex> expectedVertices = new HashSet();
+        expectedVertices.add(new Vertex("a", 2));
+        expectedVertices.add(new Vertex("b", 3));
+        expectedVertices.add(new Vertex("c", 3));
+        expectedVertices.add(new Vertex("d", 2));
+        assertEquals(expectedVertices, actualVertices);
+
+        Set<EdgeWithCost<Vertex>> actualFrom = graph.getForwardEdges();
+        Set<EdgeWithCost<Vertex>> expectedFrom = new HashSet<EdgeWithCost<Vertex>>();
+        expectedFrom.add(new EdgeWithCost<Vertex>(new Vertex("a",2),new Vertex("b",3),1));
+        expectedFrom.add(new EdgeWithCost<Vertex>(new Vertex("a",2),new Vertex("b",3),1));
+        expectedFrom.add(new EdgeWithCost<Vertex>(new Vertex("a",2),new Vertex("b",3),1));
+        expectedFrom.add(new EdgeWithCost<Vertex>(new Vertex("a",2),new Vertex("b",3),1));
+        assertEquals(expectedFrom, actualFrom);
 
     }
 
