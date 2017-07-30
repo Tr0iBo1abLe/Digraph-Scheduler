@@ -33,9 +33,7 @@ public class Main {
         InputParser<Vertex, EdgeWithCost<Vertex>> parser = new InputParser<Vertex, EdgeWithCost<Vertex>>(new VertexCtor(), new EdgeCtor());
         try {
             parser.doParse(graph, new BufferedReader(new FileReader(inputFile)));
-        } catch (ParserException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
+        } catch (ParserException | FileNotFoundException e) {
             e.printStackTrace();
         }
 
