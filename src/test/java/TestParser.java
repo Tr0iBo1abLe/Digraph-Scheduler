@@ -6,6 +6,7 @@ import Parser.EdgeCtor;
 import Parser.Exceptions.ParserException;
 import Parser.InputParser;
 import Parser.VertexCtor;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,10 +30,20 @@ public class TestParser {
     private Graph<Vertex, EdgeWithCost<Vertex>> graph;
     private InputParser<Vertex, EdgeWithCost<Vertex>> parser;
 
+    private Vertex[] vertices;
+
     @Before
     public void setup(){
         graph = new Graph<Vertex, EdgeWithCost<Vertex>>();
         parser = new InputParser<Vertex, EdgeWithCost<Vertex>>(new VertexCtor(), new EdgeCtor());
+    }
+
+    /*
+     * Destroy any testing objects.
+     */
+    @After
+    public void cleanup(){
+        vertices = null;
     }
 
     private void doParse(String file){
@@ -45,123 +56,133 @@ public class TestParser {
 
     /**
      * Three tests for a simple input with all Vertices being parsed before Edges.
+     *
+     * Makes sure Edges correspond to existing Vertex structures and their costs are correct.
      */
-
-    @Test
-    public void testNodesBeforeEdgesVertexSet(){
+    private void nodesBeforeEdgesSetup(){
+        // Parse file to graph
         doParse("nodesBeforeEdges.dot");
 
-        Vertex a2 = new Vertex("a", 2);
-        Vertex b3 = new Vertex("b", 3);
-        Vertex c3 = new Vertex("c", 3);
-        Vertex d2 = new Vertex("d", 2);
+        // Create expected vertices
+        vertices = new Vertex[4];
+        vertices[0] = new Vertex("a", 2);
+        vertices[1] = new Vertex("b", 3);
+        vertices[2] = new Vertex("c", 3);
+        vertices[3] = new Vertex("d", 2);
+    }
 
-        // Test set of stored Vertices is correct.
+    /**
+     * Test set of stored Vertices is correct.
+     */
+    @Test
+    public void testNodesBeforeEdgesVertexSet(){
+        nodesBeforeEdgesSetup();
+
         Set<Vertex> actualVertices = graph.getVertices();
         Set<Vertex> expectedVertices = new HashSet();
-        expectedVertices.add(a2);
-        expectedVertices.add(b3);
-        expectedVertices.add(c3);
-        expectedVertices.add(d2);
+        expectedVertices.add(vertices[0]);
+        expectedVertices.add(vertices[1]);
+        expectedVertices.add(vertices[2]);
+        expectedVertices.add(vertices[3]);
         assertEquals(expectedVertices, actualVertices);
     }
 
+    /**
+     * Test set of ForwardEdges is correct; note they include the edge cost.
+      */
     @Test
     public void testNodesBeforeEdgesForwardEdgeSet(){
-        doParse("nodesBeforeEdges.dot");
+        nodesBeforeEdgesSetup();
 
-        Vertex a2 = new Vertex("a", 2);
-        Vertex b3 = new Vertex("b", 3);
-        Vertex c3 = new Vertex("c", 3);
-        Vertex d2 = new Vertex("d", 2);
-
-        // Test set of ForwardEdges is correct; note they include the edge cost.
         Set<EdgeWithCost<Vertex>> actualFwd = graph.getForwardEdges();
         Set<EdgeWithCost<Vertex>> expectedFwd = new HashSet<EdgeWithCost<Vertex>>();
-        expectedFwd.add(new EdgeWithCost<Vertex>(a2, b3,1));
-        expectedFwd.add(new EdgeWithCost<Vertex>(a2, c3,2));
-        expectedFwd.add(new EdgeWithCost<Vertex>(b3, d2,2));
-        expectedFwd.add(new EdgeWithCost<Vertex>(c3, d2,1));
+        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[0], vertices[1],1));
+        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[0], vertices[2],2));
+        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[1], vertices[3],2));
+        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[2], vertices[3],1));
         assertEquals(expectedFwd, actualFwd);
     }
 
+    /**
+     * Test set of ReverseEdges is correct; note they don't store the cost.
+     */
     @Test
     public void testNodesBeforeEdgesReverseEdgeSet(){
-        doParse("nodesBeforeEdges.dot");
+        nodesBeforeEdgesSetup();
 
-        Vertex a2 = new Vertex("a", 2);
-        Vertex b3 = new Vertex("b", 3);
-        Vertex c3 = new Vertex("c", 3);
-        Vertex d2 = new Vertex("d", 2);
-
-        // Test set of ReverseEdges is correct; note they don't store the cost.
         Set<Edge<Vertex>> actualReverse = graph.getReverseEdges();
         Set<Edge<Vertex>> expectedReverse = new HashSet<Edge<Vertex>>();
-        expectedReverse.add(new Edge<Vertex>(b3, a2));
-        expectedReverse.add(new Edge<Vertex>(c3, a2));
-        expectedReverse.add(new Edge<Vertex>(d2, b3));
-        expectedReverse.add(new Edge<Vertex>(d2, c3));
+        expectedReverse.add(new Edge<Vertex>(vertices[1], vertices[0]));
+        expectedReverse.add(new Edge<Vertex>(vertices[2], vertices[0]));
+        expectedReverse.add(new Edge<Vertex>(vertices[3], vertices[1]));
+        expectedReverse.add(new Edge<Vertex>(vertices[3], vertices[2]));
         assertEquals(expectedReverse, actualReverse);
     }
 
     /**
      * Three tests for a simple input with all Edges before Vertices.
+     *
+     * When edges are read in first temporary vertices are created. These tests ensures those vertices have their
+     * costs updated once the corresponding vertices are read in.
      */
-
-    @Test
-    public void testVerticesBeforeEdgesVertexSet(){
+    private void verticesBeforeEdgesSetup(){
+        // Parse file to graph
         doParse("edgesBeforeNodes.dot");
 
-        Vertex a2 = new Vertex("a", 2);
-        Vertex b3 = new Vertex("b", 3);
-        Vertex c3 = new Vertex("c", 3);
-        Vertex d2 = new Vertex("d", 2);
+        // Create expected vertices
+        vertices = new Vertex[4];
+        vertices[0] = new Vertex("a", 2);
+        vertices[1] = new Vertex("b", 3);
+        vertices[2] = new Vertex("c", 3);
+        vertices[3] = new Vertex("d", 2);
+    }
 
-        // Test set of stored Vertices is correct.
+
+    /**
+     * Test set of stored Vertices is correct.
+     */
+    @Test
+    public void testVerticesBeforeEdgesVertexSet(){
+        verticesBeforeEdgesSetup();
+
         Set<Vertex> actualVertices = graph.getVertices();
         Set<Vertex> expectedVertices = new HashSet();
-        expectedVertices.add(a2);
-        expectedVertices.add(b3);
-        expectedVertices.add(c3);
-        expectedVertices.add(d2);
+        expectedVertices.add(vertices[0]);
+        expectedVertices.add(vertices[1]);
+        expectedVertices.add(vertices[2]);
+        expectedVertices.add(vertices[3]);
         assertEquals(expectedVertices, actualVertices);
     }
 
+    /**
+     * Test set of ForwardEdges is correct; note they include the edge cost.
+     */
     @Test
     public void testVerticesBeforeEdgesFwdEdgeSet(){
-        doParse("edgesBeforeNodes.dot");
+        verticesBeforeEdgesSetup();
 
-        Vertex a2 = new Vertex("a", 2);
-        Vertex b3 = new Vertex("b", 3);
-        Vertex c3 = new Vertex("c", 3);
-        Vertex d2 = new Vertex("d", 2);
-
-        // Test set of ForwardEdges is correct; note they include the edge cost.
         Set<EdgeWithCost<Vertex>> actualFwd = graph.getForwardEdges();
         Set<EdgeWithCost<Vertex>> expectedFwd = new HashSet<EdgeWithCost<Vertex>>();
-        expectedFwd.add(new EdgeWithCost<Vertex>(a2, b3,1));
-        expectedFwd.add(new EdgeWithCost<Vertex>(a2, c3,2));
-        expectedFwd.add(new EdgeWithCost<Vertex>(b3, d2,2));
-        expectedFwd.add(new EdgeWithCost<Vertex>(c3, d2,1));
+        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[0], vertices[1],1));
+        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[0], vertices[2],2));
+        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[1], vertices[3],2));
+        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[2], vertices[3],1));
         assertEquals(expectedFwd, actualFwd);
     }
 
+    /**
+     * Test set of ReverseEdges is correct; note they don't store the cost.
+     */
     @Test
     public void testVerticesBeforeEdgesRvrEdgeSet(){
-        doParse("edgesBeforeNodes.dot");
+        verticesBeforeEdgesSetup();
 
-        Vertex a2 = new Vertex("a", 2);
-        Vertex b3 = new Vertex("b", 3);
-        Vertex c3 = new Vertex("c", 3);
-        Vertex d2 = new Vertex("d", 2);
-
-        // Test set of ReverseEdges is correct; note they don't store the cost.
         Set<Edge<Vertex>> actualReverse = graph.getReverseEdges();
         Set<Edge<Vertex>> expectedReverse = new HashSet<Edge<Vertex>>();
-        expectedReverse.add(new Edge<Vertex>(b3, a2));
-        expectedReverse.add(new Edge<Vertex>(c3, a2));
-        expectedReverse.add(new Edge<Vertex>(d2, b3));
-        expectedReverse.add(new Edge<Vertex>(d2, c3));
+        expectedReverse.add(new Edge<Vertex>(vertices[1], vertices[0]));
+        expectedReverse.add(new Edge<Vertex>(vertices[2], vertices[0]));
+        expectedReverse.add(new Edge<Vertex>(vertices[3], vertices[1]));
+        expectedReverse.add(new Edge<Vertex>(vertices[3], vertices[2]));
         assertEquals(expectedReverse, actualReverse);
     }
 
