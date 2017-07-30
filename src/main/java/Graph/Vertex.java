@@ -33,4 +33,10 @@ public class Vertex implements IHasCost, ICollectibleAttribute {
     public int getCost() {
         return cost;
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
 }
