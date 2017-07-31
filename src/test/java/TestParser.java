@@ -4,16 +4,12 @@ import Graph.Graph;
 import Graph.Vertex;
 import Graph.Edge;
 import Parser.EdgeCtor;
-import Parser.Exceptions.ParserException;
 import Parser.InputParser;
 import Parser.VertexCtor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,7 +27,7 @@ import static org.junit.Assert.fail;
  */
 public class TestParser {
 
-    private static final String INPUT_FILE_PATH = "src/test/resources/";
+    private static final String TEST_FILES_PATH = "src/test/resources/";
     private Graph<Vertex, EdgeWithCost<Vertex>> graph;
     private InputParser<Vertex, EdgeWithCost<Vertex>> parser;
 
@@ -51,14 +47,6 @@ public class TestParser {
         vertices = null;
     }
 
-    private void doParse(String file){
-        try {
-            parser.doParse(graph, new BufferedReader(new FileReader(INPUT_FILE_PATH + file)));
-        } catch (ParserException | FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Three tests for a simple input with all Vertices being parsed before Edges.
      *
@@ -66,7 +54,7 @@ public class TestParser {
      */
     private void nodesBeforeEdgesSetup(){
         // Parse file to graph
-        doParse("verticesBeforeEdges.dot");
+        graph = parser.doParse(TEST_FILES_PATH +"verticesBeforeEdges.dot");
 
         // Create expected vertices
         vertices = new Vertex[4];
@@ -84,7 +72,7 @@ public class TestParser {
         nodesBeforeEdgesSetup();
 
         Set<Vertex> actualVertices = graph.getVertices();
-        Set<Vertex> expectedVertices = new HashSet();
+        Set<Vertex> expectedVertices = new HashSet<Vertex>();
         expectedVertices.add(vertices[0]);
         expectedVertices.add(vertices[1]);
         expectedVertices.add(vertices[2]);
@@ -132,7 +120,7 @@ public class TestParser {
      */
     private void verticesBeforeEdgesSetup(){
         // Parse file to graph
-        doParse("edgesBeforeVertices.dot");
+        graph = parser.doParse(TEST_FILES_PATH +"edgesBeforeVertices.dot");
 
         // Create expected vertices
         vertices = new Vertex[4];
@@ -204,7 +192,7 @@ public class TestParser {
         vertices[1] = new Vertex("b", 3);
         vertices[2] = new Vertex("c", 3);
 
-        doParse("sampleinput.dot");
+        graph = parser.doParse(TEST_FILES_PATH +"sampleinput.dot");
 
         List<Vertex> actual = graph.getForwardVertices(vertices[0]);
         List<Vertex> expected = new ArrayList<Vertex>();
@@ -227,7 +215,7 @@ public class TestParser {
         vertices[1] = new Vertex("b", 3);
         vertices[2] = new Vertex("c", 3);
 
-        doParse("sampleinput.dot");
+        graph = parser.doParse(TEST_FILES_PATH +"sampleinput.dot");
 
         List<Vertex> actual = graph.getReverseVertices(vertices[0]);
         List<Vertex> expected = new ArrayList<Vertex>();
@@ -242,7 +230,7 @@ public class TestParser {
      */
     @Test
     public void testGetForwardEdge(){
-        doParse("sampleinput.dot");
+        graph = parser.doParse(TEST_FILES_PATH +"sampleinput.dot");
 
         Vertex a = new Vertex("a", 2);
         Vertex b = new Vertex("b",3);
@@ -257,7 +245,7 @@ public class TestParser {
      */
     @Test
     public void testGetReverseEdge(){
-        doParse("sampleinput.dot");
+        graph = parser.doParse(TEST_FILES_PATH +"sampleinput.dot");
 
         Vertex a = new Vertex("a", 2);
         Vertex b = new Vertex("b",3);
@@ -272,7 +260,7 @@ public class TestParser {
      */
     @Test
     public void testLookupVertexByIDVertexDoesntExist(){
-        doParse("sampleinput.dot");
+        graph = parser.doParse(TEST_FILES_PATH +"sampleinput.dot");
         // Graph has a,b,c,d NOT z
         assertNull(graph.lookUpVertexById("z"));
     }
@@ -283,7 +271,7 @@ public class TestParser {
      */
     @Test
     public void testLookupVertexByIDVertexExists(){
-        doParse("sampleinput.dot");
+        graph = parser.doParse(TEST_FILES_PATH +"sampleinput.dot");
         Vertex aActual = graph.lookUpVertexById("a");
         Vertex aExpected = new Vertex("a", 2);
         assertEquals(aExpected, aActual);
@@ -295,7 +283,7 @@ public class TestParser {
      */
     @Test
     public void testScheduleVertexNonExistingException(){
-        doParse("sampleinput.dot");
+        graph = parser.doParse(TEST_FILES_PATH +"sampleinput.dot");
         try {
             // Graph has a,b,c,d NOT z
             graph.scheduleVertex(new Vertex("z", 2), 0, 0);
@@ -310,7 +298,7 @@ public class TestParser {
      */
     @Test
     public void testScheduleVertexUpdatesCorrectly(){
-        doParse("sampleinput.dot");
+        graph = parser.doParse(TEST_FILES_PATH +"sampleinput.dot");
         Vertex a = graph.lookUpVertexById("a");
         try {
             graph.scheduleVertex(a, 0, 0 );
