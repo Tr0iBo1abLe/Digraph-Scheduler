@@ -8,6 +8,7 @@ import Parser.Exceptions.ParserException;
 import Parser.InputParser;
 import Parser.VertexCtor;
 import Solver.AStarSolver;
+import Solver.AStarSolverPar;
 import Solver.Interfaces.ISolver;
 
 import java.io.*;
@@ -40,7 +41,7 @@ public class Main {
         }
         graph.finalise();
 
-        ISolver solver = new AStarSolver(graph, 1);
+        ISolver solver = new AStarSolverPar(graph, 4);
         solver.doSolve();
 
         System.out.print(graph.toString());

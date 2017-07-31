@@ -6,27 +6,25 @@ import Graph.Graph;
 import Graph.Vertex;
 import Solver.Interfaces.ISolver;
 import Solver.Parallel.AStarTask;
-import fj.Unit;
-import fj.control.parallel.Strategy;
-import fj.data.Array;
 import lombok.Data;
 
 import java.util.*;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.stream.IntStream;
 
 @Data
-public class AStarSolver implements ISolver{
+public class AStarSolverPar implements ISolver{
     private final Graph<Vertex, EdgeWithCost<Vertex>> graph;
     private final int processorCount;
 
     @Override
     public void doSolve() {
 
-        Queue<SearchState> queue = new PriorityQueue<>();
-        Set<SearchState> set = new HashSet<>();
+        Queue<SearchState> queue = new PriorityBlockingQueue<>();
+        Set<SearchState> set = new ConcurrentSkipListSet<>();
         queue.add(new SearchState(graph));
 
         while(true) {
@@ -37,15 +35,17 @@ public class AStarSolver implements ISolver{
                 scheduleVertices(s);
                 return;
             }
-            /* Expansion */
-            s.getLegalVertices().forEach(v -> IntStream.of(0, processorCount-1).forEach(i -> {
-                        SearchState next = new SearchState(s, v, i);
-                        if(!set.contains(next)) {
-                            set.add(next);
-                            queue.add(next);
+            s.getLegalVertices().stream().forEach( v -> {
+                IntStream.of(0, processorCount-1).parallel().forEach( i -> {
+                            SearchState next = new SearchState(s, v, i);
+                            if(!set.contains(next)) {
+                                set.add(next);
+                                queue.add(next);
+                            }
                         }
-                    }
-            ));
+                );
+            });
+            /* Expansion */
         }
     }
 
