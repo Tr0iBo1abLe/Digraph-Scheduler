@@ -27,7 +27,7 @@ import static org.junit.Assert.fail;
  */
 public class TestParser {
 
-    private static final String TEST_FILES_PATH = "src/test/resources/";
+    private static final String TEST_FILES_PATH = "src/test/resources/TestParser/";
     private Graph<Vertex, EdgeWithCost<Vertex>> graph;
     private InputParser<Vertex, EdgeWithCost<Vertex>> parser;
 
