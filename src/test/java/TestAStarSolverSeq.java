@@ -34,9 +34,8 @@ public class TestAStarSolverSeq {
 
     @Test
     public void testStraightLine(){
-        graph = parser.doParse(TEST_FILES_PATH+"input_straightline.dot");
-        graph.finalise();
-        solver = new AStarSolver(graph, PROCESSOR_COUNT); // cant construct solver before graph.finalise() ..?
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH+"input_straightline.dot");
+        solver = new AStarSolver(graph, PROCESSOR_COUNT);
         solver.doSolve();
         // TODO read in expected output file for comparison with toString() of solved graph.
         final GraphExporter<Vertex,EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;
