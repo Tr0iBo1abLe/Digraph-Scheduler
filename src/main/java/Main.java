@@ -7,6 +7,9 @@ import Parser.EdgeCtor;
 import Parser.Exceptions.ParserException;
 import Parser.InputParser;
 import Parser.VertexCtor;
+import Solver.AStarSolver;
+import Solver.AStarSolverPar;
+import Solver.Interfaces.ISolver;
 
 import java.io.*;
 
@@ -36,6 +39,10 @@ public class Main {
         } catch (ParserException | FileNotFoundException e) {
             e.printStackTrace();
         }
+        graph.finalise();
+
+        ISolver solver = new AStarSolver(graph, 2);
+        solver.doSolve();
 
         System.out.print(graph.toString());
 

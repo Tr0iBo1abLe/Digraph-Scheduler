@@ -32,4 +32,9 @@ public class Edge<V extends Vertex> implements IEdge<V>, ICollectibleAttribute {
     public Map<String, String> getAttributes() {
         return new LinkedHashMap<>();
     }
+
+    @Override
+    public int hashCode(){
+        return 1;
+    }
 }

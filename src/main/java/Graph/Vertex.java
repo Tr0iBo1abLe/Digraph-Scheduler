@@ -12,6 +12,10 @@ import java.util.Map;
 public class Vertex implements IHasCost, ICollectibleAttribute {
     protected final String id;
     protected final int cost;
+    protected int bottomLevel;
+    protected int assignedId;
+    protected int processor = -1;
+    protected int startTime = -1;
 
     @Override
     public boolean equals(@NonNull final Object o) {
@@ -23,15 +27,15 @@ public class Vertex implements IHasCost, ICollectibleAttribute {
     }
 
     @Override
+    @NonNull
     public Map<String, String> getAttributes() {
         Map<String, String> attrs = new LinkedHashMap<>();
         attrs.put("Weight", String.valueOf(this.cost));
+        if(this.processor != -1)
+            attrs.put("Processor", String.valueOf(this.processor));
+        if(this.startTime != -1)
+            attrs.put("Starttime", String.valueOf(this.startTime));
         return attrs;
-    }
-
-    @Override
-    public int getCost() {
-        return cost;
     }
 
     @Override
