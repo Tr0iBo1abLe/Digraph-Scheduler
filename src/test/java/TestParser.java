@@ -13,20 +13,23 @@ import org.junit.Test;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Unit tests for the input parser.
- * Tests that the data structures store the correct objects for various input orders/types.
+ * Tests that the data structures (Graph,Vertex and Edge) store the correct objects for various input orders/types.
  *
  * Created by will on 7/29/17.
  */
 public class TestParser {
 
-    private static final String FILE_PATH = "src/test/resources/";
+    private static final String INPUT_FILE_PATH = "src/test/resources/";
     private Graph<Vertex, EdgeWithCost<Vertex>> graph;
     private InputParser<Vertex, EdgeWithCost<Vertex>> parser;
 
@@ -48,7 +51,7 @@ public class TestParser {
 
     private void doParse(String file){
         try {
-            parser.doParse(graph, new BufferedReader(new FileReader(FILE_PATH + file)));
+            parser.doParse(graph, new BufferedReader(new FileReader(INPUT_FILE_PATH + file)));
         } catch (ParserException | FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -61,7 +64,7 @@ public class TestParser {
      */
     private void nodesBeforeEdgesSetup(){
         // Parse file to graph
-        doParse("nodesBeforeEdges.dot");
+        doParse("verticesBeforeEdges.dot");
 
         // Create expected vertices
         vertices = new Vertex[4];
@@ -127,7 +130,7 @@ public class TestParser {
      */
     private void verticesBeforeEdgesSetup(){
         // Parse file to graph
-        doParse("edgesBeforeNodes.dot");
+        doParse("edgesBeforeVertices.dot");
 
         // Create expected vertices
         vertices = new Vertex[4];
@@ -186,5 +189,50 @@ public class TestParser {
         assertEquals(expectedReverse, actualReverse);
     }
 
+    /**
+     * Ensures Graph.getForwardVertices returns the set of "To" vertices for a given vertex.
+     *
+     * In this case the graph looks like:
+     *    b <-- a --> c
+     */
+    @Test
+    public void testGetForwardVertices(){
+        vertices = new Vertex[3];
+        vertices[0] = new Vertex("a", 2);
+        vertices[1] = new Vertex("b", 3);
+        vertices[2] = new Vertex("c", 3);
+
+        doParse("sampleinput.dot");
+
+        List<Vertex> actual = graph.getForwardVertices(vertices[0]);
+        List<Vertex> expected = new ArrayList<Vertex>();
+        expected.add(vertices[1]);
+        expected.add(vertices[2]);
+
+        assertEquals(expected, actual);
+    }
+
+    /**
+     * Ensures Graph.getReverseVertices returns the set of "From" vertices for a given vertex.
+     *
+     * In this case the graph looks like:
+     *    b --> d <-- c
+     */
+    @Test
+    public void testGetReverseVertices(){
+        vertices = new Vertex[3];
+        vertices[0] = new Vertex("d", 2);
+        vertices[1] = new Vertex("b", 3);
+        vertices[2] = new Vertex("c", 3);
+
+        doParse("sampleinput.dot");
+
+        List<Vertex> actual = graph.getReverseVertices(vertices[0]);
+        List<Vertex> expected = new ArrayList<Vertex>();
+        expected.add(vertices[1]);
+        expected.add(vertices[2]);
+
+        assertEquals(expected, actual);
+    }
 
 }

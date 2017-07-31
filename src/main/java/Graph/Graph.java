@@ -1,6 +1,7 @@
 package Graph;
 
 import Graph.Exceptions.GraphException;
+import Graph.Exceptions.UncheckedException;
 import Parser.Interfaces.IVertexCtor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -46,16 +47,25 @@ public class Graph<V extends Vertex, E extends Edge<V>> {
         this.order.add(e);
     }
 
+    /**
+     * Returns the list of vertices that point to the given Vertex.
+     */
     public List<V> getForwardVertices(@NonNull final V v) {
         Set<E> es = forwardEdges.stream().filter(e -> e.getFrom().equals(v)).collect(Collectors.toSet());
         return es.stream().map(e -> e.getTo()).collect(Collectors.toList());
     }
 
+    /**
+     * Returns the list of vertices that the given Vertex points to.
+     */
     public List<V> getReverseVertices(@NonNull final V v) {
         Set<E> es = forwardEdges.stream().filter(e -> e.getTo().equals(v)).collect(Collectors.toSet());
         return es.stream().map(e -> e.getFrom()).collect(Collectors.toList());
     }
 
+    /**
+     * Returns the Vertex with the given ID. Asserts that only one vertex exists with that ID.
+     */
     public V lookUpVertexById(final int id) {
         List<V> vs = vertices.stream().filter(i -> i.getAssignedId() == id).collect(Collectors.toList());
         if(vs.size() != 1) {
@@ -68,6 +78,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> {
          */
     }
 
+    /**
+     * Returns the Vertex with the given ID. Asserts that only one vertex exists with that ID.
+     */
     public V lookUpVertexById(@NonNull final String id) {
         List<V> vs = vertices.stream().filter(i -> i.getId().equals(id)).collect(Collectors.toList());
         if(vs.size() != 1) {
