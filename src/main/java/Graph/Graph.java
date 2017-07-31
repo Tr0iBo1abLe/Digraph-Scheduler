@@ -69,7 +69,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> {
     public V lookUpVertexById(final int id) {
         List<V> vs = vertices.stream().filter(i -> i.getAssignedId() == id).collect(Collectors.toList());
         if(vs.size() != 1) {
-            return null;
+            return null; // TODO don't return null? Throw exception?
         }
         return vs.get(0);
         /**

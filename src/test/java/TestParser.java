@@ -25,7 +25,7 @@ import static org.junit.Assert.fail;
 
 /**
  * Unit tests for the input parser.
- * Tests that the data structures (Graph,Vertex and Edge) store the correct objects for various input orders/types.
+ * Tests that the data structures (Graph,Vertex and Edge) store the correct data for various input orders/types.
  *
  * Created by will on 7/29/17.
  */
@@ -268,6 +268,28 @@ public class TestParser {
     }
 
     /**
+     * Ensures null is returned when looking up a vertex that doesn't exist in the graph.
+     */
+    @Test
+    public void testLookupVertexByIDVertexDoesntExist(){
+        doParse("sampleinput.dot");
+        // Graph has a,b,c,d NOT z
+        assertNull(graph.lookUpVertexById("z"));
+    }
+
+    /**
+     * Ensures the correct vertex is returned (correct attributes etc)
+     * when looking up a vertex that exists in the graph.
+     */
+    @Test
+    public void testLookupVertexByIDVertexExists(){
+        doParse("sampleinput.dot");
+        Vertex aActual = graph.lookUpVertexById("a");
+        Vertex aExpected = new Vertex("a", 2);
+        assertEquals(aExpected, aActual);
+    }
+
+    /**
      * Ensures an Exception is thrown, with the correct message, when attempting to schedule a Vertex
      * that doesn't exist in the graph.
      */
@@ -298,6 +320,7 @@ public class TestParser {
         assertEquals(a.getProcessor(),0);
         assertEquals(a.getStartTime(),0);
     }
+
 
 
 
