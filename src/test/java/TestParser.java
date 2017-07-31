@@ -19,10 +19,11 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Unit tests for the input parser.
- * Tests that the data structures store the correct objects for various input orders/types.
+ * Tests that the data structures (Graph,Vertex and Edge) store the correct objects for various input orders/types.
  *
  * Created by will on 7/29/17.
  */
@@ -233,7 +234,5 @@ public class TestParser {
 
         assertEquals(expected, actual);
     }
-
-
 
 }
