@@ -69,7 +69,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> {
     public V lookUpVertexById(final int id) {
         List<V> vs = vertices.stream().filter(i -> i.getAssignedId() == id).collect(Collectors.toList());
         if(vs.size() != 1) {
-            return null;
+            return null; // TODO don't return null? Throw exception?
         }
         return vs.get(0);
         /**
@@ -132,9 +132,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> {
         return null;
     }
 
-    public E getReverseEdge(@NonNull final V from,
+    public Edge<V> getReverseEdge(@NonNull final V from,
                             @NonNull final V to) {
-        for(E e : forwardEdges) {
+        for(Edge<V> e : reverseEdges) {
             if(e.getFrom().equals(from) && e.getTo().equals(to)) {
                 return e;
             }
