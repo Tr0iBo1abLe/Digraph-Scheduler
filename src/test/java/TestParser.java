@@ -21,14 +21,14 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Unit tests for the input parser
+ * Unit tests for the input parser.
  * Tests that the data structures store the correct objects for various input orders/types.
  *
  * Created by will on 7/29/17.
  */
 public class TestParser {
 
-    private static final String FILE_PATH = "src/test/resources/";
+    private static final String INPUT_FILE_PATH = "src/test/resources/";
     private Graph<Vertex, EdgeWithCost<Vertex>> graph;
     private InputParser<Vertex, EdgeWithCost<Vertex>> parser;
 
@@ -50,7 +50,7 @@ public class TestParser {
 
     private void doParse(String file){
         try {
-            parser.doParse(graph, new BufferedReader(new FileReader(FILE_PATH + file)));
+            parser.doParse(graph, new BufferedReader(new FileReader(INPUT_FILE_PATH + file)));
         } catch (ParserException | FileNotFoundException e) {
             e.printStackTrace();
         }
