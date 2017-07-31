@@ -13,7 +13,9 @@ import org.junit.Test;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -185,6 +187,53 @@ public class TestParser {
         expectedReverse.add(new Edge<Vertex>(vertices[3], vertices[2]));
         assertEquals(expectedReverse, actualReverse);
     }
+
+    /**
+     * Ensures Graph.getForwardVertices returns the set of "To" vertices for a given vertex.
+     *
+     * In this case the graph looks like:
+     *    b <-- a --> c
+     */
+    @Test
+    public void testGetForwardVertices(){
+        vertices = new Vertex[3];
+        vertices[0] = new Vertex("a", 2);
+        vertices[1] = new Vertex("b", 3);
+        vertices[2] = new Vertex("c", 3);
+
+        doParse("sampleinput.dot");
+
+        List<Vertex> actual = graph.getForwardVertices(vertices[0]);
+        List<Vertex> expected = new ArrayList<Vertex>();
+        expected.add(vertices[1]);
+        expected.add(vertices[2]);
+
+        assertEquals(expected, actual);
+    }
+
+    /**
+     * Ensures Graph.getReverseVertices returns the set of "From" vertices for a given vertex.
+     *
+     * In this case the graph looks like:
+     *    b --> d <-- c
+     */
+    @Test
+    public void testGetReverseVertices(){
+        vertices = new Vertex[3];
+        vertices[0] = new Vertex("d", 2);
+        vertices[1] = new Vertex("b", 3);
+        vertices[2] = new Vertex("c", 3);
+
+        doParse("sampleinput.dot");
+
+        List<Vertex> actual = graph.getReverseVertices(vertices[0]);
+        List<Vertex> expected = new ArrayList<Vertex>();
+        expected.add(vertices[1]);
+        expected.add(vertices[2]);
+
+        assertEquals(expected, actual);
+    }
+
 
 
 }
