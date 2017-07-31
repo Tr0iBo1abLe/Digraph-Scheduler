@@ -43,7 +43,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> {
                     " Use ensureVertex() to to ensure it exists.");
         }
         this.forwardEdges.add(e);
-        this.reverseEdges.add(new Edge<V>(e.getFrom(), e.getTo()));
+        this.reverseEdges.add(new Edge<V>(e.getTo(), e.getFrom()));
         this.order.add(e);
     }
 

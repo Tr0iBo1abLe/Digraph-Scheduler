@@ -1,14 +1,11 @@
 import Exporter.GraphExporter;
 import Graph.EdgeWithCost;
-import Graph.Exceptions.GraphException;
 import Graph.Graph;
 import Graph.Vertex;
 import Parser.EdgeCtor;
-import Parser.Exceptions.ParserException;
 import Parser.InputParser;
 import Parser.VertexCtor;
 import Solver.AStarSolver;
-import Solver.AStarSolverPar;
 import Solver.Interfaces.ISolver;
 
 import java.io.*;
@@ -31,15 +28,10 @@ public class Main {
             System.err.println("Can't open file");
         }
 
-        Graph<Vertex, EdgeWithCost<Vertex>> graph = new Graph<Vertex, EdgeWithCost<Vertex>>();
+        Graph<Vertex, EdgeWithCost<Vertex>> graph;
 
         InputParser<Vertex, EdgeWithCost<Vertex>> parser = new InputParser<Vertex, EdgeWithCost<Vertex>>(new VertexCtor(), new EdgeCtor());
-        try {
-            parser.doParse(graph, new BufferedReader(new FileReader(inputFile)));
-        } catch (ParserException | FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        graph.finalise();
+        graph = parser.doParseAndFinaliseGraph(args[0]);
 
         ISolver solver = new AStarSolver(graph, 2);
         solver.doSolve();

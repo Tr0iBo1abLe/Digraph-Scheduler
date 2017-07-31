@@ -27,7 +27,7 @@ import static org.junit.Assert.fail;
  */
 public class TestParser {
 
-    private static final String TEST_FILES_PATH = "src/test/resources/";
+    private static final String TEST_FILES_PATH = "src/test/resources/TestParser/";
     private Graph<Vertex, EdgeWithCost<Vertex>> graph;
     private InputParser<Vertex, EdgeWithCost<Vertex>> parser;
 
@@ -54,7 +54,7 @@ public class TestParser {
      */
     private void nodesBeforeEdgesSetup(){
         // Parse file to graph
-        graph = parser.doParse(TEST_FILES_PATH +"verticesBeforeEdges.dot");
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"verticesBeforeEdges.dot");
 
         // Create expected vertices
         vertices = new Vertex[4];
@@ -120,7 +120,7 @@ public class TestParser {
      */
     private void verticesBeforeEdgesSetup(){
         // Parse file to graph
-        graph = parser.doParse(TEST_FILES_PATH +"edgesBeforeVertices.dot");
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"edgesBeforeVertices.dot");
 
         // Create expected vertices
         vertices = new Vertex[4];
@@ -192,7 +192,7 @@ public class TestParser {
         vertices[1] = new Vertex("b", 3);
         vertices[2] = new Vertex("c", 3);
 
-        graph = parser.doParse(TEST_FILES_PATH +"sampleinput.dot");
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"sampleinput.dot");
 
         List<Vertex> actual = graph.getForwardVertices(vertices[0]);
         List<Vertex> expected = new ArrayList<Vertex>();
@@ -215,7 +215,7 @@ public class TestParser {
         vertices[1] = new Vertex("b", 3);
         vertices[2] = new Vertex("c", 3);
 
-        graph = parser.doParse(TEST_FILES_PATH +"sampleinput.dot");
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"sampleinput.dot");
 
         List<Vertex> actual = graph.getReverseVertices(vertices[0]);
         List<Vertex> expected = new ArrayList<Vertex>();
@@ -230,7 +230,7 @@ public class TestParser {
      */
     @Test
     public void testGetForwardEdge(){
-        graph = parser.doParse(TEST_FILES_PATH +"sampleinput.dot");
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"sampleinput.dot");
 
         Vertex a = new Vertex("a", 2);
         Vertex b = new Vertex("b",3);
@@ -245,7 +245,7 @@ public class TestParser {
      */
     @Test
     public void testGetReverseEdge(){
-        graph = parser.doParse(TEST_FILES_PATH +"sampleinput.dot");
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"sampleinput.dot");
 
         Vertex a = new Vertex("a", 2);
         Vertex b = new Vertex("b",3);
@@ -260,7 +260,7 @@ public class TestParser {
      */
     @Test
     public void testLookupVertexByIDVertexDoesntExist(){
-        graph = parser.doParse(TEST_FILES_PATH +"sampleinput.dot");
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"sampleinput.dot");
         // Graph has a,b,c,d NOT z
         assertNull(graph.lookUpVertexById("z"));
     }
@@ -271,7 +271,7 @@ public class TestParser {
      */
     @Test
     public void testLookupVertexByIDVertexExists(){
-        graph = parser.doParse(TEST_FILES_PATH +"sampleinput.dot");
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"sampleinput.dot");
         Vertex aActual = graph.lookUpVertexById("a");
         Vertex aExpected = new Vertex("a", 2);
         assertEquals(aExpected, aActual);
@@ -283,7 +283,7 @@ public class TestParser {
      */
     @Test
     public void testScheduleVertexNonExistingException(){
-        graph = parser.doParse(TEST_FILES_PATH +"sampleinput.dot");
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"sampleinput.dot");
         try {
             // Graph has a,b,c,d NOT z
             graph.scheduleVertex(new Vertex("z", 2), 0, 0);
@@ -298,7 +298,7 @@ public class TestParser {
      */
     @Test
     public void testScheduleVertexUpdatesCorrectly(){
-        graph = parser.doParse(TEST_FILES_PATH +"sampleinput.dot");
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"sampleinput.dot");
         Vertex a = graph.lookUpVertexById("a");
         try {
             graph.scheduleVertex(a, 0, 0 );

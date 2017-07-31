@@ -54,17 +54,18 @@ public class InputParser<V extends Vertex, E extends Edge<V>> {
      * Wrapper for the parser; other objects can easily invocate Graph parsing on
      * a InputParser object when they provide a dot file.
      */
-    public Graph<V, E> doParse(String file){
+    public Graph<V, E> doParseAndFinaliseGraph(String file){
         Graph<V,E> graph = new Graph<V,E>();
         try {
             doParse(graph, new BufferedReader(new FileReader(file)));
         } catch (ParserException | FileNotFoundException e) {
             e.printStackTrace();
         }
+        graph.finalise();
         return graph;
     }
 
-    public void doParse(Graph<V, E> graph, @NonNull BufferedReader reader) throws ParserException {
+    private void doParse(Graph<V, E> graph, @NonNull BufferedReader reader) throws ParserException {
         this.graph = graph;
         this.input = reader.lines().collect(Collectors.joining("\n"));
         int totalLength = input.length();
