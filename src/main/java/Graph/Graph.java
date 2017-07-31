@@ -132,9 +132,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> {
         return null;
     }
 
-    public E getReverseEdge(@NonNull final V from,
+    public Edge<V> getReverseEdge(@NonNull final V from,
                             @NonNull final V to) {
-        for(E e : forwardEdges) {
+        for(Edge<V> e : reverseEdges) {
             if(e.getFrom().equals(from) && e.getTo().equals(to)) {
                 return e;
             }

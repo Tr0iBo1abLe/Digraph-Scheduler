@@ -235,4 +235,36 @@ public class TestParser {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Ensures getForwardEdge returns the correct edge (from: a, to: b, cost: 1). (a -(1)-> b)
+     */
+    @Test
+    public void testGetForwardEdge(){
+        doParse("sampleinput.dot");
+
+        Vertex a = new Vertex("a", 2);
+        Vertex b = new Vertex("b",3);
+        Edge edgeExpected = new EdgeWithCost(a, b, 1);
+        Edge edgeActual = graph.getForwardEdge(a, b);
+
+        assertEquals(edgeExpected, edgeActual);
+    }
+
+    /**
+     * Ensures getReverseEdge returns the correct edge (from: b, to: a). (a -(1)-> b)
+     */
+    @Test
+    public void testGetReverseEdge(){
+        doParse("sampleinput.dot");
+
+        Vertex a = new Vertex("a", 2);
+        Vertex b = new Vertex("b",3);
+        Edge edgeExpected = new Edge(b, a); // Normally from -> to (reverse is to -> from)
+        Edge edgeActual = graph.getReverseEdge(b, a);
+
+        assertEquals(edgeExpected, edgeActual);
+    }
+
+
+
 }
