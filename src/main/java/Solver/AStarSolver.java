@@ -37,15 +37,16 @@ public class AStarSolver implements ISolver{
                 scheduleVertices(s);
                 return;
             }
-            /* Expansion */
-            s.getLegalVertices().forEach(v -> IntStream.of(0, processorCount-1).forEach(i -> {
-                        SearchState next = new SearchState(s, v, i);
-                        if(!set.contains(next)) {
-                            set.add(next);
-                            queue.add(next);
+            s.getLegalVertices().stream().forEach( v -> {
+                IntStream.of(0, processorCount-1).forEach( i -> {
+                            SearchState next = new SearchState(s, v, i);
+                            if(!set.contains(next)) {
+                                set.add(next);
+                                queue.add(next);
+                            }
                         }
-                    }
-            ));
+                );
+            });
         }
     }
 

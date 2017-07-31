@@ -47,7 +47,7 @@ public class SearchState implements Comparable<SearchState>{
         this.lastVertex = null;
         this.graphSize = this.graph.getVertices().size();
         this.processors = Arrays.stream(new int[graphSize]).map(_i -> -1).toArray();
-        this.startTimes = new int[graphSize];
+        this.startTimes = Arrays.stream(new int[graphSize]).map(_i -> -1).toArray();
     }
 
     public SearchState(SearchState prevState, Vertex vertex, int processorId) {
@@ -63,7 +63,7 @@ public class SearchState implements Comparable<SearchState>{
 
         F<Integer, F<Vertex, Integer>> dependencyFoldingFn = t -> v -> {
             int aid = v.getAssignedId();
-            if(isProcessorValid(aid, processorId)) {
+            if(processors[aid] != processorId && processors[aid] != -1) {
                 int newTime = startTimes[aid] + v.getCost() + graph.getForwardEdge(v, lastVertex).getCost();
                 if(newTime > t) return newTime;
             }
@@ -72,8 +72,8 @@ public class SearchState implements Comparable<SearchState>{
 
         F<Integer, F<Vertex, Integer>> schedulerFoldingFn = t -> v -> {
             int id = v.getAssignedId();
-            if(isProcessorValid(id, processorId)) {
-                int newTime = startTimes[id] + v.getCost();
+            if(processors[id] == processorId && processors[id] != -1) {
+                int newTime = startTimes[id] + graph.lookUpVertexById(id).getCost();
                 if(newTime > t) return newTime;
             }
             return t;
@@ -81,7 +81,7 @@ public class SearchState implements Comparable<SearchState>{
 
         int time = 0;
 
-        final IterableW<Vertex> iterableV = IterableW.wrap(graph.getReverseVertices(lastVertex));
+        final IterableW<Vertex> iterableV = IterableW.wrap(graph.getVertices());
         final IterableW<Vertex> iterableP = IterableW.wrap(graph.getReverseVertices(lastVertex));
         time = iterableV.foldLeft(schedulerFoldingFn, time);
         time = iterableP.foldLeft(dependencyFoldingFn, time);
@@ -94,10 +94,6 @@ public class SearchState implements Comparable<SearchState>{
         if(this.priority < nextP) {
             this.priority = nextP;
         }
-    }
-
-    private boolean isProcessorValid(final int n, final int id) {
-        return processors[n] == id && processors[n] != -1;
     }
 
     private Integer get(Array<Integer> a, final int n) {
