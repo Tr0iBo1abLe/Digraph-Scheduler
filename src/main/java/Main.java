@@ -39,6 +39,10 @@ public class Main {
         } catch (ParserException | FileNotFoundException e) {
             e.printStackTrace();
         }
+        /*
+         TODO call graph.finalise() from the parser (make it static?)
+         it has to be called after doParse() and before constructing the solver so badly coupled atm
+         */
         graph.finalise();
 
         ISolver solver = new AStarSolver(graph, 2);

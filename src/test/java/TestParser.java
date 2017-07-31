@@ -6,6 +6,8 @@ import Graph.Edge;
 import Parser.EdgeCtor;
 import Parser.InputParser;
 import Parser.VertexCtor;
+import Solver.AStarSolver;
+import Solver.Interfaces.ISolver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +32,7 @@ public class TestParser {
     private static final String TEST_FILES_PATH = "src/test/resources/TestParser/";
     private Graph<Vertex, EdgeWithCost<Vertex>> graph;
     private InputParser<Vertex, EdgeWithCost<Vertex>> parser;
+    private ISolver solver;
 
     private Vertex[] vertices;
 
@@ -37,6 +40,7 @@ public class TestParser {
     public void setup(){
         graph = new Graph<Vertex, EdgeWithCost<Vertex>>();
         parser = new InputParser<Vertex, EdgeWithCost<Vertex>>(new VertexCtor(), new EdgeCtor());
+        solver = new AStarSolver(graph, 4);
     }
 
     /*
