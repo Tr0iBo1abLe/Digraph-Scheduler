@@ -36,8 +36,11 @@ public class SearchState implements Comparable<SearchState>{
     @Getter
     private final int graphSize;
 
+    @Getter
+    private int DFcost;
+    
     static {
-
+    	
     }
 
     public SearchState(Graph<Vertex,EdgeWithCost<Vertex>> graph) {
@@ -94,6 +97,9 @@ public class SearchState implements Comparable<SearchState>{
         if(this.priority < nextP) {
             this.priority = nextP;
         }
+        
+        DFcost = time + lastVertex.getCost();
+        
     }
 
     private Integer get(Array<Integer> a, final int n) {
