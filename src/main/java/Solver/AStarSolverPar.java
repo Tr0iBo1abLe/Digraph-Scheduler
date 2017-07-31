@@ -9,10 +9,7 @@ import Solver.Parallel.AStarTask;
 import lombok.Data;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
 @Data
@@ -24,7 +21,7 @@ public class AStarSolverPar implements ISolver{
     public void doSolve() {
 
         Queue<SearchState> queue = new PriorityBlockingQueue<>();
-        Set<SearchState> set = new ConcurrentSkipListSet<>();
+        Set<SearchState> set = Collections.newSetFromMap(new ConcurrentHashMap<SearchState, Boolean>());
         queue.add(new SearchState(graph));
 
         while(true) {
@@ -35,7 +32,7 @@ public class AStarSolverPar implements ISolver{
                 scheduleVertices(s);
                 return;
             }
-            s.getLegalVertices().stream().forEach( v -> {
+            s.getLegalVertices().parallelStream().forEach( v -> {
                 IntStream.of(0, processorCount-1).parallel().forEach( i -> {
                             SearchState next = new SearchState(s, v, i);
                             if(!set.contains(next)) {

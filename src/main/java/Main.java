@@ -41,7 +41,7 @@ public class Main {
         }
         graph.finalise();
 
-        ISolver solver = new AStarSolverPar(graph, 4);
+        ISolver solver = new AStarSolver(graph, 2);
         solver.doSolve();
 
         System.out.print(graph.toString());
