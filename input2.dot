@@ -1,3 +1,35 @@
 digraph example {
     a [Weight=1];
+    b [Weight=3];
+    c [Weight=5];
+    d [Weight=6];
+    e [Weight=3];
+    f [Weight=2];
+    g [Weight=2];
+    h [Weight=1];
+    i [Weight=3];
+    j [Weight=7];
+    k [Weight=3];
+    m [Weight=2];
+    n [Weight=2];
+    o [Weight=1];
+    p [Weight=12];
+    a -> c [Weight=2];
+    a -> d [Weight=5];
+    b -> d [Weight=5];
+    b -> e [Weight=2];
+    b -> f [Weight=7];
+    c -> g [Weight=6];
+    c -> m [Weight=2];
+    d -> h [Weight=4];
+    e -> j [Weight=3];
+    f -> j [Weight=9];
+    e -> i [Weight=2];
+    g -> l [Weight=5];
+    i -> k [Weight=4];
+    j -> k [Weight=4];
+    k -> p [Weight=2];
+    j -> p [Weight=1];
+    l -> o [Weight=7];
+    l -> n [Weight=6];
 }
