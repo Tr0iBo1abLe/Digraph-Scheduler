@@ -1,4 +1,5 @@
 import Graph.EdgeWithCost;
+import Graph.Exceptions.GraphException;
 import Graph.Graph;
 import Graph.Vertex;
 import Graph.Edge;
@@ -20,6 +21,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * Unit tests for the input parser.
@@ -263,6 +265,38 @@ public class TestParser {
         Edge edgeActual = graph.getReverseEdge(b, a);
 
         assertEquals(edgeExpected, edgeActual);
+    }
+
+    /**
+     * Ensures an Exception is thrown, with the correct message, when attempting to schedule a Vertex
+     * that doesn't exist in the graph.
+     */
+    @Test
+    public void testScheduleVertexNonExistingException(){
+        doParse("sampleinput.dot");
+        try {
+            // Graph has a,b,c,d NOT z
+            graph.scheduleVertex(new Vertex("z", 2), 0, 0);
+            fail();
+        } catch (GraphException e) {
+            assertEquals("Attempting to schedule a non-existing vertex", e.getMessage());
+        }
+    }
+
+    /**
+     * Ensures a Scheduled vertex has had its processor and start time values set correctly.
+     */
+    @Test
+    public void testScheduleVertexUpdatesCorrectly(){
+        doParse("sampleinput.dot");
+        Vertex a = graph.lookUpVertexById("a");
+        try {
+            graph.scheduleVertex(a, 0, 0 );
+        } catch (GraphException e) {
+            e.printStackTrace();
+        }
+        assertEquals(a.getProcessor(),0);
+        assertEquals(a.getStartTime(),0);
     }
 
 
