@@ -66,8 +66,8 @@ public class SearchState implements Comparable<SearchState>{
 
         F<Integer, F<Vertex, Integer>> dependencyFoldingFn = t -> v -> {
             int aid = v.getAssignedId();
-            if(processors[aid] != processorId && processors[aid] != -1) {
-                int newTime = startTimes[aid] + v.getCost() + graph.getForwardEdge(v, lastVertex).getCost();
+            if(this.processors[aid] != processorId && this.processors[aid] != -1) {
+                int newTime = this.startTimes[aid] + v.getCost() + this.graph.getForwardEdge(v, this.lastVertex).getCost();
                 if(newTime > t) return newTime;
             }
             return t;
@@ -75,8 +75,8 @@ public class SearchState implements Comparable<SearchState>{
 
         F<Integer, F<Vertex, Integer>> schedulerFoldingFn = t -> v -> {
             int id = v.getAssignedId();
-            if(processors[id] == processorId && processors[id] != -1) {
-                int newTime = startTimes[id] + graph.lookUpVertexById(id).getCost();
+            if(this.processors[id] == processorId && this.processors[id] != -1) {
+                int newTime = this.startTimes[id] + this.graph.lookUpVertexById(id).getCost();
                 if(newTime > t) return newTime;
             }
             return t;
@@ -89,10 +89,10 @@ public class SearchState implements Comparable<SearchState>{
         time = iterableV.foldLeft(schedulerFoldingFn, time);
         time = iterableP.foldLeft(dependencyFoldingFn, time);
 
-        processors[lastVertex.getAssignedId()] = processorId;
-        startTimes[lastVertex.getAssignedId()] = time;
+        this.processors[this.lastVertex.getAssignedId()] = processorId;
+        this.startTimes[this.lastVertex.getAssignedId()] = time;
 
-        int nextP = time + lastVertex.getCost() + lastVertex.getBottomLevel();
+        int nextP = time + this.lastVertex.getCost() + this.lastVertex.getBottomLevel();
 
         if(this.priority < nextP) {
             this.priority = nextP;

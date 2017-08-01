@@ -22,12 +22,15 @@ public class Graph<V extends Vertex, E extends Edge<V>> {
     private Set<Edge<V>> reverseEdges;
     @Getter
     private List<Object> order;
+    @Getter
+    private Map<Integer, V> verticesMap;
 
     public Graph() {
         this.vertices = new HashSet<>();
         this.forwardEdges = new HashSet<>();
         this.reverseEdges = new HashSet<>();
         this.order = new LinkedList<>();
+        this.verticesMap = new HashMap<>();
     }
 
     public void addVertex(@NonNull final V v) {
@@ -67,15 +70,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> {
      * Returns the Vertex with the given ID. Asserts that only one vertex exists with that ID.
      */
     public V lookUpVertexById(final int id) {
-        List<V> vs = vertices.stream().filter(i -> i.getAssignedId() == id).collect(Collectors.toList());
-        if(vs.size() != 1) {
-            return null; // TODO don't return null? Throw exception?
-        }
-        return vs.get(0);
-        /**
-         * TODO: Very inefficient, we will need to change the data structure to a Map later on...
-         * For testing purpose, we will leave it here for now
-         */
+        return this.verticesMap.get(id);
     }
 
     /**
@@ -167,6 +162,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> {
         int i = 0;
         for(V v : getVertices()) {
             v.setAssignedId(i);
+            this.verticesMap.put(i, v);
             i++;
         }
     }

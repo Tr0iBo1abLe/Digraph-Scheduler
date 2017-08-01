@@ -1,26 +1,18 @@
 package Solver;
 
 import Graph.EdgeWithCost;
-import Graph.Exceptions.GraphException;
 import Graph.Graph;
 import Graph.Vertex;
-import Solver.Interfaces.ISolver;
-import Solver.Parallel.AStarTask;
-import fj.Unit;
-import fj.control.parallel.Strategy;
-import fj.data.Array;
 import lombok.Data;
 
 import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
 
-@Data
-public class AStarSolver implements ISolver{
-    private final Graph<Vertex, EdgeWithCost<Vertex>> graph;
-    private final int processorCount;
+public final class AStarSolver extends AbstractSolver{
+
+    public AStarSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
+        super(graph, processorCount);
+    }
 
     @Override
     public void doSolve() {
@@ -37,7 +29,7 @@ public class AStarSolver implements ISolver{
                 scheduleVertices(s);
                 return;
             }
-            s.getLegalVertices().stream().forEach( v -> {
+            s.getLegalVertices().forEach( v -> {
                 IntStream.of(0, processorCount-1).forEach( i -> {
                             SearchState next = new SearchState(s, v, i);
                             if(!set.contains(next)) {
@@ -50,18 +42,6 @@ public class AStarSolver implements ISolver{
         }
     }
 
-    private void scheduleVertices(SearchState s) {
-        final int[] processors = Arrays.stream(s.getProcessors()).map(x -> x+1).toArray();
-        final int[] startTimes = s.getStartTimes();
-        for (int i = 0; i < graph.getVertices().size(); i++) {
-            Vertex v = graph.lookUpVertexById(i);
-            try {
-                graph.scheduleVertex(v,processors[i], startTimes[i]);
-            } catch (GraphException e) {
-                e.printStackTrace();
-            }
-        }
-    }
     /*
     OPEN ← emptyState
     while OPEN 6 = ∅ do s ← PopHead ( OPEN )
