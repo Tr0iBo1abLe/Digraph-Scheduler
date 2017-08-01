@@ -1,4 +1,4 @@
-package BufferedInputStream;
+package FileUtilities;
 
 import java.io.*;
 

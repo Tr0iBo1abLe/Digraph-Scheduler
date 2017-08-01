@@ -4,9 +4,12 @@ import Graph.Graph;
 import Graph.Interfaces.ICollectibleAttribute;
 import Graph.Vertex;
 import Graph.Edge;
+import Graph.EdgeWithCost;
 import lombok.NonNull;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.Map;
@@ -17,7 +20,11 @@ public class GraphExporter<V extends Vertex, E extends Edge<V>> {
     public GraphExporter() {
     }
 
-
+    public static String exportGraphToString(Graph graph) {
+        StringWriter stringWriter = new StringWriter();
+        new GraphExporter<Vertex, EdgeWithCost<Vertex>>().doExport(graph, new BufferedWriter(stringWriter));
+        return stringWriter.toString();
+    }
 
     public void doExport(@NonNull final Graph<V, E> graph,
                          @NonNull final Writer writer) {
