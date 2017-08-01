@@ -34,12 +34,12 @@ public class TestDFSSolverSeq {
 
     @Test
     public void testStraightLine(){
-        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH+"input_straightline.dot");
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH+"input_straightline_4nodes.dot");
         solver = new DFSSolver(graph, PROCESSOR_COUNT); // Must construct solver only after graph has been parsed in.
         solver.doSolve();
 
         String actual = GraphExporter.exportGraphToString(graph);
-        String expected = FileUtils.readFileToString(TEST_FILES_PATH+"output_straightline.dot");
+        String expected = FileUtils.readFileToString(TEST_FILES_PATH+"output_straightline_4nodes.dot");
         assertEquals(expected, actual);
     }
 
