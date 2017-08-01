@@ -15,12 +15,12 @@ import java.util.stream.IntStream;
  * Created by mason on 31/07/17.
  */
 @Data
-public class DFSolver extends AbstractSolver {
+public class DFSSolver extends AbstractSolver {
 
     private static int log = Integer.MAX_VALUE;
     private static SearchState result;
 
-    public DFSolver (Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
+    public DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
     	super(graph, processorCount);
     }
     

@@ -31,12 +31,12 @@ public class TestAStarSolverSeq {
     public void setup() {
         graph = new Graph<Vertex, EdgeWithCost<Vertex>>();
         parser = new InputParser<Vertex, EdgeWithCost<Vertex>>(new VertexCtor(), new EdgeCtor());
-        solver = new AStarSolver(graph, PROCESSOR_COUNT);
     }
 
     @Test
     public void testStraightLine(){
         graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH+"input_straightline.dot");
+        solver = new AStarSolver(graph, PROCESSOR_COUNT); // Must construct solver only after graph has been parsed in.
         solver.doSolve();
 
         String actual = GraphExporter.exportGraphToString(graph);
