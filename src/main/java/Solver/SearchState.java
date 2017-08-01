@@ -9,7 +9,10 @@ import fj.F2Functions;
 import fj.data.Array;
 import fj.data.IterableW;
 import fj.data.List;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -21,10 +24,12 @@ import java.util.stream.IntStream;
 /**
  * A class of partial solution
  */
+@EqualsAndHashCode(exclude = {"lastVertex", "processors"})
 public class SearchState implements Comparable<SearchState>{
-    private final Graph<Vertex, EdgeWithCost<Vertex>> graph;
     @Getter
-    private int size;
+    private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
+    @Getter
+    private static int totalSize;
     @Getter
     private int priority;
     @Getter
@@ -34,30 +39,27 @@ public class SearchState implements Comparable<SearchState>{
     @Getter
     private final int[] startTimes;
     @Getter
-    private final int graphSize;
+    private int size;
 
     @Getter
     private int DFcost;
-    
-    static {
-    	
-    }
 
-    public SearchState(Graph<Vertex,EdgeWithCost<Vertex>> graph) {
-        this.graph = graph;
-        this.size = 0;
+    public static void init(Graph<Vertex, EdgeWithCost<Vertex>> g) {
+        graph = g;
+        totalSize = g.getVertices().size();
+    }
+    
+    public SearchState() {
         this.priority = 0;
+        this.size = 0;
         this.lastVertex = null;
-        this.graphSize = this.graph.getVertices().size();
-        this.processors = Arrays.stream(new int[graphSize]).map(_i -> -1).toArray();
-        this.startTimes = Arrays.stream(new int[graphSize]).map(_i -> -1).toArray();
+        this.processors = Arrays.stream(new int[totalSize]).map(_i -> -1).toArray();
+        this.startTimes = Arrays.stream(new int[totalSize]).map(_i -> -1).toArray();
     }
 
     public SearchState(SearchState prevState, Vertex vertex, int processorId) {
-        this.graph = prevState.graph;
-        this.size = prevState.size;
         this.priority = prevState.priority;
-        this.graphSize = prevState.graphSize;
+        this.size = prevState.size;
         this.processors = Arrays.copyOf(prevState.processors, prevState.processors.length);
         this.startTimes = Arrays.copyOf(prevState.startTimes, prevState.startTimes.length);
         this.lastVertex = vertex;
@@ -67,7 +69,7 @@ public class SearchState implements Comparable<SearchState>{
         F<Integer, F<Vertex, Integer>> dependencyFoldingFn = t -> v -> {
             int aid = v.getAssignedId();
             if(this.processors[aid] != processorId && this.processors[aid] != -1) {
-                int newTime = this.startTimes[aid] + v.getCost() + this.graph.getForwardEdge(v, this.lastVertex).getCost();
+                int newTime = this.startTimes[aid] + v.getCost() + graph.getForwardEdge(v, this.lastVertex).getCost();
                 if(newTime > t) return newTime;
             }
             return t;
@@ -76,14 +78,13 @@ public class SearchState implements Comparable<SearchState>{
         F<Integer, F<Vertex, Integer>> schedulerFoldingFn = t -> v -> {
             int id = v.getAssignedId();
             if(this.processors[id] == processorId && this.processors[id] != -1) {
-                int newTime = this.startTimes[id] + this.graph.lookUpVertexById(id).getCost();
+                int newTime = this.startTimes[id] + graph.lookUpVertexById(id).getCost();
                 if(newTime > t) return newTime;
             }
             return t;
         };
 
         int time = 0;
-
         final IterableW<Vertex> iterableV = IterableW.wrap(graph.getVertices());
         final IterableW<Vertex> iterableP = IterableW.wrap(graph.getReverseVertices(lastVertex));
         time = iterableV.foldLeft(schedulerFoldingFn, time);
@@ -113,7 +114,7 @@ public class SearchState implements Comparable<SearchState>{
             return processors[v.getAssignedId()] < 0;
         };
         next:
-        for(int i = 0; i < this.graphSize; i++) {
+        for(int i = 0; i < totalSize; i++) {
             Vertex v = graph.lookUpVertexById(i);
             if(processors[i] < 0) {
                 final IterableW<Vertex> wrap = IterableW.wrap(graph.getReverseVertices(v));
@@ -125,7 +126,7 @@ public class SearchState implements Comparable<SearchState>{
     }
 
     @Override
-    public int compareTo(SearchState searchState) {
+    public int compareTo(@NonNull SearchState searchState) {
         return this.priority - searchState.priority;
     }
 }

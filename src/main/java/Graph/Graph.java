@@ -148,9 +148,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> {
      * Finalise the graph and fill in necessary information.
      */
     public void finalise() {
-        for(V v : getVertices()) {
-            calculateBottomLevels(v, 0);
-        }
+        getVertices().forEach(v -> calculateBottomLevels(v, 0));
         assignIds();
     }
 
@@ -178,7 +176,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> {
             v.setBottomLevel(level);
         }
         else {
-            getForwardVertices(v).forEach(
+            getReverseVertices(v).forEach(
                     w -> calculateBottomLevels(w, level + v.getCost()));
         }
     }

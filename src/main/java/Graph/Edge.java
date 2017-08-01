@@ -3,14 +3,19 @@ package Graph;
 import Graph.Interfaces.ICollectibleAttribute;
 import Graph.Interfaces.IEdge;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.ToString;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Data
+@ToString
+@EqualsAndHashCode
 public class Edge<V extends Vertex> implements IEdge<V>, ICollectibleAttribute {
-    protected final V from;
-    protected final V to;
+    @NonNull protected final V from;
+    @NonNull protected final V to;
 
     @Override
     public V getFromVertex() {
@@ -23,18 +28,8 @@ public class Edge<V extends Vertex> implements IEdge<V>, ICollectibleAttribute {
     }
 
     @Override
-    public boolean equals(Object o) {
-        Edge<V> e = (Edge<V>) o;
-        return this.from.equals(e.from) && this.to.equals(e.to);
-    }
-
-    @Override
     public Map<String, String> getAttributes() {
         return new LinkedHashMap<>();
     }
 
-    @Override
-    public int hashCode(){
-        return 1;
-    }
 }

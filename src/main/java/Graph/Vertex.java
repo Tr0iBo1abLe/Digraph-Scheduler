@@ -3,12 +3,16 @@ package Graph;
 import Graph.Interfaces.ICollectibleAttribute;
 import Graph.Interfaces.IHasCost;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import lombok.ToString;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Data
+@EqualsAndHashCode(exclude = {"cost", "bottomLevel", "processor", "startTime", "assignedId"})
+@ToString
 public class Vertex implements IHasCost, ICollectibleAttribute {
     protected final String id;
     protected final int cost;
@@ -16,15 +20,6 @@ public class Vertex implements IHasCost, ICollectibleAttribute {
     protected int assignedId;
     protected int processor = -1;
     protected int startTime = -1;
-
-    @Override
-    public boolean equals(@NonNull final Object o) {
-        if(o instanceof Vertex) {
-            Vertex v = (Vertex) o;
-            return id.equals(v.getId());
-        }
-        else return false;
-    }
 
     @Override
     @NonNull
@@ -37,10 +32,4 @@ public class Vertex implements IHasCost, ICollectibleAttribute {
             attrs.put("Starttime", String.valueOf(this.startTime));
         return attrs;
     }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
-
 }

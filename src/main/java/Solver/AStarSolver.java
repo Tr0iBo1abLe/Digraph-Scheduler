@@ -16,10 +16,11 @@ public final class AStarSolver extends AbstractSolver{
 
     @Override
     public void doSolve() {
+        SearchState.init(graph);
 
         Queue<SearchState> queue = new PriorityQueue<>();
         Set<SearchState> set = new HashSet<>();
-        queue.add(new SearchState(graph));
+        queue.add(new SearchState());
 
         while(true) {
             SearchState s = queue.remove();

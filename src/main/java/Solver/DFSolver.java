@@ -26,8 +26,8 @@ public class DFSolver extends AbstractSolver {
     
     @Override
     public void doSolve() {
-
-    	SearchState s = new SearchState(graph);
+		SearchState.init(graph);
+    	SearchState s = new SearchState();
 
     	solving(s);  	
 

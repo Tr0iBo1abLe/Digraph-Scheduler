@@ -17,11 +17,11 @@ public final class AStarSolverPar extends AbstractSolver {
 
     @Override
     public void doSolve() {
+        SearchState.init(graph);
 
         Queue<SearchState> queue = new PriorityBlockingQueue<>();
-        Queue<SearchState> resQueue = new PriorityBlockingQueue<>();
         Set<SearchState> set = Collections.newSetFromMap(new ConcurrentHashMap<SearchState, Boolean>());
-        queue.add(new SearchState(graph));
+        queue.add(new SearchState());
 
         while(true) {
             SearchState s = queue.remove();

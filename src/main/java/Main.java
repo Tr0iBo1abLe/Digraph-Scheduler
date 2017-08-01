@@ -5,9 +5,7 @@ import Graph.Vertex;
 import Parser.EdgeCtor;
 import Parser.InputParser;
 import Parser.VertexCtor;
-import Solver.AStarSolver;
-import Solver.AStarSolverPar;
-import Solver.DFSolver;
+import Solver.*;
 import Solver.Interfaces.ISolver;
 
 import java.io.*;
@@ -34,11 +32,11 @@ public class Main {
 
         InputParser<Vertex, EdgeWithCost<Vertex>> parser = new InputParser<Vertex, EdgeWithCost<Vertex>>(new VertexCtor(), new EdgeCtor());
         graph = parser.doParseAndFinaliseGraph(args[0]);
+        System.out.print(graph.toString());
 
-        ISolver solver = new AStarSolverPar(graph, 2);
+        ISolver solver = new AStarSolver(graph, 2);
         solver.doSolve();
 
-        System.out.print(graph.toString());
 
         final GraphExporter<Vertex,EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;
         vertexEdgeWithCostGraphExporter = new GraphExporter<Vertex, EdgeWithCost<Vertex>>();
