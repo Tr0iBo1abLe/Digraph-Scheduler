@@ -15,14 +15,15 @@ import java.util.stream.IntStream;
  * Created by mason on 31/07/17.
  */
 @Data
-public class DFSolver implements ISolver {
+public class DFSolver extends AbstractSolver {
 
-	private final Graph<Vertex, EdgeWithCost<Vertex>> graph;
-    private final int processorCount;
-    
     private static int log = Integer.MAX_VALUE;
     private static SearchState result;
 
+    public DFSolver (Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
+    	super(graph, processorCount);
+    }
+    
     @Override
     public void doSolve() {
 
@@ -58,16 +59,4 @@ public class DFSolver implements ISolver {
     	}
     }
 
-    private void scheduleVertices(SearchState s) {
-    	final int[] processors = Arrays.stream(s.getProcessors()).map(x -> x+1).toArray();
-    	final int[] startTimes = s.getStartTimes();
-    	for (int i = 0; i < graph.getVertices().size(); i++) {
-            Vertex v = graph.lookUpVertexById(i);
-            try {
-                graph.scheduleVertex(v,processors[i], startTimes[i]);
-            } catch (GraphException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }
