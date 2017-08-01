@@ -181,6 +181,7 @@ public class TestParser {
 
     /**
      * Ensures Graph.getForwardVertices returns the set of "To" vertices for a given vertex.
+     * The order doesn't matter.
      *
      * In this case the graph looks like:
      *    b <-- a --> c
@@ -194,8 +195,8 @@ public class TestParser {
 
         graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"sampleinput.dot");
 
-        List<Vertex> actual = graph.getForwardVertices(vertices[0]);
-        List<Vertex> expected = new ArrayList<Vertex>();
+        Set<Vertex> actual = new HashSet<Vertex>(graph.getForwardVertices(vertices[0]));
+        Set<Vertex> expected = new HashSet<Vertex>();
         expected.add(vertices[1]);
         expected.add(vertices[2]);
 
@@ -204,6 +205,7 @@ public class TestParser {
 
     /**
      * Ensures Graph.getReverseVertices returns the set of "From" vertices for a given vertex.
+     * The order doesn't matter.
      *
      * In this case the graph looks like:
      *    b --> d <-- c
@@ -217,8 +219,8 @@ public class TestParser {
 
         graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"sampleinput.dot");
 
-        List<Vertex> actual = graph.getReverseVertices(vertices[0]);
-        List<Vertex> expected = new ArrayList<Vertex>();
+        Set<Vertex> actual = new HashSet<Vertex>(graph.getReverseVertices(vertices[0]));
+        Set<Vertex> expected = new HashSet<Vertex>();
         expected.add(vertices[1]);
         expected.add(vertices[2]);
 
