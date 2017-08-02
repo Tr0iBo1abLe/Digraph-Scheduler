@@ -47,7 +47,7 @@ public class NewAStarSolver implements ISolver {
     private void scheduleVertices(NewSearchState s) {
 
         final int[] processors = Arrays.stream(s.getProcessors()).map(x -> x+1).toArray();
-        final int[] startTimes = s.getStartTimes();
+        final double[] startTimes = s.getStartTimes();
         graph.getNodeSet().forEach(v -> {
             int id = v.getIndex();
             v.addAttribute("Processor", processors[id]);

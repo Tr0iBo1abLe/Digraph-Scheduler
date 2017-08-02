@@ -50,7 +50,7 @@ public class Main {
             System.out.println("index" + n.getIndex());
         }
 
-        NewAStarSolver solver = new NewAStarSolver(g, 3);
+        NewAStarSolver solver = new NewAStarSolver(g, 1);
         solver.doSolve();
 
         for(Node n:g.getNodeSet()) {

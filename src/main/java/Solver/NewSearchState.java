@@ -29,7 +29,7 @@ public class NewSearchState implements Comparable<NewSearchState>{
     @Getter
     private final int[] processors;
     @Getter
-    private final int[] startTimes;
+    private final double[] startTimes;
     @Getter
     private int size;
 
@@ -46,7 +46,7 @@ public class NewSearchState implements Comparable<NewSearchState>{
         this.size = 0;
         this.lastVertex = null;
         this.processors = Arrays.stream(new int[totalSize]).map(_i -> -1).toArray();
-        this.startTimes = Arrays.stream(new int[totalSize]).map(_i -> -1).toArray();
+        this.startTimes = Arrays.stream(new double[totalSize]).map(_i -> -1).toArray();
     }
 
     public NewSearchState(NewSearchState prevState, Node vertex, int processorId) {
@@ -58,27 +58,27 @@ public class NewSearchState implements Comparable<NewSearchState>{
 
         this.size++;
 
-        F<Integer, F<Edge, Integer>> dependencyFoldingFn = t -> e -> {
+        F<Double, F<Edge, Double>> dependencyFoldingFn = t -> e -> {
             int aid = e.getSourceNode().getIndex();
             if(this.processors[aid] != processorId && this.processors[aid] != -1) {
-                int newTime = (int) (this.startTimes[aid] + (Double)e.getSourceNode().getAttribute("Weight") + (Double)e.getAttribute("Weight"));
+                double newTime = (this.startTimes[aid] + (Double)e.getSourceNode().getAttribute("Weight") + (Double)e.getAttribute("Weight"));
                 if(newTime > t) return newTime;
             }
             return t;
         };
 
-        F<Integer, F<Node, Integer>> schedulerFoldingFn = t -> v -> {
+        F<Double, F<Node, Double>> schedulerFoldingFn = t -> v -> {
             int id = v.getIndex();
             if(this.processors[id] == processorId && this.processors[id] != -1) {
-                int newTime = (int) (this.startTimes[id] + (Double)graph.getEdge(id).getAttribute("Weight"));
+                Double newTime = (this.startTimes[id] + (Double)graph.getEdge(id).getAttribute("Weight"));
                 if(newTime > t) return newTime;
             }
             return t;
         };
 
-        int time = 0;
+        double time = 0;
         final IterableW<Node> iterableV = IterableW.wrap(graph.getNodeSet());
-        final IterableW<Edge> iterableP = IterableW.wrap(lastVertex.getEnteringEdgeSet());
+        final IterableW<Edge> iterableP = IterableW.wrap(lastVertex.getEachEnteringEdge());
         time = iterableV.foldLeft(schedulerFoldingFn, time);
         time = iterableP.foldLeft(dependencyFoldingFn, time);
 
