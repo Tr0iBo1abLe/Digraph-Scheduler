@@ -76,6 +76,12 @@
             <artifactId>guava</artifactId>
             <version>22.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/net.sf.jung/jung-visualization -->
+        <dependency>
+            <groupId>net.sf.jung</groupId>
+            <artifactId>jung-visualization</artifactId>
+            <version>2.1.1</version>
+        </dependency>
 
 
     </dependencies>
