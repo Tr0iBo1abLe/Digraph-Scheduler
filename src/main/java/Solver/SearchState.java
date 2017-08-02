@@ -2,7 +2,6 @@ package Solver;
 
 import fj.F;
 import fj.data.IterableW;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import org.graphstream.graph.Edge;
@@ -17,7 +16,6 @@ import java.util.stream.Collectors;
 /**
  * A class of partial solution
  */
-@EqualsAndHashCode
 public class SearchState implements Comparable<SearchState>{
     @Getter
     private static Graph graph;
@@ -120,4 +118,8 @@ public class SearchState implements Comparable<SearchState>{
         return this.priority - searchState.priority;
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }
