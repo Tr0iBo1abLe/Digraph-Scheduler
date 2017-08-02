@@ -1,62 +1,56 @@
 package Solver;
 
-import Graph.Graph;
-import Graph.Vertex;
-import Graph.EdgeWithCost;
 import fj.F;
-import fj.F2;
-import fj.F2Functions;
-import fj.data.Array;
 import fj.data.IterableW;
-import fj.data.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * A class of partial solution
  */
+@EqualsAndHashCode
 public class SearchState implements Comparable<SearchState>{
     @Getter
-    private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
+    private static Graph graph;
     @Getter
     private static int totalSize;
     @Getter
     private int priority;
     @Getter
-    private Vertex lastVertex;
+    private Node lastVertex;
     @Getter
     private final int[] processors;
     @Getter
-    private final int[] startTimes;
+    private final double[] startTimes;
     @Getter
     private int size;
 
     @Getter
     private int DFcost;
 
-    public static void init(Graph<Vertex, EdgeWithCost<Vertex>> g) {
+    public static void init(Graph g) {
         graph = g;
-        totalSize = g.getVertices().size();
+        totalSize = g.getNodeCount();
     }
-    
+
     public SearchState() {
         this.priority = 0;
         this.size = 0;
         this.lastVertex = null;
         this.processors = Arrays.stream(new int[totalSize]).map(_i -> -1).toArray();
-        this.startTimes = Arrays.stream(new int[totalSize]).map(_i -> -1).toArray();
+        this.startTimes = Arrays.stream(new double[totalSize]).map(_i -> -1).toArray();
     }
 
-    public SearchState(SearchState prevState, Vertex vertex, int processorId) {
+    public SearchState(SearchState prevState, Node vertex, int processorId) {
         this.priority = prevState.priority;
         this.size = prevState.size;
         this.processors = Arrays.copyOf(prevState.processors, prevState.processors.length);
@@ -65,58 +59,55 @@ public class SearchState implements Comparable<SearchState>{
 
         this.size++;
 
-        F<Integer, F<Vertex, Integer>> dependencyFoldingFn = t -> v -> {
-            int aid = v.getAssignedId();
+        F<Double, F<Edge, Double>> dependencyFoldingFn = t -> e -> {
+            int aid = e.getSourceNode().getIndex();
             if(this.processors[aid] != processorId && this.processors[aid] != -1) {
-                int newTime = this.startTimes[aid] + v.getCost() + graph.getForwardEdge(v, this.lastVertex).getCost();
+                double newTime = (this.startTimes[aid] + (Double)e.getSourceNode().getAttribute("Weight") + (Double)e.getAttribute("Weight"));
                 if(newTime > t) return newTime;
             }
             return t;
         };
 
-        F<Integer, F<Vertex, Integer>> schedulerFoldingFn = t -> v -> {
-            int id = v.getAssignedId();
+        F<Double, F<Node, Double>> schedulerFoldingFn = t -> v -> {
+            int id = v.getIndex();
             if(this.processors[id] == processorId && this.processors[id] != -1) {
-                int newTime = this.startTimes[id] + graph.lookUpVertexById(id).getCost();
+                Double newTime = (this.startTimes[id] + (Double)graph.getNode(id).getAttribute("Weight"));
                 if(newTime > t) return newTime;
             }
             return t;
         };
 
-        int time = 0;
-        final IterableW<Vertex> iterableV = IterableW.wrap(graph.getVertices());
-        final IterableW<Vertex> iterableP = IterableW.wrap(graph.getReverseVertices(lastVertex));
+        double time = 0;
+        final IterableW<Node> iterableV = IterableW.wrap(graph.getNodeSet());
+        final IterableW<Edge> iterableP = IterableW.wrap(lastVertex.getEachEnteringEdge());
         time = iterableV.foldLeft(schedulerFoldingFn, time);
         time = iterableP.foldLeft(dependencyFoldingFn, time);
 
-        this.processors[this.lastVertex.getAssignedId()] = processorId;
-        this.startTimes[this.lastVertex.getAssignedId()] = time;
+        this.processors[this.lastVertex.getIndex()] = processorId;
+        this.startTimes[this.lastVertex.getIndex()] = time;
 
-        int nextP = time + this.lastVertex.getCost() + this.lastVertex.getBottomLevel();
+        int nextP = (int) (time + ((Double) this.lastVertex.getAttribute("Weight")) + ((Double) this.lastVertex.getAttribute("BL")));
 
         if(this.priority < nextP) {
             this.priority = nextP;
         }
         
-        DFcost = time + lastVertex.getCost();
+        DFcost = (int) (time + ((Double) lastVertex.getAttribute("Weight")));
         
     }
 
-    private Integer get(Array<Integer> a, final int n) {
-        return a.get(n);
-    }
-
-    Set<Vertex> getLegalVertices() {
-        Set<Vertex> set = new HashSet<>();
-        F<Boolean, F<Vertex, Boolean>> fn = b -> v -> {
+    Set<Node> getLegalVertices() {
+        Set<Node> set = new HashSet<>();
+        F<Boolean, F<Object, Boolean>> fn = b -> v -> {
             if(b.equals(true)) return b;
-            return processors[v.getAssignedId()] < 0;
+            Node n = (Node) v;
+            return processors[n.getIndex()] < 0;
         };
         next:
         for(int i = 0; i < totalSize; i++) {
-            Vertex v = graph.lookUpVertexById(i);
+            Node v = graph.getNode(i);
             if(processors[i] < 0) {
-                final IterableW<Vertex> wrap = IterableW.wrap(graph.getReverseVertices(v));
+                final IterableW<Object> wrap = IterableW.wrap(v.getEnteringEdgeSet().stream().map(Edge::getSourceNode).collect(Collectors.toSet()));
                 if(wrap.foldLeft(fn, false)) continue next;
                 set.add(v);
             }
@@ -129,8 +120,4 @@ public class SearchState implements Comparable<SearchState>{
         return this.priority - searchState.priority;
     }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

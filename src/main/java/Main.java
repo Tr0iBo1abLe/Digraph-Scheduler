@@ -1,13 +1,10 @@
-import Exporter.GraphExporter;
-import Parser.EdgeCtor;
-import Parser.InputParser;
-import Parser.VertexCtor;
 import Solver.*;
 import Solver.Interfaces.ISolver;
-import lombok.NonNull;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.DefaultGraph;
+import org.graphstream.stream.file.FileSink;
+import org.graphstream.stream.file.FileSinkDOT;
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceDOT;
 
@@ -31,16 +28,17 @@ public class Main {
             System.err.println("Can't open file");
         }
 
+
         Graph g = new DefaultGraph("g");
         FileSource fs = new FileSourceDOT();
         fs.addSink(g);
         try {
-            fs.readAll(new BufferedInputStream(new FileInputStream("input3.dot")));
+            fs.readAll(new BufferedInputStream(new FileInputStream(inputFile)));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        a(g);
+        Helper.finalise(g);
 
         System.out.println(g.getEdgeSet());
 
@@ -50,7 +48,7 @@ public class Main {
             System.out.println("index" + n.getIndex());
         }
 
-        NewAStarSolver solver = new NewAStarSolver(g, 1);
+        ISolver solver = new AStarSolver(g, 2);
         solver.doSolve();
 
         for(Node n:g.getNodeSet()) {
@@ -58,29 +56,13 @@ public class Main {
             System.out.println("Time" + n.getAttribute("ST"));
             System.out.println("index" + n.getIndex());
         }
-    }
+        FileSink sink = new FileSinkDOT();
+        try {
+            sink.writeAll(g, new BufferedOutputStream(System.out));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-    public static void a(Graph g) {
-        g.getNodeSet().forEach(v -> calculateBottomLevels(v, 0));
-    }
-
-    private static void calculateBottomLevels(@NonNull final Node v,
-                                       final double level) {
-        Double res;
-        res = v.getAttribute("BL", Double.class);
-        if(res == null) {
-            v.setAttribute("BL", 0d);
-            res = 0d;
-        }
-        if(res < level) {
-            v.setAttribute("BL", level);
-        }
-        else {
-            v.getEnteringEdgeSet().forEach(e -> {
-                Node n = e.getSourceNode();
-                calculateBottomLevels(n, level + v.getAttribute("Weight", Double.class));
-            });
-        }
     }
 
 
