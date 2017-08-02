@@ -24,7 +24,6 @@ import java.util.stream.IntStream;
 /**
  * A class of partial solution
  */
-@EqualsAndHashCode(exclude = {"lastVertex", "processors"})
 public class SearchState implements Comparable<SearchState>{
     @Getter
     private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
@@ -128,5 +127,10 @@ public class SearchState implements Comparable<SearchState>{
     @Override
     public int compareTo(@NonNull SearchState searchState) {
         return this.priority - searchState.priority;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }
