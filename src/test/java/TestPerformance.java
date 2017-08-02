@@ -19,7 +19,7 @@ import java.io.OutputStreamWriter;
  */
 public class TestPerformance {
 
-    private static final int PROCESSOR_COUNT = 4;
+    private static final int PROCESSOR_COUNT = 2;
     private static final String TEST_FILES_PATH = "src/test/resources/TestSolver/";
     private Graph<Vertex, EdgeWithCost<Vertex>> graph;
     private InputParser<Vertex, EdgeWithCost<Vertex>> parser;
