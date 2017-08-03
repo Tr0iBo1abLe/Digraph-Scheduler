@@ -1,45 +1,51 @@
-import Exporter.GraphExporter;
-import Graph.EdgeWithCost;
-import Graph.Graph;
-import Graph.Vertex;
-import Parser.EdgeCtor;
-import Parser.InputParser;
-import Parser.VertexCtor;
 import Solver.AStarSolver;
 import Solver.AStarSolverPar;
 import Solver.Interfaces.ISolver;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.implementations.DefaultGraph;
+import org.graphstream.stream.file.FileSink;
+import org.graphstream.stream.file.FileSinkDOT;
+import org.graphstream.stream.file.FileSource;
+import org.graphstream.stream.file.FileSourceDOT;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
+import java.io.*;
 
 /**
  * Created by e on 1/08/17.
  */
 public class TestPerformance {
 
-    private static final int PROCESSOR_COUNT = 4;
+    private static final int PROCESSOR_COUNT = 2;
     private static final String TEST_FILES_PATH = "src/test/resources/TestSolver/";
-    private Graph<Vertex, EdgeWithCost<Vertex>> graph;
-    private InputParser<Vertex, EdgeWithCost<Vertex>> parser;
+    public static final String FILE_NAME = "input3.dot";
+    private Graph graph;
 
     @Before
     public void setup(){
-        graph = new Graph<Vertex, EdgeWithCost<Vertex>>();
-        parser = new InputParser<Vertex, EdgeWithCost<Vertex>>(new VertexCtor(), new EdgeCtor());
+        graph = new DefaultGraph("g");
+        FileSource fs = new FileSourceDOT();
+        fs.addSink(graph);
+        try {
+            fs.readAll(new BufferedInputStream(new FileInputStream(FILE_NAME)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Helper.finalise(graph);
     }
 
     @Test
     public void testSeq(){
         long t = System.currentTimeMillis();
-        ISolver solver;
-        graph = parser.doParseAndFinaliseGraph("input3.dot");
-        solver = new AStarSolver(graph, PROCESSOR_COUNT);
+        ISolver solver = new AStarSolver(graph, 2);
         solver.doSolve();
-        final GraphExporter<Vertex,EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;
-        vertexEdgeWithCostGraphExporter = new GraphExporter<Vertex, EdgeWithCost<Vertex>>();
-        vertexEdgeWithCostGraphExporter.doExport(graph, new BufferedWriter(new OutputStreamWriter(System.out)));
+        FileSink sink = new FileSinkDOT();
+        try {
+            sink.writeAll(graph, new BufferedOutputStream(System.err));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         long delta = System.currentTimeMillis() - t;
         System.out.println("Seq Astar Time taken = " + delta);
     }
@@ -47,15 +53,17 @@ public class TestPerformance {
     @Test
     public void testPar(){
         long t = System.currentTimeMillis();
-        ISolver solver;
-        graph = parser.doParseAndFinaliseGraph("input3.dot");
-        solver = new AStarSolverPar(graph, PROCESSOR_COUNT);
+        ISolver solver = new AStarSolverPar(graph, 2);
         solver.doSolve();
-        final GraphExporter<Vertex,EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;
-        vertexEdgeWithCostGraphExporter = new GraphExporter<Vertex, EdgeWithCost<Vertex>>();
-        vertexEdgeWithCostGraphExporter.doExport(graph, new BufferedWriter(new OutputStreamWriter(System.out)));
+        FileSink sink = new FileSinkDOT();
+        try {
+            sink.writeAll(graph, new BufferedOutputStream(System.err));
+            sink.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         long delta = System.currentTimeMillis() - t;
-        System.out.println("Par Astar Time taken = " + delta);
+        System.err.println("Par Astar Time taken = " + delta);
     }
 
 }

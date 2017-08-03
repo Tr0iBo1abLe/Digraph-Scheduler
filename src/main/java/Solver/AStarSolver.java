@@ -1,22 +1,23 @@
 package Solver;
 
-import Graph.EdgeWithCost;
-import Graph.Graph;
-import Graph.Vertex;
+import Solver.Interfaces.ISolver;
+import lombok.Builder;
 import lombok.Data;
+import org.graphstream.graph.Graph;
 
 import java.util.*;
 import java.util.stream.IntStream;
 
-public final class AStarSolver extends AbstractSolver{
+public class AStarSolver extends AbstractSolver{
 
-    public AStarSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
+    public AStarSolver(Graph graph, int processorCount) {
         super(graph, processorCount);
     }
 
     @Override
     public void doSolve() {
         SearchState.init(graph);
+        System.out.println(graph.getNodeCount());
 
         Queue<SearchState> queue = new PriorityQueue<>();
         Set<SearchState> set = new HashSet<>();
@@ -25,13 +26,13 @@ public final class AStarSolver extends AbstractSolver{
         while(true) {
             SearchState s = queue.remove();
             set.remove(s);
-            if(s.getSize() == graph.getVertices().size()) {
+            if(s.getSize() == graph.getNodeCount()) {
                 // We have found THE optimal solution
                 scheduleVertices(s);
                 return;
             }
             s.getLegalVertices().forEach( v -> {
-                IntStream.of(0, processorCount-1).forEach( i -> {
+                IntStream.of(0, processorCount-1).forEach(i -> {
                             SearchState next = new SearchState(s, v, i);
                             if(!set.contains(next)) {
                                 set.add(next);
@@ -41,13 +42,6 @@ public final class AStarSolver extends AbstractSolver{
                 );
             });
         }
-    }
 
-    /*
-    OPEN ← emptyState
-    while OPEN 6 = ∅ do s ← PopHead ( OPEN )
-    if s is complete solution then return s as optimal solution
-    Expand state s into children and compute f ( s child )
-     for each OPEN ← new states
-     */
+    }
 }

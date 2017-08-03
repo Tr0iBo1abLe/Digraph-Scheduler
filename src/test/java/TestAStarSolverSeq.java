@@ -1,16 +1,17 @@
-import Exporter.GraphExporter;
 import FileUtilities.FileUtils;
-import Graph.EdgeWithCost;
-import Graph.Graph;
-import Graph.Vertex;
-import Parser.EdgeCtor;
-import Parser.InputParser;
-import Parser.VertexCtor;
 import Solver.AStarSolver;
 import Solver.Interfaces.ISolver;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.implementations.DefaultGraph;
+import org.graphstream.stream.file.FileSink;
+import org.graphstream.stream.file.FileSinkDOT;
+import org.graphstream.stream.file.FileSource;
+import org.graphstream.stream.file.FileSourceDOT;
 import org.junit.Before;
 import org.junit.Test;
 
+
+import java.io.*;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -23,25 +24,36 @@ public class TestAStarSolverSeq {
 
     private static final int PROCESSOR_COUNT = 4;
     private static final String TEST_FILES_PATH = "src/test/resources/TestSolver/";
-    private Graph<Vertex, EdgeWithCost<Vertex>> graph;
-    private InputParser<Vertex, EdgeWithCost<Vertex>> parser;
+    private Graph graph;
     private ISolver solver;
 
     @Before
     public void setup() {
-        graph = new Graph<Vertex, EdgeWithCost<Vertex>>();
-        parser = new InputParser<Vertex, EdgeWithCost<Vertex>>(new VertexCtor(), new EdgeCtor());
+        graph = new DefaultGraph("g");
+        FileSource fs = new FileSourceDOT();
+        fs.addSink(graph);
+        try {
+            fs.readAll(new BufferedInputStream(new FileInputStream(TEST_FILES_PATH+"input_straightline_4nodes.dot")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Helper.finalise(graph);
     }
 
     @Test
     public void testStraightLine(){
-        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH+"input_straightline_4nodes.dot");
         solver = new AStarSolver(graph, PROCESSOR_COUNT); // Must construct solver only after graph has been parsed in.
         solver.doSolve();
+        FileSink sink = new FileSinkDOT();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try {
+            sink.writeAll(graph, os);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        String actual = GraphExporter.exportGraphToString(graph);
         String expected = FileUtils.readFileToString(TEST_FILES_PATH+"output_straightline_4nodes.dot");
-        assertEquals(expected, actual);
+        assertEquals(expected, os.toString());
     }
 
 }

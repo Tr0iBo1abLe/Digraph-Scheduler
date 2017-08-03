@@ -1,12 +1,12 @@
-import Exporter.GraphExporter;
-import Graph.EdgeWithCost;
-import Graph.Graph;
-import Graph.Vertex;
-import Parser.EdgeCtor;
-import Parser.InputParser;
-import Parser.VertexCtor;
 import Solver.*;
 import Solver.Interfaces.ISolver;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.DefaultGraph;
+import org.graphstream.stream.file.FileSink;
+import org.graphstream.stream.file.FileSinkDOT;
+import org.graphstream.stream.file.FileSource;
+import org.graphstream.stream.file.FileSourceDOT;
 
 import java.io.*;
 
@@ -28,22 +28,42 @@ public class Main {
             System.err.println("Can't open file");
         }
 
-        Graph<Vertex, EdgeWithCost<Vertex>> graph;
 
-        InputParser<Vertex, EdgeWithCost<Vertex>> parser = new InputParser<Vertex, EdgeWithCost<Vertex>>(new VertexCtor(), new EdgeCtor());
-        graph = parser.doParseAndFinaliseGraph(args[0]);
-        System.out.print(graph.toString());
+        Graph g = new DefaultGraph("g");
+        FileSource fs = new FileSourceDOT();
+        fs.addSink(g);
+        try {
+            fs.readAll(new BufferedInputStream(new FileInputStream(inputFile)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        ISolver solver = new AStarSolver(graph, 2);
+        Helper.finalise(g);
+
+        System.out.println(g.getEdgeSet());
+
+        for(Node n:g.getNodeSet()) {
+            System.out.println("Weight" + n.getAttribute("Weight"));
+            System.out.println("BL" + n.getAttribute("BL"));
+            System.out.println("index" + n.getIndex());
+        }
+
+        ISolver solver = new AStarSolver(g, 2);
         solver.doSolve();
 
-
-        final GraphExporter<Vertex,EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;
-        vertexEdgeWithCostGraphExporter = new GraphExporter<Vertex, EdgeWithCost<Vertex>>();
-        vertexEdgeWithCostGraphExporter.doExport(graph, new BufferedWriter(new OutputStreamWriter(System.out)));
+        for(Node n:g.getNodeSet()) {
+            System.out.println("Proc" + n.getAttribute("Processor"));
+            System.out.println("Time" + n.getAttribute("ST"));
+            System.out.println("index" + n.getIndex());
+        }
+        FileSink sink = new FileSinkDOT();
+        try {
+            sink.writeAll(g, new BufferedOutputStream(System.out));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
-
 
 
 }

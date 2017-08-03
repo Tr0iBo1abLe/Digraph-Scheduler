@@ -1,17 +1,16 @@
 package Solver;
 
-import Graph.EdgeWithCost;
-import Graph.Graph;
-import Graph.Vertex;
+import lombok.Builder;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.graphstream.graph.Graph;
 
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
-@Data
 public final class AStarSolverPar extends AbstractSolver {
-    public AStarSolverPar(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
+    public AStarSolverPar(Graph graph, int processorCount) {
         super(graph, processorCount);
     }
 
@@ -26,7 +25,7 @@ public final class AStarSolverPar extends AbstractSolver {
         while(true) {
             SearchState s = queue.remove();
             set.remove(s);
-            if(s.getSize() == graph.getVertices().size()) {
+            if(s.getSize() == graph.getNodeCount()) {
                 // We have found THE optimal solution
                 scheduleVertices(s);
                 return;
