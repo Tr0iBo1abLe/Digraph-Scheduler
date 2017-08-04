@@ -28,4 +28,10 @@ public class Helper {
             });
         }
     }
+
+    public static void stripUneeded(@NonNull final Graph g) {
+        g.getNodeSet().forEach(e -> {
+            e.removeAttribute("BL");
+        });
+    }
 }

@@ -1,10 +1,10 @@
+import FileUtilities.FileSinkSpecialDot;
 import Solver.*;
 import Solver.Interfaces.ISolver;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.stream.file.FileSink;
-import org.graphstream.stream.file.FileSinkDOT;
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceDOT;
 
@@ -51,12 +51,14 @@ public class Main {
         ISolver solver = new AStarSolver(g, 2);
         solver.doSolve();
 
+        Helper.stripUneeded(g);
+
         for(Node n:g.getNodeSet()) {
             System.out.println("Proc" + n.getAttribute("Processor"));
             System.out.println("Time" + n.getAttribute("ST"));
             System.out.println("index" + n.getIndex());
         }
-        FileSink sink = new FileSinkDOT();
+        FileSink sink = new FileSinkSpecialDot("88");
         try {
             sink.writeAll(g, new BufferedOutputStream(System.out));
         } catch (IOException e) {
