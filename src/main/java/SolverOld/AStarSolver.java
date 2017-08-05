@@ -1,5 +1,6 @@
 package SolverOld;
 
+import Datastructure.FastPriorityQueue;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
@@ -17,13 +18,12 @@ public final class AStarSolver extends AbstractSolver{
     public void doSolve() {
         SearchState.init(graph);
 
-        Queue<SearchState> queue = new PriorityQueue<>();
-        Set<SearchState> set = new HashSet<>();
+        Queue<SearchState> queue = new FastPriorityQueue<>();
         queue.add(new SearchState());
 
         while(true) {
+
             SearchState s = queue.remove();
-            set.remove(s);
             if(s.getSize() == graph.getVertices().size()) {
                 // We have found THE optimal solution
                 scheduleVertices(s);
@@ -32,8 +32,7 @@ public final class AStarSolver extends AbstractSolver{
             s.getLegalVertices().forEach( v -> {
                 IntStream.of(0, processorCount-1).forEach( i -> {
                             SearchState next = new SearchState(s, v, i);
-                            if(!set.contains(next)) {
-                                set.add(next);
+                            if(!queue.contains(next)) {
                                 queue.add(next);
                             }
                         }

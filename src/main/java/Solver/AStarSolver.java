@@ -1,5 +1,6 @@
 package Solver;
 
+import Datastructure.FastPriorityQueue;
 import Solver.Interfaces.ISolver;
 import lombok.Builder;
 import lombok.Data;
@@ -19,13 +20,11 @@ public class AStarSolver extends AbstractSolver{
         SearchState.init(graph);
         System.out.println(graph.getNodeCount());
 
-        Queue<SearchState> queue = new PriorityQueue<>();
-        Set<SearchState> set = new HashSet<>();
+        Queue<SearchState> queue = new FastPriorityQueue<>();
         queue.add(new SearchState());
 
         while(true) {
             SearchState s = queue.remove();
-            set.remove(s);
             if(s.getSize() == graph.getNodeCount()) {
                 // We have found THE optimal solution
                 scheduleVertices(s);
@@ -34,8 +33,7 @@ public class AStarSolver extends AbstractSolver{
             s.getLegalVertices().forEach( v -> {
                 IntStream.of(0, processorCount-1).forEach(i -> {
                             SearchState next = new SearchState(s, v, i);
-                            if(!set.contains(next)) {
-                                set.add(next);
+                            if(!queue.contains(next)) {
                                 queue.add(next);
                             }
                         }
