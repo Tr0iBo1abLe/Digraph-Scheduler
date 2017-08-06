@@ -58,10 +58,11 @@ public class SearchState implements Comparable<SearchState>{
 
         this.size++;
 
-        F<Integer, F<Vertex, Integer>> dependencyFoldingFn = t -> v -> {
+        F<Integer, F<EdgeWithCost<Vertex>, Integer>> dependencyFoldingFn = t -> e -> {
+            Vertex v = e.getFrom();
             int aid = v.getAssignedId();
             if(this.processors[aid] != processorId && this.processors[aid] != -1) {
-                int newTime = this.startTimes[aid] + v.getCost() + graph.getForwardEdge(v, this.lastVertex).getCost();
+                int newTime = this.startTimes[aid] + v.getCost() + e.getCost();
                 if(newTime > t) return newTime;
             }
             return t;
@@ -70,7 +71,7 @@ public class SearchState implements Comparable<SearchState>{
         F<Integer, F<Vertex, Integer>> schedulerFoldingFn = t -> v -> {
             int id = v.getAssignedId();
             if(this.processors[id] == processorId && this.processors[id] != -1) {
-                int newTime = this.startTimes[id] + graph.lookUpVertexById(id).getCost();
+                int newTime = this.startTimes[id] + graph.getVertex(id).getCost();
                 if(newTime > t) return newTime;
             }
             return t;
@@ -78,9 +79,8 @@ public class SearchState implements Comparable<SearchState>{
 
         int time = 0;
         final IterableW<Vertex> iterableV = IterableW.wrap(graph.getVertices());
-        final IterableW<Vertex> iterableP = IterableW.wrap(graph.getReverseVertices(lastVertex));
         time = iterableV.foldLeft(schedulerFoldingFn, time);
-        time = iterableP.foldLeft(dependencyFoldingFn, time);
+        time = graph.getInwardsEdges(lastVertex).foldLeft(dependencyFoldingFn, time);
 
         this.processors[this.lastVertex.getAssignedId()] = processorId;
         this.startTimes[this.lastVertex.getAssignedId()] = time;
@@ -107,10 +107,9 @@ public class SearchState implements Comparable<SearchState>{
         };
         next:
         for(int i = 0; i < totalSize; i++) {
-            Vertex v = graph.lookUpVertexById(i);
+            Vertex v = graph.getVertex(i);
             if(processors[i] < 0) {
-                final IterableW<Vertex> wrap = IterableW.wrap(graph.getReverseVertices(v));
-                if(wrap.foldLeft(fn, false)) continue next;
+                if(graph.getParentVertices(v).foldLeft(fn, false)) continue next;
                 set.add(v);
             }
         }
