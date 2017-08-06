@@ -51,8 +51,6 @@ public class Main {
         ISolver solver = new AStarSolver(g, 2);
         solver.doSolve();
         
-//        ISolver solver = new DFSolver(g, 2);
-//        solver.doSolve();
 
         Helper.stripUneeded(g);
 
