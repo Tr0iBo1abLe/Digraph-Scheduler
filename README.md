@@ -11,7 +11,9 @@ positional arguments:
 
 optional arguments:
 
-  -h, --help             show this help message and exit
+  -h, --help
+
+   show this help message and exit
   
   -l {gs,old}, --library {gs,old}
   
@@ -25,6 +27,9 @@ optional arguments:
   
                          Choose the algorithm to use (default: as)
                          
-  -p N, --processors N   Processor count
+  -p N, --processors N
+
+   Processor count
   
-  -r M, --parallel M     Use parallel processing (default: 1)
+  -r M, --parallel M
+   Use parallel processing (default: 1)
