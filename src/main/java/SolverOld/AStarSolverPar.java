@@ -3,6 +3,8 @@ package SolverOld;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
+import fj.F;
+import fj.F1Functions;
 import lombok.Data;
 
 import java.util.*;

@@ -1,3 +1,5 @@
+package Util;
+
 import lombok.NonNull;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;

@@ -1,6 +1,9 @@
+package EntryPoint;
+
 import FileUtilities.FileSinkSpecialDot;
 import Solver.*;
 import Solver.Interfaces.ISolver;
+import Util.Helper;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.DefaultGraph;
@@ -17,11 +20,20 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        if(args.length != 1) {
-            System.err.println("$0 takes 1 argument");
+        boolean par = false;
+        int procN = 1;
+        if(args.length < 1) {
+            System.err.println("$0 takes 1 required argument(s)");
             return;
         }
 
+        if(args.length >= 2) {
+            procN = Integer.parseInt(args[1]);
+        }
+
+        if(args.length >= 3 && args[1].matches("[-]p")) {
+            par = true;
+        }
 
         File inputFile = new File(args[0]);
         if(!inputFile.exists() || !inputFile.canRead()) {
@@ -48,7 +60,13 @@ public class Main {
             System.out.println("index" + n.getIndex());
         }
 
-        ISolver solver = new AStarSolver(g, 2);
+        ISolver solver;
+        if(par) {
+            solver = new AStarSolverPar(g, procN);
+        }
+        else {
+            solver = new AStarSolver(g, procN);
+        }
         solver.doSolve();
 
         Helper.stripUneeded(g);
