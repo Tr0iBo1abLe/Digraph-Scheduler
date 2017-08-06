@@ -1,3 +1,4 @@
+import CommonInterface.ISolver;
 import Exporter.GraphExporter;
 import FileUtilities.FileUtils;
 import Graph.EdgeWithCost;
@@ -7,7 +8,6 @@ import Parser.EdgeCtor;
 import Parser.InputParser;
 import Parser.VertexCtor;
 import SolverOld.AStarSolver;
-import SolverOld.Interfaces.ISolver;
 import org.junit.Before;
 import org.junit.Test;
 

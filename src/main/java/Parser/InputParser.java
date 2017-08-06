@@ -10,6 +10,7 @@ import Parser.Interfaces.IVertexCtor;
 import lombok.NonNull;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.LinkedHashMap;
@@ -52,10 +53,20 @@ public class InputParser<V extends Vertex, E extends Edge<V>> {
     }
 
     /**
-     * Wrapper for the parser; other objects can easily invocate Graph parsing on
+     * Wrapper for the parser; other objects can easily invoke Graph parsing on
      * a InputParser object when they provide a dot file.
+     * @param file the path of the file
      */
     public Graph<V, E> doParseAndFinaliseGraph(String file){
+        return doParseAndFinaliseGraph(new File(file));
+    }
+
+    /**
+     * Wrapper for the parser; other objects can easily invoke Graph parsing on
+     * a InputParser object when they provide a dot file.
+     * @param file the file
+     */
+    public Graph<V, E> doParseAndFinaliseGraph(File file){
         Graph<V,E> graph = new Graph<V,E>();
         try {
             doParse(graph, new BufferedReader(new FileReader(file)));

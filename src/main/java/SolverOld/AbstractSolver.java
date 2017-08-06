@@ -1,10 +1,10 @@
 package SolverOld;
 
+import CommonInterface.ISolver;
 import Graph.EdgeWithCost;
 import Graph.Exceptions.GraphException;
 import Graph.Graph;
 import Graph.Vertex;
-import SolverOld.Interfaces.ISolver;
 import lombok.Data;
 
 import java.util.Arrays;

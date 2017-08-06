@@ -1,4 +1,4 @@
-package Solver.Interfaces;
+package CommonInterface;
 
 /**
  * Created by e on 30/07/17.
