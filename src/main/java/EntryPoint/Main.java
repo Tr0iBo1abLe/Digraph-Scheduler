@@ -144,21 +144,19 @@ public class Main {
         String fileName, libraryStr, outfileName;
         OutputStream os = null;
         boolean gui;
-        List<String> ret;
 
         gui = ns.getBoolean("gui");
         procN = (int) ns.getList("processors").get(0);
         parN = (int) ns.getList("parallel").get(0);
         fileName = (String) ns.getList("infile").get(0);
         libraryStr = ns.getString("library");
-        ret = ns.<String>getList("outfile");
-        if(ret == null) {
+        String s = ns.getString("outfile");
+        if(s== null) {
             os = new BufferedOutputStream(System.out);
         }
         else {
-            outfileName = ret.get(0);
             try {
-                os = new FileOutputStream(new File(outfileName));
+                os = new FileOutputStream(new File(s));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
