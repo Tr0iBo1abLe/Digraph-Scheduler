@@ -21,6 +21,8 @@ import Graph.Vertex;
 import Graph.EdgeWithCost;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Main {
@@ -118,7 +120,7 @@ public class Main {
                 .metavar("M")
                 .type(Integer.class)
                 .nargs(1)
-                .setDefault("1")
+                .setDefault(Arrays.asList(new Integer[]{1}))
                 .required(false)
                 .help("Use parallel processing");
         argumentParser.addArgument("infile")
