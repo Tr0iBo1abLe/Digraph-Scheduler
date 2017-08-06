@@ -1,3 +1,5 @@
+package EntryPoint;
+
 import Exporter.GraphExporter;
 import Graph.EdgeWithCost;
 import Graph.Graph;
@@ -17,11 +19,20 @@ public class MainOld {
     }
 
     public static void main(String[] args) {
-        if(args.length != 1) {
-            System.err.println("$0 takes 1 argument");
+        boolean par = false;
+        int procN = 1;
+        if(args.length < 1) {
+            System.err.println("$0 takes 1 required argument(s)");
             return;
         }
 
+        if(args.length >= 2) {
+            procN = Integer.parseInt(args[1]);
+        }
+
+        if(args.length >= 3 && args[1].matches("[-]p")) {
+            par = true;
+        }
 
         File inputFile = new File(args[0]);
         if(!inputFile.exists() || !inputFile.canRead()) {
@@ -34,7 +45,13 @@ public class MainOld {
         graph = parser.doParseAndFinaliseGraph(args[0]);
         System.out.print(graph.toString());
 
-        ISolver solver = new AStarSolver(graph, 2);
+        ISolver solver;
+        if(par) {
+            solver = new AStarSolverPar(graph, procN);
+        }
+        else {
+            solver = new AStarSolver(graph, procN);
+        }
         solver.doSolve();
 
 
