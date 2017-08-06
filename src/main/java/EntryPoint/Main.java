@@ -21,6 +21,7 @@ import Graph.Vertex;
 import Graph.EdgeWithCost;
 
 import java.io.*;
+import java.util.List;
 
 public class Main {
 
@@ -32,7 +33,7 @@ public class Main {
          * Sadly, we are in Java
          */
 
-    private static void callSolverOld(File file, int procN, int parN) {
+    private static void callSolverOld(File file, int procN, int parN, OutputStream os) {
         Graph.Graph<Vertex, EdgeWithCost<Vertex>> graph;
 
         InputParser<Vertex, EdgeWithCost<Vertex>> parser = new InputParser<Vertex, EdgeWithCost<Vertex>>(new VertexCtor(), new EdgeCtor());
@@ -48,13 +49,12 @@ public class Main {
         }
         solver.doSolve();
 
-
         final GraphExporter<Vertex,EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;
         vertexEdgeWithCostGraphExporter = new GraphExporter<Vertex, EdgeWithCost<Vertex>>();
-        vertexEdgeWithCostGraphExporter.doExport(graph, new BufferedWriter(new OutputStreamWriter(System.out)));
+        vertexEdgeWithCostGraphExporter.doExport(graph, new BufferedWriter(new OutputStreamWriter(os)));
     }
 
-    private static void callGSSolver(File file, int procN, int parN) {
+    private static void callGSSolver(File file, int procN, int parN, OutputStream os) {
         org.graphstream.graph.Graph g = new DefaultGraph("g");
 
         FileSource fs = new FileSourceDOT();
@@ -80,7 +80,8 @@ public class Main {
 
         FileSink sink = new FileSinkSpecialDot("88");
         try {
-            sink.writeAll(g, new BufferedOutputStream(System.out));
+            sink.writeAll(g, new BufferedOutputStream(os));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -97,6 +98,11 @@ public class Main {
                 .setDefault("gs")
                 .required(false)
                 .help("Choose library to use. gs -> Use graphstream library, old -> use old parser and datastructure");
+        argumentParser.addArgument("-g", "--gui")
+                .setDefault("false")
+                .required(false)
+                .setDefault(true)
+                .help("Choose whether to use GUI(Not implemented at the moment)");
         argumentParser.addArgument("-a", "--algorithm")
                 .choices("as", "bnb")
                 .setDefault("as")
@@ -115,11 +121,16 @@ public class Main {
                 .setDefault("1")
                 .required(false)
                 .help("Use parallel processing");
-        argumentParser.addArgument("file")
-                .metavar("FILENAME")
+        argumentParser.addArgument("infile")
+                .metavar("INFILENAME")
                 .nargs(1)
                 .required(true)
                 .help("Filename to process");
+        argumentParser.addArgument("outfile")
+                .metavar("OUTFILENAME")
+                .nargs("?")
+                .required(false)
+                .help("Output file name, write to STDOUT if non-specified");
 
         try {
             ns = argumentParser.parseArgs(args);
@@ -129,12 +140,26 @@ public class Main {
         }
 
         int procN, parN;
-        String fileName, libraryStr;
+        String fileName, libraryStr, outfileName;
+        OutputStream os = null;
+        List<String> ret;
 
         procN = (int) ns.getList("processors").get(0);
         parN = (int) ns.getList("parallel").get(0);
-        fileName = (String) ns.getList("file").get(0);
+        fileName = (String) ns.getList("infile").get(0);
         libraryStr = ns.getString("library");
+        ret = ns.<String>getList("outfile");
+        if(ret == null) {
+            os = new BufferedOutputStream(System.out);
+        }
+        else {
+            outfileName = ret.get(0);
+            try {
+                os = new FileOutputStream(new File(outfileName));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
 
         File inputFile = new File(fileName);
         if(!inputFile.exists() || !inputFile.canRead()) {
@@ -142,9 +167,9 @@ public class Main {
         }
 
         if(libraryStr.matches("gs"))
-            callGSSolver(inputFile, procN, parN);
+            callGSSolver(inputFile, procN, parN, os);
         else if(libraryStr.matches("old"))
-            callSolverOld(inputFile, procN, parN);
+            callSolverOld(inputFile, procN, parN, os);
 
     }
 
