@@ -6,6 +6,7 @@ import Graph.EdgeWithCost;
 import fj.F;
 import fj.data.Array;
 import fj.data.IterableW;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -121,8 +122,4 @@ public class SearchState implements Comparable<SearchState>{
         return this.priority - searchState.priority;
     }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }
