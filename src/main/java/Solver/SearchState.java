@@ -33,7 +33,7 @@ public class SearchState implements Comparable<SearchState>{
     private int size;
 
     @Getter
-    private int DFcost;
+    private int dfCost;
 
     public static void init(Graph g) {
         graph = g;
@@ -90,7 +90,7 @@ public class SearchState implements Comparable<SearchState>{
             this.priority = nextP;
         }
         
-        DFcost = nextP;
+        dfCost = nextP;
         
     }
 
