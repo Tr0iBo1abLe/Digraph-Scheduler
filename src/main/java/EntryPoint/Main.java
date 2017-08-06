@@ -9,6 +9,7 @@ import Solver.*;
 import CommonInterface.ISolver;
 import Util.Helper;
 import net.sourceforge.argparse4j.ArgumentParsers;
+import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -101,9 +102,7 @@ public class Main {
                 .required(false)
                 .help("Choose library to use. gs -> Use graphstream library, old -> use old parser and datastructure");
         argumentParser.addArgument("-g", "--gui")
-                .setDefault("false")
-                .required(false)
-                .setDefault(true)
+                .action(Arguments.storeTrue())
                 .help("Choose whether to use GUI(Not implemented at the moment)");
         argumentParser.addArgument("-a", "--algorithm")
                 .choices("as", "bnb")
@@ -144,8 +143,10 @@ public class Main {
         int procN, parN;
         String fileName, libraryStr, outfileName;
         OutputStream os = null;
+        boolean gui;
         List<String> ret;
 
+        gui = ns.getBoolean("gui");
         procN = (int) ns.getList("processors").get(0);
         parN = (int) ns.getList("parallel").get(0);
         fileName = (String) ns.getList("infile").get(0);
