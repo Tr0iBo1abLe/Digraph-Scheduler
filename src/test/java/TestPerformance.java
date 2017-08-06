@@ -2,7 +2,7 @@ import Util.Helper;
 
 import Solver.AStarSolver;
 import Solver.AStarSolverPar;
-import Solver.Interfaces.ISolver;
+import CommonInterface.ISolver;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.stream.file.FileSink;
@@ -11,8 +11,6 @@ import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceDOT;
 import org.junit.Before;
 import org.junit.Test;
-import org.openjdk.jmh.annotations.GenerateMicroBenchmark;
-import org.openjdk.jmh.annotations.State;
 
 import java.io.*;
 

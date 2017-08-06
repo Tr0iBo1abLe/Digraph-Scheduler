@@ -1,9 +1,6 @@
 package Solver;
 
 import Datastructure.FastPriorityQueue;
-import Solver.Interfaces.ISolver;
-import lombok.Builder;
-import lombok.Data;
 import org.graphstream.graph.Graph;
 
 import java.util.*;

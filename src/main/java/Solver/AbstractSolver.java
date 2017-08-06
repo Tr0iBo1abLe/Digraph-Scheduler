@@ -1,8 +1,7 @@
 package Solver;
 
-import Solver.Interfaces.ISolver;
+import CommonInterface.ISolver;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.graphstream.graph.Graph;
 
 import java.util.Arrays;
