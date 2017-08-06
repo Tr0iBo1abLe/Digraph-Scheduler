@@ -60,7 +60,7 @@ public class Main {
             System.out.println("index" + n.getIndex());
         }
 
-        ISolver solver;
+        ISolver solver = new AStarSolver(g, 2);
         if(par) {
             solver = new AStarSolverPar(g, procN);
         }
@@ -68,6 +68,7 @@ public class Main {
             solver = new AStarSolver(g, procN);
         }
         solver.doSolve();
+        
 
         Helper.stripUneeded(g);
 
