@@ -1,5 +1,6 @@
 package Solver;
 
+import CommonInterface.ISearchState;
 import fj.F;
 import fj.data.IterableW;
 import lombok.EqualsAndHashCode;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * A class of partial solution
  */
-public class SearchState implements Comparable<SearchState>{
+public class SearchState implements Comparable<SearchState>, ISearchState{
     @Getter
     private static Graph graph;
     @Getter
@@ -29,7 +30,7 @@ public class SearchState implements Comparable<SearchState>{
     @Getter
     private final int[] processors;
     @Getter
-    private final double[] startTimes;
+    private final int[] startTimes;
     @Getter
     private int size;
 
@@ -46,7 +47,7 @@ public class SearchState implements Comparable<SearchState>{
         this.size = 0;
         this.lastVertex = null;
         this.processors = Arrays.stream(new int[totalSize]).map(_i -> -1).toArray();
-        this.startTimes = Arrays.stream(new double[totalSize]).map(_i -> -1).toArray();
+        this.startTimes = Arrays.stream(new int[totalSize]).map(_i -> -1).toArray();
     }
 
     public SearchState(SearchState prevState, Node vertex, int processorId) {
@@ -83,7 +84,7 @@ public class SearchState implements Comparable<SearchState>{
         time = iterableP.foldLeft(dependencyFoldingFn, time);
 
         this.processors[this.lastVertex.getIndex()] = processorId;
-        this.startTimes[this.lastVertex.getIndex()] = time;
+        this.startTimes[this.lastVertex.getIndex()] = (int)time;
 
         int nextP = (int) (time + ((Double) this.lastVertex.getAttribute("Weight")) + ((Double) this.lastVertex.getAttribute("BL")));
 
@@ -102,12 +103,12 @@ public class SearchState implements Comparable<SearchState>{
             Node n = (Node) v;
             return processors[n.getIndex()] < 0;
         };
-        next:
+        /* This could be short-circuited */
         for(int i = 0; i < totalSize; i++) {
             Node v = graph.getNode(i);
             if(processors[i] < 0) {
                 final IterableW<Object> wrap = IterableW.wrap(v.getEnteringEdgeSet().stream().map(Edge::getSourceNode).collect(Collectors.toSet()));
-                if(wrap.foldLeft(fn, false)) continue next;
+                if(wrap.foldLeft(fn, false)) continue;
                 set.add(v);
             }
         }

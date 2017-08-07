@@ -1,5 +1,6 @@
 package SolverOld;
 
+import CommonInterface.ISearchState;
 import Datastructure.FastPriorityBlockingQueue;
 import Graph.EdgeWithCost;
 import Graph.Graph;
@@ -14,8 +15,10 @@ import java.util.stream.IntStream;
 
 @Data
 public final class AStarSolverPar extends AbstractSolver {
+    private final Queue<SearchState> queue;
     public AStarSolverPar(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
+        queue= new FastPriorityBlockingQueue<>();
     }
 
     @Override
@@ -43,6 +46,11 @@ public final class AStarSolverPar extends AbstractSolver {
             });
             /* Expansion */
         }
+    }
+
+    @Override
+    public ISearchState pollState() {
+        return queue.peek();
     }
 
     /*

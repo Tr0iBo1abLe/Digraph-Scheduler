@@ -99,6 +99,7 @@ public class InputParser<V extends Vertex, E extends Edge<V>> {
                     break;
                 case LINEFEED:
                     currState = processLineFeed();
+                    pos--;
                     break;
             }
             pos++;
@@ -184,9 +185,13 @@ public class InputParser<V extends Vertex, E extends Edge<V>> {
 
     private STATE processFullHeader() throws ParserException {
         if(tokenBuffer.isEmpty()) throw new ParserException("Empty Header");
-        if(tokenBuffer.size() != 2) throw new ParserException("Invalid Header");
+        if(tokenBuffer.size() < 1) throw new ParserException("Invalid Header");
         if(!tokenBuffer.get(0).matches("[Dd][Ii][Gg][Rr][Aa][Pp][Hh]")) throw new ParserException("Not a digraph");
-        this.graph.setName(tokenBuffer.get(1));
+        if(tokenBuffer.size() >= 2) {
+            this.graph.setName(tokenBuffer.get(1));
+        }
+        else
+            this.graph.setName("digraph");
         if(hasHeader) throw new ParserException("Malformed dot file");
         this.hasHeader = true;
         flushBuffer();

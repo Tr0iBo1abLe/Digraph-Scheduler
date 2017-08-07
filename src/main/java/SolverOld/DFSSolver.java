@@ -1,5 +1,6 @@
 package SolverOld;
 
+import CommonInterface.ISearchState;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
@@ -32,7 +33,15 @@ public class DFSSolver extends AbstractSolver {
     	
     }
 
-    private void solving(SearchState s){
+	@Override
+	public ISearchState pollState() {
+		/**
+		 * STUB
+		 */
+		return null;
+	}
+
+	private void solving(SearchState s){
     	s.getLegalVertices().stream().forEach( v -> {
     		IntStream.of(0, processorCount-1).forEach( i -> {
     			SearchState next = new SearchState(s, v, i);

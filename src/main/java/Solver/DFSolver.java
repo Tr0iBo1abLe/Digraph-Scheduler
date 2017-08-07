@@ -2,6 +2,7 @@ package Solver;
 
 import java.util.stream.IntStream;
 
+import CommonInterface.ISearchState;
 import org.graphstream.graph.Graph;
 
 import lombok.Data;
@@ -25,6 +26,14 @@ public class DFSolver extends AbstractSolver {
 		SearchState s = new SearchState();
 		solving(s);  	
 		scheduleVertices(result);
+	}
+
+	@Override
+	public ISearchState pollState() {
+		/**
+		 * STUB
+		 */
+		return null;
 	}
 
 	private void solving(SearchState s){

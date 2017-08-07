@@ -1,5 +1,6 @@
 package SolverOld;
 
+import CommonInterface.ISearchState;
 import Datastructure.FastPriorityQueue;
 import Graph.EdgeWithCost;
 import Graph.Graph;
@@ -10,20 +11,23 @@ import java.util.stream.IntStream;
 
 public final class AStarSolver extends AbstractSolver{
 
+    private final Queue<SearchState> queue;
+
     public AStarSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
+        queue = new FastPriorityQueue<>();
     }
 
     @Override
     public void doSolve() {
         SearchState.init(graph);
 
-        Queue<SearchState> queue = new FastPriorityQueue<>();
         queue.add(new SearchState());
 
         while(true) {
-
             SearchState s = queue.remove();
+            //System.err.println(queue.size());
+            //Arrays.stream(s.getProcessors()).forEach(System.err::println);
             if(s.getSize() == graph.getVertices().size()) {
                 // We have found THE optimal solution
                 scheduleVertices(s);
@@ -39,6 +43,11 @@ public final class AStarSolver extends AbstractSolver{
                 );
             });
         }
+    }
+
+    @Override
+    public ISearchState pollState() {
+        return queue.peek();
     }
 
     /*

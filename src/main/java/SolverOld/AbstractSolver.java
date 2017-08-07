@@ -6,6 +6,7 @@ import Graph.Exceptions.GraphException;
 import Graph.Graph;
 import Graph.Vertex;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.Arrays;
 
@@ -14,6 +15,7 @@ import java.util.Arrays;
  */
 @Data
 abstract public class AbstractSolver implements ISolver {
+    @Getter
     protected final Graph<Vertex, EdgeWithCost<Vertex>> graph;
     protected final int processorCount;
 

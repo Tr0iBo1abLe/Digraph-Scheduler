@@ -5,4 +5,5 @@ package CommonInterface;
  */
 public interface ISolver {
     void doSolve();
+    ISearchState pollState();
 }
