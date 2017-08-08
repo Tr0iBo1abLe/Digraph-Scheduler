@@ -1,5 +1,6 @@
 package SolverOld;
 
+import CommonInterface.ISearchState;
 import Graph.Graph;
 import Graph.Vertex;
 import Graph.EdgeWithCost;
@@ -17,7 +18,7 @@ import java.util.Set;
 /**
  * A class of partial solution
  */
-public class SearchState implements Comparable<SearchState>{
+public class SearchState implements Comparable<SearchState>, ISearchState{
     @Getter
     private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
     @Getter
@@ -105,11 +106,11 @@ public class SearchState implements Comparable<SearchState>{
             if(b.equals(true)) return b;
             return processors[v.getAssignedId()] < 0;
         };
-        next:
+        /* This could be short-circuited */
         for(int i = 0; i < totalSize; i++) {
             Vertex v = graph.getVertex(i);
             if(processors[i] < 0) {
-                if(graph.getParentVertices(v).foldLeft(fn, false)) continue next;
+                if(graph.getParentVertices(v).foldLeft(fn, false)) continue;
                 set.add(v);
             }
         }

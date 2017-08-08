@@ -2,6 +2,8 @@ package EntryPoint;
 
 import Exporter.GraphExporter;
 import FileUtilities.FileSinkSpecialDot;
+import GUI.SwingMain;
+import Graph.Graph;
 import Parser.EdgeCtor;
 import Parser.InputParser;
 import Parser.VertexCtor;
@@ -21,6 +23,7 @@ import org.graphstream.stream.file.FileSourceDOT;
 import Graph.Vertex;
 import Graph.EdgeWithCost;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,12 +40,7 @@ public class Main {
          */
 
     private static void callSolverOld(File file, int procN, int parN, OutputStream os) {
-        Graph.Graph<Vertex, EdgeWithCost<Vertex>> graph;
-
-        InputParser<Vertex, EdgeWithCost<Vertex>> parser = new InputParser<Vertex, EdgeWithCost<Vertex>>(new VertexCtor(), new EdgeCtor());
-        graph = parser.doParseAndFinaliseGraph(file);
-        System.out.print(graph.toString());
-
+        Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(file);
         ISolver solver;
         if(parN != 1) {
             solver = new SolverOld.AStarSolverPar(graph, procN);
@@ -58,18 +56,7 @@ public class Main {
     }
 
     private static void callGSSolver(File file, int procN, int parN, OutputStream os) {
-        org.graphstream.graph.Graph g = new DefaultGraph("g");
-
-        FileSource fs = new FileSourceDOT();
-        fs.addSink(g);
-        try {
-            fs.readAll(new BufferedInputStream(new FileInputStream(file)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Helper.finalise(g);
-
+        org.graphstream.graph.Graph g = Helper.fileToGsGraph(file);
         ISolver solver;
         if(parN != 1) {
             solver = new AStarSolverPar(g, procN);
@@ -84,7 +71,6 @@ public class Main {
         FileSink sink = new FileSinkSpecialDot("88");
         try {
             sink.writeAll(g, new BufferedOutputStream(os));
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -167,13 +153,26 @@ public class Main {
             System.err.println("Can't open file");
         }
 
-        if(libraryStr.matches("gs"))
-            callGSSolver(inputFile, procN, parN, os);
-        else if(libraryStr.matches("old"))
-            callSolverOld(inputFile, procN, parN, os);
-
+        if(gui) {
+            if (libraryStr.matches("gs")) {
+                org.graphstream.graph.Graph graph = Helper.fileToGsGraph(inputFile);
+                ISolver solver = new Solver.AStarSolver(graph, procN);
+                SwingMain.init(graph, solver);
+                SwingUtilities.invokeLater(new SwingMain());
+            }
+            else if (libraryStr.matches("old")) {
+                Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(inputFile);
+                ISolver solver = new SolverOld.AStarSolver(graph, procN);
+                SwingMain.init(graph, solver);
+                SwingUtilities.invokeLater(new SwingMain());
+            }
+        }
+        else {
+            if (libraryStr.matches("gs"))
+                callGSSolver(inputFile, procN, parN, os);
+            else if (libraryStr.matches("old"))
+                callSolverOld(inputFile, procN, parN, os);
+        }
     }
-
-
 }
 

@@ -1,5 +1,6 @@
 package Solver;
 
+import CommonInterface.ISearchState;
 import Datastructure.FastPriorityBlockingQueue;
 import lombok.Builder;
 import lombok.Data;
@@ -11,15 +12,26 @@ import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
 public final class AStarSolverPar extends AbstractSolver {
+    private final Queue<SearchState> queue;
     public AStarSolverPar(Graph graph, int processorCount) {
         super(graph, processorCount);
+        queue = new FastPriorityBlockingQueue<>();
     }
 
     @Override
     public void doSolve() {
         SearchState.init(graph);
-
-        Queue<SearchState> queue = new FastPriorityBlockingQueue<>();
+        if(updater != null) {
+            /* We have an updater and a UI to update */
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                                          @Override
+                                          public void run() {
+                                              updater.update(queue.peek());
+                                          }
+                                      },
+                    200, 200);
+        }
         queue.add(new SearchState());
 
         while(true) {
@@ -41,6 +53,7 @@ public final class AStarSolverPar extends AbstractSolver {
             /* Expansion */
         }
     }
+
 
     /*
     OPEN ← emptyState

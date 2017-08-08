@@ -3,10 +3,16 @@ package Util;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
+import Parser.EdgeCtor;
+import Parser.InputParser;
+import Parser.VertexCtor;
 import lombok.NonNull;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.DefaultGraph;
+import org.graphstream.stream.file.FileSource;
+import org.graphstream.stream.file.FileSourceDOT;
 
+import java.io.*;
 import java.util.stream.IntStream;
 
 
@@ -51,15 +57,41 @@ public class Helper {
             Vertex v = convertee.getVertex(e);
             Node n = newGraph.addNode(v.getId());
             n.addAttribute("Weight", v.getCost());
+            n.addAttribute("label", v.getId());
         });
         convertee.getForwardEdges().forEach(e -> {
             Vertex from, to;
             from = e.getFrom();
             to = e.getTo();
-            org.graphstream.graph.Edge newE = newGraph.addEdge(from.getId() + to.getId(), from.getAssignedId(), to.getAssignedId());
+            org.graphstream.graph.Edge newE = newGraph.addEdge(from.getId() + to.getId(), from.getAssignedId(), to.getAssignedId(), true);
             newE.addAttribute("Weight", e.getCost());
         });
 
         return newGraph;
     }
+
+    public static org.graphstream.graph.Graph fileToGsGraph(File inputFile) {
+        org.graphstream.graph.Graph g = new DefaultGraph("g");
+
+        FileSource fs = new FileSourceDOT();
+        fs.addSink(g);
+        try {
+            fs.readAll(new BufferedInputStream(new FileInputStream(inputFile)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Helper.finalise(g);
+        return g;
+    }
+
+    public static Graph<Vertex, EdgeWithCost<Vertex>> fileToGraph(File inputFile) {
+        Graph<Vertex, EdgeWithCost<Vertex>> graph;
+
+        InputParser<Vertex, EdgeWithCost<Vertex>> parser = new InputParser<Vertex, EdgeWithCost<Vertex>>(new VertexCtor(), new EdgeCtor());
+        graph = parser.doParseAndFinaliseGraph(inputFile);
+
+        return graph;
+    }
+
 }

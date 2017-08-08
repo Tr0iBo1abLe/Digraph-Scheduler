@@ -2,6 +2,7 @@ package Solver;
 
 import java.util.stream.IntStream;
 
+import CommonInterface.ISearchState;
 import org.graphstream.graph.Graph;
 
 import lombok.Data;

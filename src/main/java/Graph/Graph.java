@@ -200,9 +200,9 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
      * Finalise the graph and fill in necessary information.
      */
     public void finalise() {
-        getVertices().forEach(v -> calculateBottomLevels(v, 0));
         assignIds();
         buildMaps();
+        getVertices().forEach(v -> calculateBottomLevels(v, 0));
         /* ~forwardEdges()
          * ~vertices()
          */
@@ -243,7 +243,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
             v.setBottomLevel(level);
         }
         else {
-            getReverseVertices(v).forEach(
+            getParentVertices(v).forEach(
                     w -> calculateBottomLevels(w, level + v.getCost()));
         }
     }
