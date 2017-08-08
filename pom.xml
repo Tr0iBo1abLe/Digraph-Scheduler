@@ -120,6 +120,13 @@
             <artifactId>jgoodies-forms</artifactId>
             <version>1.9.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.testfx/openjfx-monocle -->
+        <dependency>
+        <groupId>org.testfx</groupId>
+        <artifactId>openjfx-monocle</artifactId>
+        <version>8u76-b04</version>
+        </dependency>
+
 
     </dependencies>
 
