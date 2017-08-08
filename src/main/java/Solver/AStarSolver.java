@@ -32,7 +32,7 @@ public final class AStarSolver extends AbstractSolver{
                                               updater.update(queue.peek());
                                           }
                                       },
-                    100, 100);
+                    500, 500);
         }
 
         queue.add(new SearchState());

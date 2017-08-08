@@ -41,7 +41,7 @@ public final class AStarSolver extends AbstractSolver {
         while(true) {
             SearchState s = queue.remove();
             //updater.update(s);
-            System.err.println(s.getSize() + " " + s.getPriority() + " " + queue.size());
+            //System.err.println(s.getSize() + " " + s.getPriority() + " " + queue.size());
             if(s.getSize() == graph.getVertices().size()) {
                 // We have found THE optimal solution
                 scheduleVertices(s);
