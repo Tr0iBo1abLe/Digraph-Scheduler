@@ -2,7 +2,6 @@ package EntryPoint;
 
 import Exporter.GraphExporter;
 import FileUtilities.FileSinkSpecialDot;
-import GUI.FXMain;
 import GUI.SwingMain;
 import Graph.Graph;
 import Parser.EdgeCtor;
