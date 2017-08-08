@@ -21,7 +21,17 @@ public final class AStarSolverPar extends AbstractSolver {
     @Override
     public void doSolve() {
         SearchState.init(graph);
-
+        if(updater != null) {
+            /* We have an updater and a UI to update */
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                                          @Override
+                                          public void run() {
+                                              updater.update(queue.peek());
+                                          }
+                                      },
+                    200, 200);
+        }
         queue.add(new SearchState());
 
         while(true) {
@@ -44,10 +54,6 @@ public final class AStarSolverPar extends AbstractSolver {
         }
     }
 
-    @Override
-    public ISearchState pollState() {
-        return queue.peek();
-    }
 
     /*
     OPEN ← emptyState

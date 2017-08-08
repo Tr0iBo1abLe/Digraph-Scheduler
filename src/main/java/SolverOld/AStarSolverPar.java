@@ -25,11 +25,24 @@ public final class AStarSolverPar extends AbstractSolver {
     public void doSolve() {
         SearchState.init(graph);
 
-        Queue<SearchState> queue = new FastPriorityBlockingQueue<>();
+
+        if(updater != null) {
+            /* We have an updater and a UI to update */
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                                          @Override
+                                          public void run() {
+                                              updater.update(queue.peek());
+                                          }
+                                      },
+                    100, 100);
+        }
+
         queue.add(new SearchState());
 
         while(true) {
             SearchState s = queue.remove();
+            System.err.println(s.getSize() + " " + s.getPriority() + " " + queue.size());
             if(s.getSize() == graph.getVertices().size()) {
                 // We have found THE optimal solution
                 scheduleVertices(s);
@@ -48,7 +61,7 @@ public final class AStarSolverPar extends AbstractSolver {
         }
     }
 
-    @Override
+    //@Override
     public ISearchState pollState() {
         return queue.peek();
     }

@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 @Data
-public class AStarSolver extends AbstractSolver{
+public final class AStarSolver extends AbstractSolver{
 
     private final Queue<SearchState> queue;
 
@@ -22,6 +22,19 @@ public class AStarSolver extends AbstractSolver{
     @Override
     public void doSolve() {
         SearchState.init(graph);
+
+        if(updater != null) {
+            /* We have an updater and a UI to update */
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                                          @Override
+                                          public void run() {
+                                              updater.update(queue.peek());
+                                          }
+                                      },
+                    100, 100);
+        }
+
         queue.add(new SearchState());
         while(true) {
             SearchState s = queue.remove();
@@ -43,8 +56,4 @@ public class AStarSolver extends AbstractSolver{
         }
     }
 
-    @Override
-    public ISearchState pollState() {
-        return queue.peek();
-    }
 }

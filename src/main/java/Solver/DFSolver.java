@@ -28,14 +28,6 @@ public class DFSolver extends AbstractSolver {
 		scheduleVertices(result);
 	}
 
-	@Override
-	public ISearchState pollState() {
-		/**
-		 * STUB
-		 */
-		return null;
-	}
-
 	private void solving(SearchState s){
 		s.getLegalVertices().stream().forEach( v -> {
 			IntStream.of(0, processorCount-1).forEach( i -> {

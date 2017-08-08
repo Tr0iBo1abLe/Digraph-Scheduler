@@ -12,10 +12,7 @@ import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceDOT;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.stream.IntStream;
 
 
@@ -96,4 +93,5 @@ public class Helper {
 
         return graph;
     }
+
 }

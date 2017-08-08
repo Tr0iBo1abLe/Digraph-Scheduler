@@ -2,6 +2,7 @@ package SolverOld;
 
 import CommonInterface.ISearchState;
 import Datastructure.FastPriorityQueue;
+import GUI.IUpdatableState;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
@@ -9,7 +10,7 @@ import Graph.Vertex;
 import java.util.*;
 import java.util.stream.IntStream;
 
-public final class AStarSolver extends AbstractSolver{
+public final class AStarSolver extends AbstractSolver {
 
     private final Queue<SearchState> queue;
 
@@ -20,14 +21,27 @@ public final class AStarSolver extends AbstractSolver{
 
     @Override
     public void doSolve() {
+        /* This method is blocking, we need a way to notify the GUI */
         SearchState.init(graph);
+
+        if(updater != null) {
+            /* We have an updater and a UI to update */
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                               @Override
+                               public void run() {
+                                   updater.update(queue.peek());
+                               }
+                           },
+                    100, 100);
+        }
 
         queue.add(new SearchState());
 
         while(true) {
             SearchState s = queue.remove();
-            //System.err.println(queue.size());
-            //Arrays.stream(s.getProcessors()).forEach(System.err::println);
+            //updater.update(s);
+            System.err.println(s.getSize() + " " + s.getPriority() + " " + queue.size());
             if(s.getSize() == graph.getVertices().size()) {
                 // We have found THE optimal solution
                 scheduleVertices(s);
@@ -45,7 +59,7 @@ public final class AStarSolver extends AbstractSolver{
         }
     }
 
-    @Override
+    //@Override
     public ISearchState pollState() {
         return queue.peek();
     }
