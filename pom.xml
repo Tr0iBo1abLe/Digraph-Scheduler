@@ -122,9 +122,9 @@
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.testfx/openjfx-monocle -->
         <dependency>
-        <groupId>org.testfx</groupId>
-        <artifactId>openjfx-monocle</artifactId>
-        <version>8u76-b04</version>
+            <groupId>org.testfx</groupId>
+            <artifactId>openjfx-monocle</artifactId>
+            <version>8u76-b04</version>
         </dependency>
 
 
