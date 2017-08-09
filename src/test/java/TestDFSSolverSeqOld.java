@@ -40,8 +40,7 @@ public class TestDFSSolverSeqOld {
 
         String actual = GraphExporter.exportGraphToString(graph);
         String expected = FileUtils.readFileToString(TEST_FILES_PATH+"output_straightline_4nodes.dot");
-        //assertEquals(expected, actual);
-        // Disabled for now
+        assertEquals(expected, actual);
     }
 
 }
