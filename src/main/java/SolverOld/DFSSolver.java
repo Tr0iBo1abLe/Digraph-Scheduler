@@ -33,7 +33,7 @@ public class DFSSolver extends AbstractSolver {
 
 	private void solving(SearchState s){
     	s.getLegalVertices().stream().forEach( v -> {
-    		IntStream.of(0, processorCount-1).forEach( i -> {
+    		IntStream.range(0, processorCount).forEach( i -> {
     			SearchState next = new SearchState(s, v, i);
     			if (next.getDFcost() >= log){
     				return;

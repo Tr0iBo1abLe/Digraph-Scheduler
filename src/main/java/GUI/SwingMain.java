@@ -2,6 +2,8 @@ package GUI;
 
 import CommonInterface.ISearchState;
 import CommonInterface.ISolver;
+import GUI.CSS.GraphCSS;
+import GUI.Models.GMouseManager;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
@@ -146,12 +148,14 @@ public class SwingMain implements Runnable, IUpdatableState {
 
     public static void init(org.graphstream.graph.Graph graph, ISolver solveri) {
         visualGraph = Graphs.clone(graph);
+        visualGraph.addAttribute("ui.stylesheet", GraphCSS.css);
         solver = solveri;
         initRest();
     }
 
     public static void init(Graph<? extends Vertex, ? extends EdgeWithCost> graph, ISolver solveri) {
         visualGraph = Helper.convertToGsGraph(graph);
+        visualGraph.addAttribute("ui.stylesheet", GraphCSS.css);
         solver = solveri;
         initRest();
     }
@@ -162,6 +166,7 @@ public class SwingMain implements Runnable, IUpdatableState {
         viewer.enableAutoLayout();
         viewerPipe = viewer.newViewerPipe();
         viewPanel = viewer.addDefaultView(false);
+        viewPanel.addMouseListener(new GMouseManager(viewPanel));
         visualGraph.addAttribute("ui.stylesheet", STYLE_RESORUCE);
         rootFrame = new JFrame();
     }
@@ -195,7 +200,8 @@ public class SwingMain implements Runnable, IUpdatableState {
                 n.addAttribute("ui.class", "sched");
                 n.addAttribute("processor", procOn + 1);
                 n.addAttribute("startTime", startTimes[index]);
-                @NonNull Integer cost = n.getAttribute("Weight");
+                @NonNull Double aDouble = n.getAttribute("Weight");
+                int cost = aDouble.intValue();
                 //series.getData().add(new XYChart.Data(startTimes[index], n.getId(), new ScheduleChart.ExtraData(cost, stylesStr[(processors[index] + 1) % stylesStr.length])));
                 series.getData().add(new XYChart.Data(startTimes[index], procStr + String.valueOf(procOn + 1), new ScheduleChart.ExtraData(cost, colorManager.next())));
                 seriesList.add(series);
