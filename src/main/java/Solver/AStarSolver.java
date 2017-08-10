@@ -39,7 +39,7 @@ public final class AStarSolver extends AbstractSolver{
         queue.add(new SearchState());
         while(true) {
             SearchState s = queue.remove();
-            System.err.println(s.getSize() + " " + s.getPriority() + " " + queue.size());
+            //System.err.println(s.getSize() + " " + s.getPriority() + " " + queue.size());
             if(s.getSize() == graph.getNodeCount()) {
                 // We have found THE optimal solution
                 if(updater != null && timer != null) {
