@@ -7,3 +7,12 @@
 .status-blue {
     -fx-background-color:rgba(0,0,128,0.8);
 }
+.status-magenta {
+    -fx-background-color:rgba(128,0,128,0.8);
+}
+.status-yellow {
+    -fx-background-color:rgba(128,128,0,0.8);
+}
+.status-cyan{
+    -fx-background-color:rgba(0,128,128,0.8);
+}

@@ -19,6 +19,7 @@ import java.util.Arrays;
 abstract public class AbstractSolver implements ISolver {
     @Getter
     protected final Graph<Vertex, EdgeWithCost<Vertex>> graph;
+    @Getter
     protected final int processorCount;
     protected GUIUpdater updater;
 
