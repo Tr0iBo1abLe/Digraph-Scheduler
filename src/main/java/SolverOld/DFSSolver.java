@@ -26,9 +26,7 @@ public class DFSSolver extends AbstractSolver {
     public void doSolve() {
 		SearchState.init(graph);
     	SearchState s = new SearchState();
-
-    	solving(s);  	
-
+    	solving(s);
     	scheduleVertices(result);
     	
     }

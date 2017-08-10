@@ -126,6 +126,12 @@
             <artifactId>openjfx-monocle</artifactId>
             <version>8u76-b04</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.fusesource/sigar -->
+        <dependency>
+            <groupId>org.fusesource</groupId>
+            <artifactId>sigar</artifactId>
+            <version>1.6.4</version>
+        </dependency>
 
 
     </dependencies>

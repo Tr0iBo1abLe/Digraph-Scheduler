@@ -92,7 +92,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState{
             this.priority = nextP;
         }
         
-        DFcost = time + lastVertex.getCost();
+        DFcost = nextP;
         
     }
 
