@@ -53,7 +53,7 @@ public final class AStarSolverPar extends AbstractSolver {
                 return;
             }
             s.getLegalVertices().parallelStream().forEach( v -> {
-                IntStream.of(0, processorCount-1).parallel().forEach( i -> {
+                IntStream.range(0, processorCount).parallel().forEach( i -> {
                             SearchState next = new SearchState(s, v, i);
                             if(!queue.contains(next)) {
                                 queue.add(next);

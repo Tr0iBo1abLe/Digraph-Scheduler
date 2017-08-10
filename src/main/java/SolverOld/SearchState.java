@@ -18,6 +18,7 @@ import java.util.Set;
 /**
  * A class of partial solution
  */
+@EqualsAndHashCode
 public class SearchState implements Comparable<SearchState>, ISearchState{
     @Getter
     private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
