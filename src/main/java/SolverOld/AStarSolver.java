@@ -46,9 +46,10 @@ public final class AStarSolver extends AbstractSolver {
             if(s.getSize() == graph.getVertices().size()) {
                 // We have found THE optimal solution
                 scheduleVertices(s);
-                if(updater != null && timer != null)
+                if(updater != null && timer != null) {
                     updater.update(s);
                     timer.cancel();
+                }
                 return;
             }
             s.getLegalVertices().forEach( v -> {
