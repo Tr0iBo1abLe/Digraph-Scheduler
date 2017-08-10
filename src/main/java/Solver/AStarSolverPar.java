@@ -13,6 +13,7 @@ import java.util.stream.IntStream;
 
 public final class AStarSolverPar extends AbstractSolver {
     private final Queue<SearchState> queue;
+    private Timer timer;
     public AStarSolverPar(Graph graph, int processorCount) {
         super(graph, processorCount);
         queue = new FastPriorityBlockingQueue<>();
@@ -23,7 +24,7 @@ public final class AStarSolverPar extends AbstractSolver {
         SearchState.init(graph);
         if(updater != null) {
             /* We have an updater and a UI to update */
-            Timer timer = new Timer();
+            timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
                                           @Override
                                           public void run() {
@@ -39,10 +40,14 @@ public final class AStarSolverPar extends AbstractSolver {
             if(s.getSize() == graph.getNodeCount()) {
                 // We have found THE optimal solution
                 scheduleVertices(s);
+                if(updater != null && timer != null) {
+                    updater.update(s);
+                    timer.cancel();
+                }
                 return;
             }
             s.getLegalVertices().parallelStream().forEach( v -> {
-                IntStream.of(0, processorCount-1).parallel().forEach( i -> {
+                IntStream.range(0, processorCount).parallel().forEach( i -> {
                             SearchState next = new SearchState(s, v, i);
                             if(!queue.contains(next)) {
                                 queue.add(next);

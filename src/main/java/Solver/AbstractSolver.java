@@ -13,6 +13,7 @@ import java.util.Arrays;
 abstract public class AbstractSolver implements ISolver {
     @Getter
     protected final Graph graph;
+    @Getter
     protected final int processorCount;
     protected GUIUpdater updater;
 

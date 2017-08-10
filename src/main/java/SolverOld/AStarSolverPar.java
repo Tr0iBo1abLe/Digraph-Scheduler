@@ -16,6 +16,7 @@ import java.util.stream.IntStream;
 @Data
 public final class AStarSolverPar extends AbstractSolver {
     private final Queue<SearchState> queue;
+    private Timer timer;
     public AStarSolverPar(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
         queue= new FastPriorityBlockingQueue<>();
@@ -28,7 +29,7 @@ public final class AStarSolverPar extends AbstractSolver {
 
         if(updater != null) {
             /* We have an updater and a UI to update */
-            Timer timer = new Timer();
+            timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
                                           @Override
                                           public void run() {
@@ -45,6 +46,10 @@ public final class AStarSolverPar extends AbstractSolver {
             System.err.println(s.getSize() + " " + s.getPriority() + " " + queue.size());
             if(s.getSize() == graph.getVertices().size()) {
                 // We have found THE optimal solution
+                if(updater != null && timer != null) {
+                    updater.update(s);
+                    timer.cancel();
+                }
                 scheduleVertices(s);
                 return;
             }
