@@ -52,7 +52,7 @@ public class TestDFSSolverSeqOld {
      */
     @Ignore
     public void test8Nodes0Edges(){
-        PROCESSOR_COUNT = 5;
+        PROCESSOR_COUNT = 8;
         graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH + "input_8nodes_0edges.dot");
         solver = new DFSSolver(graph, PROCESSOR_COUNT); // Must construct solver only after graph has been parsed in.
         solver.doSolve();
