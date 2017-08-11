@@ -33,7 +33,6 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
         @Getter @Setter
         protected String label;
         public ExtraData(long lengthMs, String styleClass, String label) {
-            super();
             this.length = lengthMs;
             this.styleClass = styleClass;
             this.label = label;
