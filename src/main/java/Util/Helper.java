@@ -9,6 +9,8 @@ import Parser.VertexCtor;
 import lombok.NonNull;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.DefaultGraph;
+import org.graphstream.stream.file.FileSink;
+import org.graphstream.stream.file.FileSinkDOT;
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceDOT;
 
@@ -92,6 +94,17 @@ public class Helper {
         graph = parser.doParseAndFinaliseGraph(inputFile);
 
         return graph;
+    }
+
+    public static String gsGraphToDOTString(org.graphstream.graph.Graph graph){
+        FileSink sink = new FileSinkDOT();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try {
+            sink.writeAll(graph, os);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return os.toString();
     }
 
 }
