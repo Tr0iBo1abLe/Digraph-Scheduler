@@ -110,7 +110,7 @@ public class SwingMain implements Runnable, IUpdatableState {
             XYChart.Series series = new XYChart.Series();
             seriesArr[i] = series;
             procStrNames[i] = procStr.concat(String.valueOf(i + 1));
-            seriesArr[i].getData().add(new XYChart.Data(0, procStrNames[i], new ScheduleChart.ExtraData(0, "")));
+            seriesArr[i].getData().add(new XYChart.Data(0, procStrNames[i], new ScheduleChart.ExtraData(0, "", "")));
         });
         String[] nodeNameArr = new String[visualGraph.getNodeSet().size()];
         for (int i = 0; i < seriesArr.length; i++) {
@@ -141,6 +141,7 @@ public class SwingMain implements Runnable, IUpdatableState {
     private static JFrame rootFrame;
     private static final String procStr = "Processor";
     private static final ColorManager colorManager = new ColorManager();
+    private static boolean inited = false;
 
     public static final String STYLE_RESORUCE = "url('style.css')";
 
@@ -164,13 +165,15 @@ public class SwingMain implements Runnable, IUpdatableState {
         viewPanel = viewer.addDefaultView(false);
         visualGraph.addAttribute("ui.stylesheet", STYLE_RESORUCE);
         rootFrame = new JFrame();
+        inited = true;
     }
 
     @Override
     public void run() {
+        if(!inited) throw new RuntimeException(getClass() + " has to be init'd before running");
         rootFrame.setContentPane(panel1);
         rootFrame.pack();
-        rootFrame.show();
+        rootFrame.setVisible(true);
     }
 
 
@@ -196,8 +199,9 @@ public class SwingMain implements Runnable, IUpdatableState {
                 n.addAttribute("processor", procOn + 1);
                 n.addAttribute("startTime", startTimes[index]);
                 @NonNull Integer cost = n.getAttribute("Weight");
-                //series.getData().add(new XYChart.Data(startTimes[index], n.getId(), new ScheduleChart.ExtraData(cost, stylesStr[(processors[index] + 1) % stylesStr.length])));
-                series.getData().add(new XYChart.Data(startTimes[index], procStr + String.valueOf(procOn + 1), new ScheduleChart.ExtraData(cost, colorManager.next())));
+                series.getData().add(new XYChart.Data(startTimes[index]
+                        , procStr + String.valueOf(procOn + 1)
+                        , new ScheduleChart.ExtraData(cost, colorManager.next(), n.getId())));
                 seriesList.add(series);
             }
         });
@@ -207,7 +211,6 @@ public class SwingMain implements Runnable, IUpdatableState {
             XYChart.Series[] seriesArr = new XYChart.Series[seriesList.size()];
             scheduleChart.getData().addAll(seriesList.toArray(seriesArr));
         });
-        //scheduleChart.getData().addAll((XYChart.Series<Number, String>[]) seriesList.toArray());
     }
 
     private void initFX(JFXPanel fxPanel) {
