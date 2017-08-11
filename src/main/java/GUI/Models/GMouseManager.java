@@ -78,15 +78,15 @@ public class GMouseManager implements MouseMotionListener, MouseListener{
     @Override
     public void mouseDragged(MouseEvent event) {
 //        super.mouseDragged(event);
-        System.out.println(event.getSource().getClass().toString());
+//        System.out.println(event.getSource().getClass().toString());
         GraphicElement ge = view.findNodeOrSpriteAt((double)event.getX(), (double)event.getY());
         if (ge == null){
             int y = event.getY();
             int x = event.getX();
-            System.out.println(x + " " + y);
-            System.out.println(((double)x - (double)previousX)+" "+((double)y - (double)previousY));
+//            System.out.println(x + " " + y);
+//            System.out.println(((double)x - (double)previousX)+" "+((double)y - (double)previousY));
             Point3 p = view.getCamera().getViewCenter();
-            System.out.println(p.x + " " + p.y);
+//            System.out.println(p.x + " " + p.y);
             Point3 px = view.getCamera().transformGuToPx(p.x, p.y, p.z);
             Point3 pgu = view.getCamera().transformPxToGu(px.x + ((double)x - (double)previousX)*(-1.00), px.y + ((double)y - (double)previousY)*(-1.00));
             view.getCamera().setViewCenter(pgu.x, pgu.y, pgu.z);
