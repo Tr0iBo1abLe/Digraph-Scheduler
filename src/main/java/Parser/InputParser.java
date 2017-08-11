@@ -141,6 +141,10 @@ public class InputParser<V extends Vertex, E extends Edge<V>> {
                 if(this.tokenBuffer.size() != 2) {
                     throw new ParserException("Malformed Edge");
                 }
+                if(!attrs.containsKey("Weight")) {
+                    // We skip this line
+                    break;
+                }
                 this.graph.addEdge(
                         this.edgeCtor.makeEdge(
                                 this.graph.ensureVertex(this.tokenBuffer.get(0), this.vertexCtor),
