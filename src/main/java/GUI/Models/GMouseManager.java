@@ -48,7 +48,7 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
                             "ID:"+n.getId()+" \n"+
                                     "\tWt:"+n.getAttribute("Weight")+" \n"+
                                     "\tProc:"+n.getAttribute("Processor")+" \n"+
-                                    "\tSTime:"+n.getAttribute("ST"))
+                                    "\tSTime:"+n.getAttribute("Start"))
                     );
                     graph.getEdgeSet().stream().forEach(eg -> eg.addAttribute("ui.label",
                             "Wt:"+eg.getAttribute("Weight"))

@@ -15,6 +15,7 @@ public class GraphCSS {
             "\tshadow-mode: gradient-vertical;\n" +
             "\ttext-background-mode: rounded-box;\n" +
             "\ttext-background-color: yellow;\n" +
+            "\ttext-alignment: above;\n" +
             "\ttext-size: 15px;\n" +
             "}\n" +
             "\n" +

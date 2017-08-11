@@ -25,6 +25,7 @@ import org.graphstream.graph.implementations.Graphs;
 import org.graphstream.ui.swingViewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.ViewerPipe;
+import org.graphstream.ui.view.util.DefaultMouseManager;
 
 import javax.swing.*;
 
@@ -202,11 +203,11 @@ public class SwingMain implements Runnable, IUpdatableState {
     private static void initRest() {
         System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 
-        viewer = new GraphViewer(visualGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+
 
         WebLookAndFeel.install();
 
-
+        viewer = new GraphViewer(visualGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         viewer.enableAutoLayout();
         viewerPipe = viewer.newViewerPipe();
         viewPanel = viewer.addDefaultView(false);
