@@ -22,16 +22,26 @@ abstract public class AbstractSolver implements ISolver {
     @Getter
     protected final int processorCount;
     protected GUIUpdater updater;
+    @Getter
+    protected int finalTime;
 
     protected void scheduleVertices(SearchState s) {
         final int[] processors = Arrays.stream(s.getProcessors()).map(x -> x+1).toArray();
         final int[] startTimes = s.getStartTimes();
+        final int[] max = {-1};
         graph.getVertices().forEach(v -> {
             int id = v.getAssignedId();
             try {
-                graph.scheduleVertex(v ,processors[id], startTimes[id]);
+                graph.scheduleVertex(v, processors[id], startTimes[id]);
+                // get the ending time
+                int temp = startTimes[id] + v.getCost();
+                if (temp > max[0]){
+                    max[0] = temp;
+                }
+            finalTime = max[0];
             } catch (GraphException e) {
                 e.printStackTrace();
+
             }
         });
     }
