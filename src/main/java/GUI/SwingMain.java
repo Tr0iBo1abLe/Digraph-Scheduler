@@ -170,7 +170,7 @@ public class SwingMain implements Runnable, IUpdatableState {
 
     @Override
     public void run() {
-        if(!inited) throw new RuntimeException(getClass() + " has to be init'd before running");
+        if (!inited) throw new RuntimeException(getClass() + " has to be init'd before running");
         rootFrame.setContentPane(panel1);
         rootFrame.pack();
         rootFrame.setVisible(true);
