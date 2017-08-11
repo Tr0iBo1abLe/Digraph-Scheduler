@@ -28,7 +28,7 @@ abstract public class AbstractSolver implements ISolver {
         graph.getNodeSet().forEach(v -> {
             int id = v.getIndex();
             v.addAttribute("Processor", processors[id]);
-            v.addAttribute("ST", startTimes[id]);
+            v.addAttribute("Start", startTimes[id]);
 
             // get the ending time
             int temp = startTimes[id] + intValue(v.getAttribute("Weight"));
