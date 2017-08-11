@@ -220,7 +220,14 @@ public class SwingMain implements Runnable, IUpdatableState {
                 n.addAttribute("ui.class", "sched");
                 n.addAttribute("processor", procOn + 1);
                 n.addAttribute("startTime", startTimes[index]);
-                @NonNull Integer cost = n.getAttribute("Weight");
+                Integer cost = null;
+                try {
+                    Double d = n.getAttribute("Weight");
+                    cost = d.intValue();
+                } catch (ClassCastException e) {
+                    cost = n.getAttribute("Weight");
+                    // Weight attr has to be double or int
+                }
                 series.getData().add(new XYChart.Data(startTimes[index]
                         , procStr + String.valueOf(procOn + 1)
                         , new ScheduleChart.ExtraData(cost, colorManager.next(), n.getId())));
