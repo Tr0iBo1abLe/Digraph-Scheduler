@@ -10,4 +10,5 @@ public interface ISolver {
     //ISearchState pollState();
     void associateUI(IUpdatableState ui);
     int getProcessorCount();
+
 }

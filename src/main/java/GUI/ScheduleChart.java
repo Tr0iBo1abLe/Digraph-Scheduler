@@ -3,6 +3,8 @@ package GUI;
 import javafx.scene.chart.Axis;
 
 import javafx.scene.chart.XYChart;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,20 +17,25 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ValueAxis;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextBoundsType;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 public class ScheduleChart<X, Y> extends XYChart<X, Y> {
 
     public static class ExtraData {
         @Getter @Setter
-        public long length;
+        protected long length;
         @Getter @Setter
-        public String styleClass;
-        public ExtraData(long lengthMs, String styleClass) {
-            super();
+        protected String styleClass;
+        @Getter @Setter
+        protected String label;
+        public ExtraData(long lengthMs, String styleClass, String label) {
             this.length = lengthMs;
             this.styleClass = styleClass;
+            this.label = label;
         }
     }
 
@@ -51,46 +58,58 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
         return ((ExtraData)obj).getStyleClass();
     }
 
-    private static double getLength( Object obj) {
+    private static double getLength(Object obj) {
         return ((ExtraData)obj).getLength();
+    }
+
+    private static String getLabel(Object obj) {
+        return ((ExtraData)obj).getLabel();
     }
 
     @Override
     protected void layoutPlotChildren() {
-        getData().forEach(e -> {
-            getDisplayedDataIterator(e).forEachRemaining(n -> {
-                double x, y;
-                x = getXAxis().getDisplayPosition(n.getXValue());
-                y = getYAxis().getDisplayPosition(n.getYValue());
-                if(Double.isNaN(x) || Double.isNaN(y)) return;
-                Node block = n.getNode();
-                Rectangle rect;
-                if(block != null) {
-                    if(block instanceof StackPane) {
-                        StackPane region = (StackPane)block;
-                        if(region.getShape() == null) {
-                            rect = new Rectangle(getLength(n.getExtraValue()), getBlockHeight());
-                        }
-                        else if(region.getShape() instanceof Rectangle) {
-                            rect = (Rectangle)region.getShape();
-                        }
-                        else {
-                            return;
-                        }
-                        rect.setWidth(getLength(n.getExtraValue()) * ((NumberAxis)getXAxis()).getScale());
-                        rect.setHeight(getBlockHeight());
-                        y -= getBlockHeight() / 2.0f;
-                        region.setShape(null);
-                        region.setShape(rect);
-                        region.setScaleShape(false);
-                        region.setCenterShape(false);
-                        region.setCacheShape(false);
-                        block.setLayoutX(x);
-                        block.setLayoutY(y);
+        getData().forEach(e -> getDisplayedDataIterator(e).forEachRemaining(n -> {
+            double x, y;
+            x = getXAxis().getDisplayPosition(n.getXValue());
+            y = getYAxis().getDisplayPosition(n.getYValue());
+            if(Double.isNaN(x) || Double.isNaN(y)) return;
+            Node block = n.getNode();
+            Rectangle rect;
+            @NonNull final String label = getLabel(n.getExtraValue());
+            Text text = new Text(label);
+            text.setTranslateX(x);
+            text.setTranslateY(getBlockHeight());
+            text.setBoundsType(TextBoundsType.VISUAL);
+            if(block != null) {
+                if(block instanceof StackPane) {
+                    StackPane region = (StackPane)block;
+                    if(region.getShape() == null) {
+                        rect = new Rectangle(getLength(n.getExtraValue()), getBlockHeight());
                     }
+                    else if(region.getShape() instanceof Rectangle) {
+                        rect = (Rectangle)region.getShape();
+                    }
+                    else {
+                        return;
+                    }
+                    y -= getBlockHeight() / 2.0f;
+                    text.setTranslateX(getLength(n.getExtraValue()) / 1.0f);
+                    text.setTranslateY(getBlockHeight() / 2.0f);
+                    if(!region.getChildren().contains(rect) && !region.getChildren().contains(text)) {
+                        region.getChildren().addAll(text);
+                    }
+                    rect.setWidth(getLength(n.getExtraValue()) * ((NumberAxis)getXAxis()).getScale());
+                    rect.setHeight(getBlockHeight());
+                    region.setShape(null);
+                    region.setShape(rect);
+                    region.setScaleShape(false);
+                    region.setCenterShape(false);
+                    region.setCacheShape(false);
+                    block.setLayoutX(x);
+                    block.setLayoutY(y);
                 }
-            });
-        });
+            }
+        }));
 
     }
 

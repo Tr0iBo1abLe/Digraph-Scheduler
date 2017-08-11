@@ -29,7 +29,7 @@ public class Vertex implements IHasCost, ICollectibleAttribute {
         if(this.processor != -1)
             attrs.put("Processor", String.valueOf(this.processor));
         if(this.startTime != -1)
-            attrs.put("Starttime", String.valueOf(this.startTime));
+            attrs.put("Start", String.valueOf(this.startTime));
         return attrs;
     }
 }

@@ -34,6 +34,7 @@ public class InputParser<V extends Vertex, E extends Edge<V>> {
     private String input;
     private Graph<V, E> graph;
     private boolean hasHeader = false;
+    private boolean inAttr = false;
     private LINE_STATE lineState = LINE_STATE.HEADER;
     private char nextSymbol;
 
@@ -138,6 +139,10 @@ public class InputParser<V extends Vertex, E extends Edge<V>> {
         Map<String, String> attrs = processAttrs();
         switch (lineState) {
             case EDGE:
+                if(!attrs.containsKey("Weight")) {
+                    // We skip this line
+                    break;
+                }
                 if(this.tokenBuffer.size() != 2) {
                     throw new ParserException("Malformed Edge");
                 }
@@ -148,6 +153,10 @@ public class InputParser<V extends Vertex, E extends Edge<V>> {
                                 attrs));
                 break;
             case VERTEX:
+                if(!attrs.containsKey("Weight")) {
+                    // We skip this line
+                    break;
+                }
                 if(this.tokenBuffer.size() != 1) {
                     throw new ParserException("Malformed Vertex");
                 }
@@ -169,17 +178,15 @@ public class InputParser<V extends Vertex, E extends Edge<V>> {
     private Map<String, String> processAttrs() throws ParserException {
         String last = tokenBuffer.get(tokenBuffer.size() - 1);
         Map<String, String> attrMap = new LinkedHashMap<>();
-        if (last.startsWith("[") && last.endsWith("]")) {
-            String[] attrTokens = last.substring(1, last.length() - 1 ).split(",");
-            for(String tk : attrTokens) {
-                String[] association = tk.split("=");
-                if(association.length != 2) {
-                    throw new ParserException("Malformed attribute");
-                }
-                attrMap.put(association[0], association[1]);
+        String[] attrTokens = last.split(",");
+        for(String tk : attrTokens) {
+            String[] association = tk.split("=");
+            if(association.length != 2) {
+                throw new ParserException("Malformed attribute");
             }
-            this.tokenBuffer.remove(tokenBuffer.size()-1);
+            attrMap.put(association[0], association[1]);
         }
+        this.tokenBuffer.remove(tokenBuffer.size()-1);
         return attrMap;
     }
 
@@ -214,6 +221,10 @@ public class InputParser<V extends Vertex, E extends Edge<V>> {
             this.nextSymbol = '\"';
             return STATE.NEXT_SYMBOL;
         }
+        else if (c == '[') {
+            this.nextSymbol = ']';
+            return STATE.NEXT_SYMBOL;
+        }
         else if (c == '{') {
             processFullHeader();
             return STATE.HEADER;
@@ -225,8 +236,10 @@ public class InputParser<V extends Vertex, E extends Edge<V>> {
             return STATE.LINEFEED;
         }
         else if (c == ';') {
-            tokenBuffer.add(strBuffer.toString());
-            strBuffer.delete(0, strBuffer.length());
+            if(strBuffer.length() != 0) {
+                tokenBuffer.add(strBuffer.toString());
+                strBuffer.delete(0, strBuffer.length());
+            }
             return STATE.SEMICOLON;
         }
         else if(c == '-') {

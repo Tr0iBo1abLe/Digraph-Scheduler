@@ -6,4 +6,5 @@ package CommonInterface;
 public interface ISearchState {
     int[] getProcessors();
     int[] getStartTimes();
+    int getSize();
 }
