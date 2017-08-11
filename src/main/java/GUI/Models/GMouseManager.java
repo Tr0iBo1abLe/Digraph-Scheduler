@@ -1,27 +1,32 @@
 package GUI.Models;
 
+
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.view.View;
-import org.graphstream.ui.view.util.DefaultMouseManager;
-import org.graphstream.ui.view.util.MouseManager;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 
-public class GMouseManager implements MouseMotionListener, MouseListener{
+import java.awt.event.*;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public class GMouseManager implements MouseMotionListener, MouseListener, MouseWheelListener{
 
     private View view;
+    private Graph graph;
 
     private int previousX;
     private int previousY;
 
-    public GMouseManager(View v) {
-        super();
+    private boolean checkpoint = false;
+
+    public GMouseManager(View v, Graph g) {
         this.view = v;
+        this.graph = g;
         view.addMouseMotionListener(this);
         view.addMouseListener(this);
     }
@@ -34,7 +39,27 @@ public class GMouseManager implements MouseMotionListener, MouseListener{
      */
     @Override
     public void mouseClicked(MouseEvent e) {
-
+        if (e.getButton() == MouseEvent.BUTTON3){
+            view.getCamera().resetView();
+        }else{
+            if (e.getClickCount()==2){
+                if (!checkpoint){
+                    graph.getNodeSet().stream().forEach(n -> n.addAttribute("ui.label",
+                            "ID:"+n.getId()+" \n"+
+                                    "\tWt:"+n.getAttribute("Weight")+" \n"+
+                                    "\tProc:"+n.getAttribute("Processor")+" \n"+
+                                    "\tSTime:"+n.getAttribute("ST"))
+                    );
+                    graph.getEdgeSet().stream().forEach(eg -> eg.addAttribute("ui.label",
+                            "Wt:"+eg.getAttribute("Weight"))
+                    );
+                }else {
+                    graph.getNodeSet().stream().forEach(n -> n.removeAttribute("ui.label"));
+                    graph.getEdgeSet().stream().forEach(eg -> eg.removeAttribute("ui.label"));
+                }
+                checkpoint = !checkpoint;
+            }
+        }
     }
 
     @Override
@@ -42,7 +67,7 @@ public class GMouseManager implements MouseMotionListener, MouseListener{
 //        super.mousePressed(event);
         previousX = event.getX();
         previousY = event.getY();
-        System.out.println(previousX + " " + previousY);
+//        System.out.println(previousX + " " + previousY);
     }
 
     /**
@@ -107,4 +132,20 @@ public class GMouseManager implements MouseMotionListener, MouseListener{
 
     }
 
+    /**
+     * Invoked when the mouse wheel is rotated.
+     *
+     * @param e
+     * @see MouseWheelEvent
+     */
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+
+        if (e.getWheelRotation()<0){
+            view.getCamera().setViewPercent(view.getCamera().getViewPercent()*0.8);
+        }else if ((e.getWheelRotation()>0)){
+            view.getCamera().setViewPercent(view.getCamera().getViewPercent()*1.5);
+        }
+
+    }
 }

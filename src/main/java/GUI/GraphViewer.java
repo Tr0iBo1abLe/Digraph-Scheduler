@@ -7,45 +7,39 @@ import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.ViewerListener;
 
 import java.awt.event.*;
+import java.util.Random;
 
-public class GraphViewer extends Viewer implements ViewerListener, MouseWheelListener{
+public class GraphViewer extends Viewer{
 
-    public GraphViewer(ProxyPipe source) {
-        super(source);
+    public GraphViewer(ProxyPipe source) { super(source); setHQ();}
+
+    public GraphViewer(GraphicGraph graph) { super(graph); setHQ();}
+
+    public GraphViewer(Graph graph, ThreadingModel threadingModel) { super(graph, threadingModel); setHQ();}
+
+    private void setHQ(){
+        graph.addAttribute("ui.quality");
+        graph.addAttribute("ui.antialias");
     }
 
-    public GraphViewer(GraphicGraph graph) {
-        super(graph);
-    }
+    public void colorNodes(Graph graph){
+        graph.getNodeSet().stream().forEach(n -> {
+            if ((n.getAttribute("Processor")!=null)&&((int)n.getAttribute("Processor")!=(-1))){
 
-    public GraphViewer(Graph graph, ThreadingModel threadingModel) {
-        super(graph, threadingModel);
-    }
+                double color = (double) (int) n.getAttribute("Processor");
 
-
-    @Override
-    public void viewClosed(String s) {
-
-    }
-
-    @Override
-    public void buttonPushed(String s) {
-
-    }
-
-    @Override
-    public void buttonReleased(String s) {
-        //don't care.
-    }
-
-    /**
-     * Invoked when the mouse wheel is rotated.
-     *
-     * @param e
-     * @see MouseWheelEvent
-     */
-    @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
-
+                if (color < 10.00){
+                    color = color*(0.1);
+                    n.setAttribute("ui.color", color);
+//                    System.out.println(color);
+                    return;
+                }
+                while (color >= 10.00){
+                    color = color*(0.5);
+                }
+                color = color*(0.1);
+                n.setAttribute("ui.color", color);
+            }
+        });
     }
 }

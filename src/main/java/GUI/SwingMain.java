@@ -88,6 +88,26 @@ public class SwingMain implements Runnable, IUpdatableState {
             solver.doSolve();
             return null;
         }
+
+        /**
+         * Executed on the <i>Event Dispatch Thread</i> after the {@code doInBackground}
+         * method is finished. The default
+         * implementation does nothing. Subclasses may override this method to
+         * perform completion actions on the <i>Event Dispatch Thread</i>. Note
+         * that you can query status inside the implementation of this method to
+         * determine the result of this task or whether this task has been cancelled.
+         *
+         * @see #doInBackground
+         * @see #isCancelled()
+         * @see #get
+         */
+        @Override
+        protected void done() {
+            GraphViewer graphViewer = (GraphViewer)viewer;
+            graphViewer.colorNodes(visualGraph);
+        }
+
+
     }
 
     public SwingMain() {
@@ -144,10 +164,10 @@ public class SwingMain implements Runnable, IUpdatableState {
     private static final String procStr = "Processor";
     private static final ColorManager colorManager = new ColorManager();
 
-    public static final String STYLE_RESORUCE = "url('style.css')";
+//    public static final String STYLE_RESORUCE = "url('style.css')";
 
     public static void init(org.graphstream.graph.Graph graph, ISolver solveri) {
-        visualGraph = Graphs.clone(graph);
+        visualGraph = graph;
         visualGraph.addAttribute("ui.stylesheet", GraphCSS.css);
         solver = solveri;
         initRest();
@@ -162,12 +182,13 @@ public class SwingMain implements Runnable, IUpdatableState {
 
     private static void initRest() {
         System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
-        viewer = new Viewer(visualGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+        viewer = new GraphViewer(visualGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         viewer.enableAutoLayout();
         viewerPipe = viewer.newViewerPipe();
         viewPanel = viewer.addDefaultView(false);
-        viewPanel.addMouseListener(new GMouseManager(viewPanel));
-        visualGraph.addAttribute("ui.stylesheet", STYLE_RESORUCE);
+        viewPanel.addMouseListener(new GMouseManager(viewPanel, visualGraph));
+        viewPanel.addMouseWheelListener(new GMouseManager(viewPanel, visualGraph));
+//        visualGraph.addAttribute("ui.stylesheet", STYLE_RESORUCE);
         rootFrame = new JFrame();
     }
 
