@@ -9,8 +9,6 @@ import org.graphstream.graph.Graph;
 
 import java.util.Arrays;
 
-import static oracle.jrockit.jfr.events.Bits.intValue;
-
 @Data
 abstract public class AbstractSolver implements ISolver {
     @Getter
@@ -31,7 +29,7 @@ abstract public class AbstractSolver implements ISolver {
             v.addAttribute("Start", startTimes[id]);
 
             // get the ending time
-            int temp = startTimes[id] + intValue(v.getAttribute("Weight"));
+            int temp = startTimes[id] + (Integer)(v.getAttribute("Weight"));
             if (temp > max[0]){
                 max[0] = temp;
             }
