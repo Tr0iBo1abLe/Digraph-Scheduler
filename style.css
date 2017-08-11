@@ -1,4 +1,5 @@
 node {
+    text-alignment: above;
 }
 
 node.sched {

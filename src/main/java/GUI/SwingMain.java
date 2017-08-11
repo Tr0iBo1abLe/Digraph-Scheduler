@@ -6,6 +6,7 @@ import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
 import Util.Helper;
+import com.alee.laf.WebLookAndFeel;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import javafx.application.Platform;
@@ -26,8 +27,9 @@ import org.graphstream.ui.view.ViewerPipe;
 import javax.swing.*;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -42,7 +44,9 @@ public class SwingMain implements Runnable, IUpdatableState {
     private JPanel panel1;
     private JButton startButton;
     private JFXPanel jfxPanel1;
-    private JButton button1;
+    private JButton stopButton;
+    private JProgressBar progressBar1;
+    private SolverWorker solverWorker;
 
     private ScheduleChart<Number, String> scheduleChart;
 
@@ -56,18 +60,23 @@ public class SwingMain implements Runnable, IUpdatableState {
     private void $$$setupUI$$$() {
         createUIComponents();
         panel1 = new JPanel();
-        panel1.setLayout(new FormLayout("fill:d:grow,left:4dlu:noGrow,fill:max(d;4px):grow", "center:d:grow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,top:4dlu:noGrow"));
+        panel1.setLayout(new FormLayout("fill:min(d;500px):grow,left:4dlu:noGrow,fill:min(d;500px):grow", "center:d:grow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,center:max(d;4px):noGrow,top:4dlu:noGrow,top:4dlu:noGrow"));
         CellConstraints cc = new CellConstraints();
         panel1.add(viewPanel1, cc.xy(1, 1));
-        button1 = new JButton();
-        button1.setText("Button");
-        panel1.add(button1, cc.xy(3, 5));
+        stopButton = new JButton();
+        stopButton.setText("Stop");
+        panel1.add(stopButton, cc.xy(3, 7));
         final JScrollPane scrollPane1 = new JScrollPane();
         panel1.add(scrollPane1, cc.xy(3, 1, CellConstraints.FILL, CellConstraints.FILL));
         scrollPane1.setViewportView(jfxPanel1);
         startButton = new JButton();
         startButton.setText("Start");
-        panel1.add(startButton, cc.xy(1, 5));
+        panel1.add(startButton, cc.xy(1, 7));
+        progressBar1 = new JProgressBar();
+        panel1.add(progressBar1, cc.xyw(1, 5, 3, CellConstraints.FILL, CellConstraints.DEFAULT));
+        final JLabel label1 = new JLabel();
+        label1.setText("Progress:");
+        panel1.add(label1, cc.xy(1, 3));
     }
 
     /**
@@ -90,13 +99,22 @@ public class SwingMain implements Runnable, IUpdatableState {
 
     public SwingMain() {
         $$$setupUI$$$();
-        startButton.addActionListener(actionEvent -> new SolverWorker().execute());
+        startButton.addActionListener(actionEvent -> {
+            solverWorker = new SolverWorker();
+            solverWorker.execute();
+        });
         Platform.runLater(() -> initFX(jfxPanel1));
+        stopButton.addActionListener(actionEvent -> {
+            if (solverWorker != null) {
+                solverWorker.cancel(true);
+                solverWorker = null;
+            }
+        });
     }
 
     public void createUIComponents() {
         viewPanel1 = viewPanel;
-        viewPanel1.setPreferredSize(new Dimension(800, 800));
+        viewPanel1.setPreferredSize(new Dimension(500, 500));
         jfxPanel1 = new JFXPanel();
 
         final NumberAxis xAxis = new NumberAxis();
@@ -159,6 +177,7 @@ public class SwingMain implements Runnable, IUpdatableState {
 
     private static void initRest() {
         System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+        WebLookAndFeel.install();
         viewer = new Viewer(visualGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         viewer.enableAutoLayout();
         viewerPipe = viewer.newViewerPipe();
@@ -170,9 +189,12 @@ public class SwingMain implements Runnable, IUpdatableState {
 
     @Override
     public void run() {
-        if(!inited) throw new RuntimeException(getClass() + " has to be init'd before running");
+        if (!inited) throw new RuntimeException(getClass() + " has to be init'd before running");
+        progressBar1.setMaximum(visualGraph.getNodeSet().size());
         rootFrame.setContentPane(panel1);
         rootFrame.pack();
+        rootFrame.setPreferredSize(new Dimension(1000, 1000));
+        rootFrame.setMinimumSize(new Dimension(1000, 1000));
         rootFrame.setVisible(true);
     }
 
@@ -205,6 +227,10 @@ public class SwingMain implements Runnable, IUpdatableState {
                 seriesList.add(series);
             }
         });
+        int curSize = searchState.getSize();
+        if (progressBar1.getValue() < curSize) {
+            progressBar1.setValue(curSize);
+        }
 
         Platform.runLater(() -> {
             scheduleChart.getData().clear();
