@@ -1,12 +1,9 @@
 package EntryPoint;
 
 import Exporter.GraphExporter;
-import FileUtilities.FileSinkSpecialDot;
+import Util.FileSinkSpecialDot;
 import GUI.SwingMain;
 import Graph.Graph;
-import Parser.EdgeCtor;
-import Parser.InputParser;
-import Parser.VertexCtor;
 import Solver.*;
 import CommonInterface.ISolver;
 import Util.Helper;
@@ -15,19 +12,13 @@ import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.stream.file.FileSink;
-import org.graphstream.stream.file.FileSource;
-import org.graphstream.stream.file.FileSourceDOT;
 import Graph.Vertex;
 import Graph.EdgeWithCost;
 
 import javax.swing.*;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class Main {
 
