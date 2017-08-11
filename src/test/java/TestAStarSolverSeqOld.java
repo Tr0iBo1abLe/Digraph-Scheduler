@@ -1,6 +1,6 @@
 import CommonInterface.ISolver;
 import Exporter.GraphExporter;
-import FileUtilities.FileUtils;
+import Util.FileUtils;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
@@ -23,7 +23,7 @@ import static junit.framework.TestCase.assertEquals;
  *
  * Created by will on 7/31/17.
  */
-public class TestAStarSolverSeqOld_Milestone1 {
+public class TestAStarSolverSeqOld {
 
     private static int PROCESSOR_COUNT;
     private static final String TEST_FILES_PATH = "src/test/resources/",

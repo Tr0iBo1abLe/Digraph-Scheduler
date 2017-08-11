@@ -1,4 +1,4 @@
-package FileUtilities;
+package Util;
 
 import lombok.Data;
 import org.graphstream.graph.Graph;
