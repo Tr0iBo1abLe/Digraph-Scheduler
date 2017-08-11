@@ -29,7 +29,7 @@ abstract public class AbstractSolver implements ISolver {
             v.addAttribute("Start", startTimes[id]);
 
             // get the ending time
-            int temp = startTimes[id] + (Integer)(v.getAttribute("Weight"));
+            int temp = (int) (startTimes[id] + (Double)v.getAttribute("Weight"));
             if (temp > max[0]){
                 max[0] = temp;
             }
