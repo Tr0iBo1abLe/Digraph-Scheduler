@@ -56,20 +56,20 @@ public class TestAStarSolverSeqOld {
         assertEquals(expected, actual);
     }
 
-    /**
-     * Input was added to canvas; Thursday 20170810
-     */
-    @Test
-    public void testNodes_7_OutTree() {
-        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH + MILESTONE_1_INPUT + "Nodes_7_OutTree.dot");
-        solver = new AStarSolver(graph, PROCESSOR_COUNT);
-        solver.doSolve();
-
-        String actual = GraphExporter.exportGraphToString(graph);
-        String expected = FileUtils.readFileToString(TEST_FILES_PATH + MILESTONE_1_OUTPUT + "output_Nodes_7_OutTree.dot");
-
-        assertEquals(expected, actual);
-    }
+//    /**
+//     * Input was added to canvas; Thursday 20170810
+//     */
+//    @Test
+//    public void testNodes_7_OutTree() {
+//        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH + MILESTONE_1_INPUT + "Nodes_7_OutTree.dot");
+//        solver = new AStarSolver(graph, PROCESSOR_COUNT);
+//        solver.doSolve();
+//
+//        String actual = GraphExporter.exportGraphToString(graph);
+//        String expected = FileUtils.readFileToString(TEST_FILES_PATH + MILESTONE_1_OUTPUT + "output_Nodes_7_OutTree.dot");
+//
+//        assertEquals(expected, actual);
+//    }
 
     /**
      * This test ensures multiple cores are being used when they are required for the optimal schedule as there are no
