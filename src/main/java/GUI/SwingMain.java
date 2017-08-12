@@ -137,7 +137,7 @@ public class SwingMain implements Runnable, IUpdatableState {
 
     public void createUIComponents() {
         viewPanel1 = viewPanel;
-        viewPanel1.setPreferredSize(new Dimension(500, 500));
+        viewPanel1.setPreferredSize(new Dimension(500, 1000));
         jfxPanel1 = new JFXPanel();
 
         final NumberAxis xAxis = new NumberAxis();
