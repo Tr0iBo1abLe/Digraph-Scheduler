@@ -82,7 +82,7 @@ public class Main {
                 .action(Arguments.storeTrue())
                 .help("Choose whether to use GUI(Not implemented at the moment)");
         argumentParser.addArgument("-a", "--algorithm")
-                .choices("as", "bnb")
+                .choices("as")
                 .setDefault("as")
                 .required(false)
                 .help("Choose the algorithm to use");
