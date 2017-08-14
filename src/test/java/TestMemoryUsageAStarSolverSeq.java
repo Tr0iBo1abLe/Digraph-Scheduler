@@ -29,6 +29,8 @@ import static org.junit.Assert.assertEquals;
  *
  * More edges means less memory will be used since there will be fewer configurations for states.
  *
+ * The @Ignore tests currently exhaust all memory (8GB system)
+ *
  * @author Will Molloy, wmol664
  */
 public class TestMemoryUsageAStarSolverSeq {
