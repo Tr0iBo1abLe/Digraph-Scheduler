@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
 @Data
 public class DFSSolver extends AbstractSolver {
 
-    private static int log = Integer.MAX_VALUE;
+    private static int currMax = Integer.MAX_VALUE;
     private static SearchState result;
 
     public DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
@@ -31,13 +31,13 @@ public class DFSSolver extends AbstractSolver {
     }
 
     private void solving(SearchState s) {
-        s.getLegalVertices().stream().forEach(v -> IntStream.of(0, processorCount - 1).forEach(i -> {
+        s.getLegalVertices().stream().forEach(v -> IntStream.range(0, processorCount).forEach(i -> {
                     SearchState next = new SearchState(s, v, i);
-                    if (next.getDFcost() >= log) {
+                    if (next.getPriority() >= currMax) {
                         return;
                     }
                     if (next.getSize() == graph.getVertices().size()) {
-                        updateLog(next, next.getDFcost());
+                        updateLog(next, next.getPriority());
                         return;
                     }
                     solving(next);
@@ -46,8 +46,8 @@ public class DFSSolver extends AbstractSolver {
     }
 
     private void updateLog(SearchState s, int cost) {
-        if (cost < log) {
-            log = cost;
+        if (cost < currMax) {
+            currMax = cost;
             result = s;
         }
     }

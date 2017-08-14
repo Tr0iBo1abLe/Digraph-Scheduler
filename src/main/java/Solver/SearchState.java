@@ -34,9 +34,6 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
     @Getter
     private int size;
 
-    @Getter
-    private int DFcost; // Required for DFSSolver
-
     public SearchState() {
         this.priority = 0;
         this.size = 0;
@@ -86,8 +83,6 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         if (this.priority < nextPriority) {
             this.priority = nextPriority;
         }
-
-        DFcost = nextPriority;
 
     }
 
