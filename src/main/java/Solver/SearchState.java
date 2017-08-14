@@ -13,6 +13,7 @@ import lombok.NonNull;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 /**
  * A class of partial solution
@@ -99,14 +100,15 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
             if (b.equals(true)) return b;
             return processors[v.getAssignedId()] < 0;
         };
-        /* This could be short-circuited */
-        for (int i = 0; i < totalSize; i++) {
+        IntStream.range(0, totalSize).forEach(i -> {
             Vertex v = graph.getVertex(i);
             if (processors[i] < 0) {
-                if (graph.getParentVertices(v).foldLeft(fn, false)) continue;
+                // Skip any assigned processor
+                if (graph.getParentVertices(v).foldLeft(fn, false)) return;
+                // Add the available vertex to the set
                 set.add(v);
             }
-        }
+        });
         return set;
     }
 

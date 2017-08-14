@@ -37,7 +37,7 @@ public final class DFSSolver extends AbstractSolver {
                         return;
                     }
                     if (next.getSize() == graph.getVertices().size()) {
-                        updateLog(next, next.getPriority());
+                        updateLog(next);
                         return;
                     }
                     solving(next);
@@ -45,9 +45,10 @@ public final class DFSSolver extends AbstractSolver {
         ));
     }
 
-    private void updateLog(SearchState s, int cost) {
-        if (cost < currMax) {
-            currMax = cost;
+    private void updateLog(SearchState s) {
+        int underestimate = s.getPriority();
+        if (underestimate < currMax) {
+            currMax = underestimate;
             result = s;
         }
     }
