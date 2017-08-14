@@ -14,8 +14,10 @@ import java.util.Map;
 @ToString
 @EqualsAndHashCode
 public class Edge<V extends Vertex> implements IEdge<V>, ICollectibleAttribute {
-    @NonNull protected final V from;
-    @NonNull protected final V to;
+    @NonNull
+    protected final V from;
+    @NonNull
+    protected final V to;
 
     @Override
     public V getFromVertex() {

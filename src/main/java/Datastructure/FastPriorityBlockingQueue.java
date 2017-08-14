@@ -19,45 +19,6 @@ public class FastPriorityBlockingQueue<E> implements Queue<E> {
         this.set = new HashSet<>();
     }
 
-    private class Itor implements Iterator<E>{
-        final Object[] array;
-        int caret, lastRet;
-
-        Itor(Object[] array) {
-            lastRet = -1;
-            this.array = array;
-        }
-
-        public boolean hasNext() {
-            return caret < array.length;
-        }
-
-        public E next() {
-            if (caret >= array.length)
-                throw new NoSuchElementException();
-            lastRet = caret;
-            return (E)array[caret++];
-        }
-
-        public void remove() {
-            if (lastRet < 0)
-                throw new IllegalStateException();
-            Object x = array[lastRet];
-            lastRet = -1;
-            lock.lock();
-            try {
-                for (Iterator it = queue.iterator(); it.hasNext(); ) {
-                    if (it.next() == x) {
-                        it.remove();
-                        return;
-                    }
-                }
-            } finally {
-                lock.unlock();
-            }
-        }
-    }
-
     @Override
     public Iterator<E> iterator() {
         return new Itor(toArray());
@@ -229,6 +190,45 @@ public class FastPriorityBlockingQueue<E> implements Queue<E> {
             return queue.peek();
         } finally {
             lock.unlock();
+        }
+    }
+
+    private class Itor implements Iterator<E> {
+        final Object[] array;
+        int caret, lastRet;
+
+        Itor(Object[] array) {
+            lastRet = -1;
+            this.array = array;
+        }
+
+        public boolean hasNext() {
+            return caret < array.length;
+        }
+
+        public E next() {
+            if (caret >= array.length)
+                throw new NoSuchElementException();
+            lastRet = caret;
+            return (E) array[caret++];
+        }
+
+        public void remove() {
+            if (lastRet < 0)
+                throw new IllegalStateException();
+            Object x = array[lastRet];
+            lastRet = -1;
+            lock.lock();
+            try {
+                for (Iterator it = queue.iterator(); it.hasNext(); ) {
+                    if (it.next() == x) {
+                        it.remove();
+                        return;
+                    }
+                }
+            } finally {
+                lock.unlock();
+            }
         }
     }
 

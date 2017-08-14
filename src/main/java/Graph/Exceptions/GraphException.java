@@ -6,6 +6,8 @@ public class GraphException extends Exception {
     public GraphException(@NonNull String s) {
         super(s);
     }
-    public GraphException(){}
+
+    public GraphException() {
+    }
 
 }

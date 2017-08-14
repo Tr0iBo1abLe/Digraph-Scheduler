@@ -6,5 +6,7 @@ public class UncheckedException extends RuntimeException {
     public UncheckedException(@NonNull String s) {
         super(s);
     }
-    public UncheckedException(){}
+
+    public UncheckedException() {
+    }
 }

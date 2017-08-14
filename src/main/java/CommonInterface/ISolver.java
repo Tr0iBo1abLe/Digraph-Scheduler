@@ -7,8 +7,10 @@ import GUI.IUpdatableState;
  */
 public interface ISolver {
     void doSolve();
+
     //ISearchState pollState();
     void associateUI(IUpdatableState ui);
+
     int getProcessorCount();
 
 }

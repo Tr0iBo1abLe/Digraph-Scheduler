@@ -15,36 +15,39 @@ public class BM {
     public void benchGS() {
         Main.main(new String[]
                 {"-l", "gs",
-                "-a", "as",
-                "-p", String.valueOf(PROC_N),
-                "-r", "1",
-                FN});
+                        "-a", "as",
+                        "-p", String.valueOf(PROC_N),
+                        "-r", "1",
+                        FN});
     }
+
     @GenerateMicroBenchmark
     public void benchOld() {
         Main.main(new String[]
                 {"-l", "old",
-                "-a", "as",
-                "-p", String.valueOf(PROC_N),
-                "-r", "1",
-                FN});
+                        "-a", "as",
+                        "-p", String.valueOf(PROC_N),
+                        "-r", "1",
+                        FN});
     }
+
     @GenerateMicroBenchmark
     public void benchGSPar() {
         Main.main(new String[]
                 {"-l", "gs",
-                "-a", "as",
-                "-p", String.valueOf(PROC_N),
-                "-r", "4",
-                FN});
+                        "-a", "as",
+                        "-p", String.valueOf(PROC_N),
+                        "-r", "4",
+                        FN});
     }
+
     @GenerateMicroBenchmark
     public void benchOldPar() {
         Main.main(new String[]
                 {"-l", "old",
-                "-a", "as",
-                "-p", String.valueOf(PROC_N),
-                "-r", "4",
-                FN});
+                        "-a", "as",
+                        "-p", String.valueOf(PROC_N),
+                        "-r", "4",
+                        FN});
     }
 }

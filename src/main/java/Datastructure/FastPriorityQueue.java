@@ -1,7 +1,5 @@
 package Datastructure;
 
-import lombok.Data;
-
 import java.util.*;
 
 /**
@@ -9,17 +7,19 @@ import java.util.*;
  * while maintaining O(1) for deque operations as expense of memory
  * This class is NOT threadsafe
  */
-public class FastPriorityQueue<T> implements Queue<T>{
+public class FastPriorityQueue<T> implements Queue<T> {
     /*
      * Wrapped data structure, mutable data structure has to be used
      * due to memory constraints
      */
     private final PriorityQueue<T> queue;
     private final HashSet<T> set;
+
     public FastPriorityQueue() {
         this.queue = new PriorityQueue<>();
         this.set = new HashSet<>();
     }
+
     @Override
     public int size() {
         return set.size();
@@ -98,7 +98,7 @@ public class FastPriorityQueue<T> implements Queue<T>{
 
     @Override
     public boolean offer(T t) {
-        if(queue.offer(t)) {
+        if (queue.offer(t)) {
             set.add(t);
             return true;
         }

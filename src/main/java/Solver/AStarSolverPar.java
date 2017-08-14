@@ -2,19 +2,22 @@ package Solver;
 
 import CommonInterface.ISearchState;
 import Datastructure.FastPriorityBlockingQueue;
-import lombok.Builder;
+import Graph.EdgeWithCost;
+import Graph.Graph;
+import Graph.Vertex;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import org.graphstream.graph.Graph;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.stream.IntStream;
 
+@Data
 public final class AStarSolverPar extends AbstractSolver {
     private final Queue<SearchState> queue;
     private Timer timer;
-    public AStarSolverPar(Graph graph, int processorCount) {
+
+    public AStarSolverPar(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
         queue = new FastPriorityBlockingQueue<>();
     }
@@ -22,7 +25,9 @@ public final class AStarSolverPar extends AbstractSolver {
     @Override
     public void doSolve() {
         SearchState.init(graph);
-        if(updater != null) {
+
+
+        if (updater != null) {
             /* We have an updater and a UI to update */
             timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
@@ -31,34 +36,37 @@ public final class AStarSolverPar extends AbstractSolver {
                                               updater.update(queue.peek());
                                           }
                                       },
-                    200, 200);
+                    100, 100);
         }
+
         queue.add(new SearchState());
 
-        while(true) {
+        while (true) {
             SearchState s = queue.remove();
-            if(s.getSize() == graph.getNodeCount()) {
+            if (s.getSize() == graph.getVertices().size()) {
                 // We have found THE optimal solution
-                scheduleVertices(s);
-                if(updater != null && timer != null) {
+                if (updater != null && timer != null) {
                     updater.update(s);
                     timer.cancel();
                 }
+                scheduleVertices(s);
                 return;
             }
-            s.getLegalVertices().parallelStream().forEach( v -> {
-                IntStream.range(0, processorCount).parallel().forEach( i -> {
-                            SearchState next = new SearchState(s, v, i);
-                            if(!queue.contains(next)) {
-                                queue.add(next);
-                            }
+            s.getLegalVertices().parallelStream().forEach(v -> IntStream.range(0, processorCount).parallel().forEach(i -> {
+                        SearchState next = new SearchState(s, v, i);
+                        if (!queue.contains(next)) {
+                            queue.add(next);
                         }
-                );
-            });
+                    }
+            ));
             /* Expansion */
         }
     }
 
+    //@Override
+    public ISearchState pollState() {
+        return queue.peek();
+    }
 
     /*
     OPEN ← emptyState

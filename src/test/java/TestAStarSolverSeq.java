@@ -5,8 +5,9 @@ import Graph.Vertex;
 import Parser.EdgeCtor;
 import Parser.InputParser;
 import Parser.VertexCtor;
-import SolverOld.AStarSolver;
-import SolverOld.AbstractSolver;
+import Solver.AStarSolver;
+import Solver.AbstractSolver;
+import TestCommon.CommonTester;
 import Util.FileUtils;
 import Util.Helper;
 import org.junit.Before;
@@ -27,7 +28,7 @@ import static junit.framework.TestCase.assertEquals;
  * <p>
  * Created by will on 7/31/17.
  */
-public class TestAStarSolverSeqOld_M1Tests {
+public class TestAStarSolverSeq {
 
     private static final String TEST_FILES_PATH = "src/test/resources/",
             TEST_SOLVER = "TestSolver/",
@@ -37,9 +38,11 @@ public class TestAStarSolverSeqOld_M1Tests {
     private Graph<Vertex, EdgeWithCost<Vertex>> graph;
     private InputParser<Vertex, EdgeWithCost<Vertex>> parser;
     private AbstractSolver solver;
+    private CommonTester tester;
 
     @Before
     public void setup() {
+        tester = new CommonTester();
         PROCESSOR_COUNT = 2; // Override in individual tests if needed.
         graph = new Graph<Vertex, EdgeWithCost<Vertex>>();
         parser = new InputParser<Vertex, EdgeWithCost<Vertex>>(new VertexCtor(), new EdgeCtor());
@@ -97,8 +100,11 @@ public class TestAStarSolverSeqOld_M1Tests {
      * Processors = 2.
      */
 
+
+
     @Test
-    public void testMilestone1Nodes7Processors2(){
+    public void testMilestone1Nodes7Processors2() {
+
         PROCESSOR_COUNT = 2;
         graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_7_OutTree.dot"));
         graph.finalise();
@@ -109,7 +115,7 @@ public class TestAStarSolverSeqOld_M1Tests {
     }
 
     @Test
-    public void testMilestone1Nodes8Processors2(){
+    public void testMilestone1Nodes8Processors2() {
         PROCESSOR_COUNT = 2;
         graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_8_Random.dot"));
         graph.finalise();
@@ -120,7 +126,7 @@ public class TestAStarSolverSeqOld_M1Tests {
     }
 
     @Test
-    public void testMilestone1Nodes9Processors2(){
+    public void testMilestone1Nodes9Processors2() {
         PROCESSOR_COUNT = 2;
         graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_9_SeriesParallel.dot"));
         graph.finalise();
@@ -131,19 +137,13 @@ public class TestAStarSolverSeqOld_M1Tests {
     }
 
     @Test
-    public void testMilestone1Nodes10Processors2(){
-        PROCESSOR_COUNT = 2;
-        graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot"));
-        graph.finalise();
-        solver = new AStarSolver(graph, PROCESSOR_COUNT);
-        solver.doSolve();
-
+    public void testMilestone1Nodes10Processors2() {
+        solver = tester.doTest(2, graph, AStarSolver.class, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot"));
         assertEquals(50, solver.getFinalTime()); // test final time
     }
 
-    // TODO Takes a while, pretty sure it's stuck
     @Test
-    public void testMilestone1Nodes11Processors2(){
+    public void testMilestone1Nodes11Processors2() {
         PROCESSOR_COUNT = 2;
         graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_11_OutTree.dot"));
         graph.finalise();
@@ -159,7 +159,7 @@ public class TestAStarSolverSeqOld_M1Tests {
      */
 
     @Test
-    public void testMilestone1Nodes7Processors4(){
+    public void testMilestone1Nodes7Processors4() {
         PROCESSOR_COUNT = 4;
         graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_7_OutTree.dot"));
         graph.finalise();
@@ -170,7 +170,7 @@ public class TestAStarSolverSeqOld_M1Tests {
     }
 
     @Test
-    public void testMilestone1Nodes8Processors4(){
+    public void testMilestone1Nodes8Processors4() {
         PROCESSOR_COUNT = 4;
         graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_8_Random.dot"));
         graph.finalise();
@@ -181,7 +181,7 @@ public class TestAStarSolverSeqOld_M1Tests {
     }
 
     @Test
-    public void testMilestone1Nodes9Processors4(){
+    public void testMilestone1Nodes9Processors4() {
         PROCESSOR_COUNT = 4;
         graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_9_SeriesParallel.dot"));
         graph.finalise();
@@ -192,7 +192,7 @@ public class TestAStarSolverSeqOld_M1Tests {
     }
 
     @Test
-    public void testMilestone1Nodes10Processors4(){
+    public void testMilestone1Nodes10Processors4() {
         PROCESSOR_COUNT = 4;
         graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot"));
         graph.finalise();
@@ -203,7 +203,7 @@ public class TestAStarSolverSeqOld_M1Tests {
     }
 
     @Test
-    public void testMilestone1Nodes11Processors4(){
+    public void testMilestone1Nodes11Processors4() {
         PROCESSOR_COUNT = 4;
         graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_11_OutTree.dot"));
         graph.finalise();
