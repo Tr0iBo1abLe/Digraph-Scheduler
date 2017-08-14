@@ -12,10 +12,10 @@ import java.util.stream.IntStream;
  * Created by mason on 31/07/17.
  */
 @Data
-public class DFSSolver extends AbstractSolver {
+public final class DFSSolver extends AbstractSolver {
 
-    private static int currMax = Integer.MAX_VALUE;
-    private static SearchState result;
+    private int currMax = Integer.MAX_VALUE;
+    private SearchState result;
 
     public DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
@@ -31,7 +31,7 @@ public class DFSSolver extends AbstractSolver {
     }
 
     private void solving(SearchState s) {
-        s.getLegalVertices().stream().forEach(v -> IntStream.range(0, processorCount).forEach(i -> {
+        s.getLegalVertices().forEach(v -> IntStream.range(0, processorCount).forEach(i -> {
                     SearchState next = new SearchState(s, v, i);
                     if (next.getPriority() >= currMax) {
                         return;

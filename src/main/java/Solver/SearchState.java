@@ -34,6 +34,11 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
     @Getter
     private int size;
 
+    public static void initialise(Graph<Vertex, EdgeWithCost<Vertex>> graph) {
+        SearchState.graph = graph;
+        totalSize = graph.getVertices().size();
+    }
+
     public SearchState() {
         this.priority = 0;
         this.size = 0;
@@ -87,10 +92,6 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
 
     }
 
-    public static void initialise(Graph<Vertex, EdgeWithCost<Vertex>> graph) {
-        SearchState.graph = graph;
-        totalSize = graph.getVertices().size();
-    }
 
     Set<Vertex> getLegalVertices() {
         Set<Vertex> set = new HashSet<>();

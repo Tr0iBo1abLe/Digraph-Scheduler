@@ -27,7 +27,6 @@ import static junit.framework.TestCase.assertEquals;
  * <p>
  * Created by mason on 7/31/17.
  */
-@Ignore
 public class TestDFSSolverSeq {
 
     private static final String TEST_FILES_PATH = "src/test/resources/TestSolver/";
