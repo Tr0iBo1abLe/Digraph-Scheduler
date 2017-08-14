@@ -34,16 +34,15 @@ public class TestAStarSolverSeq {
             TEST_SOLVER = "TestSolver/",
             MILESTONE_1_INPUT = "input-graphs-milestone1/",
             MILESTONE_1_OUTPUT = "output-graphs-milestone1/";
-    private static int PROCESSOR_COUNT;
     private Graph<Vertex, EdgeWithCost<Vertex>> graph;
     private InputParser<Vertex, EdgeWithCost<Vertex>> parser;
     private AbstractSolver solver;
     private CommonTester tester;
 
+    int PROCESSOR_COUNT = 2;
     @Before
     public void setup() {
-        tester = new CommonTester();
-        PROCESSOR_COUNT = 2; // Override in individual tests if needed.
+        tester = new CommonTester(AStarSolver.class);
         graph = new Graph<Vertex, EdgeWithCost<Vertex>>();
         parser = new InputParser<Vertex, EdgeWithCost<Vertex>>(new VertexCtor(), new EdgeCtor());
     }
@@ -57,6 +56,7 @@ public class TestAStarSolverSeq {
         graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH + TEST_SOLVER + "input_straightline_4nodes.dot");
         solver = new AStarSolver(graph, PROCESSOR_COUNT); // Must construct solver only after graph has been parsed in.
         solver.doSolve();
+
 
         String actual = GraphExporter.exportGraphToString(graph);
         String expected = FileUtils.readFileToString(TEST_FILES_PATH + TEST_SOLVER + "output_straightline_4nodes.dot");
@@ -138,7 +138,7 @@ public class TestAStarSolverSeq {
 
     @Test
     public void testMilestone1Nodes10Processors2() {
-        solver = tester.doTest(2, graph, AStarSolver.class, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot"));
+        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot"));
         assertEquals(50, solver.getFinalTime()); // test final time
     }
 
