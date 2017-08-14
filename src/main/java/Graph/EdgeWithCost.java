@@ -13,6 +13,7 @@ import java.util.Map;
 @Data
 public class EdgeWithCost<V extends Vertex> extends Edge<V> implements IHasCost {
     private final int cost;
+
     public EdgeWithCost(@NonNull final V from,
                         @NonNull final V to,
                         final int cost) {

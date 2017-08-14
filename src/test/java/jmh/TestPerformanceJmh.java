@@ -1,6 +1,5 @@
 package jmh;
 
-import org.openjdk.jmh.Main;
 import org.openjdk.jmh.logic.results.Result;
 import org.openjdk.jmh.logic.results.RunResult;
 import org.openjdk.jmh.output.OutputFormatType;
@@ -29,7 +28,7 @@ public class TestPerformanceJmh {
                 .addProfiler(ProfilerType.HS_THREAD)
                 .build();
 
-        Map<BenchmarkRecord,RunResult> records = new Runner(opts).run();
+        Map<BenchmarkRecord, RunResult> records = new Runner(opts).run();
         for (Map.Entry<BenchmarkRecord, RunResult> result : records.entrySet()) {
             Result r = result.getValue().getPrimaryResult();
             System.out.println("API replied benchmark score: "

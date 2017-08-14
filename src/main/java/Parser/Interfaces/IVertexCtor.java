@@ -10,5 +10,6 @@ import java.util.Map;
  */
 public interface IVertexCtor<V> {
     V makeVertex(@NonNull final String id, final Map<String, String> attrs) throws GraphException;
+
     V makeVertex(@NonNull final String id);
 }

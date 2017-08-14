@@ -1,12 +1,11 @@
 package Exporter;
 
+import Graph.Edge;
+import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Interfaces.ICollectibleAttribute;
 import Graph.Vertex;
-import Graph.Edge;
-import Graph.EdgeWithCost;
 import lombok.NonNull;
-import scala.Char;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -31,15 +30,14 @@ public class GraphExporter<V extends Vertex, E extends Edge<V>> {
                          @NonNull final Writer writer) {
         try {
             writer.write("digraph " + graph.getName() + " {\n");
-            for(Object orderObj : graph.getOrder()) {
-                if(orderObj instanceof Vertex) {
+            for (Object orderObj : graph.getOrder()) {
+                if (orderObj instanceof Vertex) {
                     final Vertex v = (Vertex) orderObj;
                     writer.write("    ");
                     writer.write(v.getId() + " ");
                     writeAttributes(v, writer);
                     writer.write(";\n");
-                }
-                else if(orderObj instanceof Edge) {
+                } else if (orderObj instanceof Edge) {
                     final Edge<Vertex> e = (Edge<Vertex>) orderObj;
                     writer.write("    ");
                     writer.write(e.getFrom().getId() + " -> " + e.getTo().getId() + " ");
@@ -56,15 +54,15 @@ public class GraphExporter<V extends Vertex, E extends Edge<V>> {
 
     private void writeAttributes(@NonNull final ICollectibleAttribute ica, @NonNull final Writer writer) throws IOException {
         final Set<Map.Entry<String, String>> entries = ica.getAttributes().entrySet();
-        if(entries.isEmpty()) {
+        if (entries.isEmpty()) {
             return;
         }
         writer.write('[');
         final Iterator<Map.Entry<String, String>> iterator = entries.iterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             Map.Entry<String, String> entry = iterator.next();
             writer.write(entry.getKey() + "=" + entry.getValue());
-            if(iterator.hasNext()) {
+            if (iterator.hasNext()) {
                 writer.write(",");
             }
         }

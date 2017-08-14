@@ -1,20 +1,17 @@
 package EntryPoint;
 
-import Exporter.GraphExporter;
-import Util.FileSinkSpecialDot;
-import GUI.SwingMain;
-import Graph.Graph;
-import Solver.*;
 import CommonInterface.ISolver;
+import Exporter.GraphExporter;
+import GUI.SwingMain;
+import Graph.EdgeWithCost;
+import Graph.Graph;
+import Graph.Vertex;
 import Util.Helper;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.graphstream.stream.file.FileSink;
-import Graph.Vertex;
-import Graph.EdgeWithCost;
 
 import javax.swing.*;
 import java.io.*;
@@ -22,7 +19,7 @@ import java.util.Arrays;
 
 public class Main {
 
-    private Main(){
+    private Main() {
         //Ensure this class is not instantiated
     }
         /*
@@ -33,39 +30,16 @@ public class Main {
     private static void callSolverOld(File file, int procN, int parN, OutputStream os) {
         Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(file);
         ISolver solver;
-        if(parN != 1) {
-            solver = new SolverOld.AStarSolverPar(graph, procN);
-        }
-        else {
-            solver = new SolverOld.AStarSolver(graph, procN);
+        if (parN != 1) {
+            solver = new Solver.AStarSolverPar(graph, procN);
+        } else {
+            solver = new Solver.AStarSolver(graph, procN);
         }
         solver.doSolve();
 
-        final GraphExporter<Vertex,EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;
+        final GraphExporter<Vertex, EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;
         vertexEdgeWithCostGraphExporter = new GraphExporter<Vertex, EdgeWithCost<Vertex>>();
         vertexEdgeWithCostGraphExporter.doExport(graph, new BufferedWriter(new OutputStreamWriter(os)));
-    }
-
-    private static void callGSSolver(File file, int procN, int parN, OutputStream os) {
-        org.graphstream.graph.Graph g = Helper.fileToGsGraph(file);
-        ISolver solver;
-        if(parN != 1) {
-            solver = new AStarSolverPar(g, procN);
-        }
-        else {
-            solver = new AStarSolver(g, procN);
-        }
-        solver.doSolve();
-
-        Helper.stripUneeded(g);
-
-        FileSink sink = new FileSinkSpecialDot("88");
-        try {
-            sink.writeAll(g, new BufferedOutputStream(os));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 
     public static void main(String[] args) {
@@ -82,7 +56,7 @@ public class Main {
                 .action(Arguments.storeTrue())
                 .help("Choose whether to use GUI(Not implemented at the moment)");
         argumentParser.addArgument("-a", "--algorithm")
-                .choices("as", "bnb")
+                .choices("as")
                 .setDefault("as")
                 .required(false)
                 .help("Choose the algorithm to use");
@@ -126,12 +100,10 @@ public class Main {
         procN = (int) ns.getList("processors").get(0);
         parN = (int) ns.getList("parallel").get(0);
         fileName = (String) ns.getList("infile").get(0);
-        libraryStr = ns.getString("library");
         String s = ns.getString("outfile");
-        if(s== null) {
+        if (s == null) {
             os = new BufferedOutputStream(System.out);
-        }
-        else {
+        } else {
             try {
                 os = new FileOutputStream(new File(s));
             } catch (FileNotFoundException e) {
@@ -140,29 +112,17 @@ public class Main {
         }
 
         File inputFile = new File(fileName);
-        if(!inputFile.exists() || !inputFile.canRead()) {
+        if (!inputFile.exists() || !inputFile.canRead()) {
             System.err.println("Can't open file");
         }
 
-        if(gui) {
-            if (libraryStr.matches("gs")) {
-                org.graphstream.graph.Graph graph = Helper.fileToGsGraph(inputFile);
-                ISolver solver = new Solver.AStarSolver(graph, procN);
-                SwingMain.init(graph, solver);
-                SwingUtilities.invokeLater(new SwingMain());
-            }
-            else if (libraryStr.matches("old")) {
-                Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(inputFile);
-                ISolver solver = new SolverOld.AStarSolver(graph, procN);
-                SwingMain.init(graph, solver);
-                SwingUtilities.invokeLater(new SwingMain());
-            }
-        }
-        else {
-            if (libraryStr.matches("gs"))
-                callGSSolver(inputFile, procN, parN, os);
-            else if (libraryStr.matches("old"))
-                callSolverOld(inputFile, procN, parN, os);
+        if (gui) {
+            Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(inputFile);
+            ISolver solver = new Solver.AStarSolver(graph, procN);
+            SwingMain.init(graph, solver);
+            SwingUtilities.invokeLater(new SwingMain());
+        } else {
+            callSolverOld(inputFile, procN, parN, os);
         }
     }
 }

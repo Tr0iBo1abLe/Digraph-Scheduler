@@ -26,9 +26,9 @@ public class Vertex implements IHasCost, ICollectibleAttribute {
     public Map<String, String> getAttributes() {
         Map<String, String> attrs = new LinkedHashMap<>();
         attrs.put("Weight", String.valueOf(this.cost));
-        if(this.processor != -1)
+        if (this.processor != -1)
             attrs.put("Processor", String.valueOf(this.processor));
-        if(this.startTime != -1)
+        if (this.startTime != -1)
             attrs.put("Start", String.valueOf(this.startTime));
         return attrs;
     }
