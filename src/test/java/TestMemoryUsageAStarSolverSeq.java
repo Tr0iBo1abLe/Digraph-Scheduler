@@ -33,6 +33,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author Will Molloy, wmol664
  */
+@Ignore
 public class TestMemoryUsageAStarSolverSeq {
 
     private AbstractSolver solver;
