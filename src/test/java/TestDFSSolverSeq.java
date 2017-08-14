@@ -7,6 +7,7 @@ import Parser.InputParser;
 import Parser.VertexCtor;
 import Solver.AbstractSolver;
 import Solver.DFSSolver;
+import TestCommon.CommonTester;
 import Util.FileUtils;
 import Util.Helper;
 import org.junit.Before;
@@ -17,6 +18,7 @@ import java.io.File;
 
 import static TestCommon.TestConfig.TEST_FILE_PATH;
 import static TestCommon.TestConfig.TEST_MILESTONE_1_INPUT_PATH;
+import static TestCommon.TestConfig.TEST_SOLVER_PATH;
 import static junit.framework.TestCase.assertEquals;
 
 /**
@@ -28,14 +30,14 @@ import static junit.framework.TestCase.assertEquals;
 public class TestDFSSolverSeq {
 
     private static final String TEST_FILES_PATH = "src/test/resources/TestSolver/";
-    private static int PROCESSOR_COUNT;
     private Graph<Vertex, EdgeWithCost<Vertex>> graph;
     private InputParser<Vertex, EdgeWithCost<Vertex>> parser;
     private AbstractSolver solver;
+    private CommonTester tester;
 
     @Before
     public void setup() {
-        PROCESSOR_COUNT = 2;
+        tester = new CommonTester(DFSSolver.class);
         graph = new Graph<Vertex, EdgeWithCost<Vertex>>();
         parser = new InputParser<Vertex, EdgeWithCost<Vertex>>(new VertexCtor(), new EdgeCtor());
     }
@@ -43,7 +45,7 @@ public class TestDFSSolverSeq {
     @Test
     public void testStraightLine() {
         graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH + "input_straightline_4nodes.dot");
-        solver = new DFSSolver(graph, PROCESSOR_COUNT); // Must construct solver only after graph has been parsed in.
+        solver = new DFSSolver(graph, 4); // Must construct solver only after graph has been parsed in.
         solver.doSolve();
 
         String actual = GraphExporter.exportGraphToString(graph);
@@ -55,137 +57,75 @@ public class TestDFSSolverSeq {
      * This test ensures multiple cores are being used when they are required for the optimal schedule as there are no
      * dependencies between nodes.
      */
-    @Ignore
+    @Test
     public void test8Nodes0Edges() {
-        PROCESSOR_COUNT = 8;
-        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH + "input_8nodes_0edges.dot");
-        solver = new DFSSolver(graph, PROCESSOR_COUNT); // Must construct solver only after graph has been parsed in.
-        solver.doSolve();
-
-        String actual = GraphExporter.exportGraphToString(graph);
-        String expected = FileUtils.readFileToString(TEST_FILES_PATH + "output_8nodes_0edges.dot");
-        System.out.println(actual);
-        assertEquals(expected, actual);
+        solver = tester.doTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_8nodes_0edges.dot"));
+        assertEquals(3, solver.getFinalTime()); // test final time
     }
 
-
     /**
-     * Tests for Milestone 1 input provided on canvas.
-     * Processors = 2.
+     * Tests for Milestone 1 input provided on canvas. Processors = 2.
      */
-
     @Test
     public void testMilestone1Nodes7Processors2() {
-        PROCESSOR_COUNT = 2;
-        graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_7_OutTree.dot"));
-        graph.finalise();
-        solver = new DFSSolver(graph, PROCESSOR_COUNT);
-        solver.doSolve();
-
+        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_7_OutTree.dot"));
         assertEquals(28, solver.getFinalTime()); // test final time
     }
 
     @Test
     public void testMilestone1Nodes8Processors2() {
-        PROCESSOR_COUNT = 2;
-        graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_8_Random.dot"));
-        graph.finalise();
-        solver = new DFSSolver(graph, PROCESSOR_COUNT);
-        solver.doSolve();
-
+        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_8_Random.dot"));
         assertEquals(581, solver.getFinalTime()); // test final time
     }
 
     @Test
     public void testMilestone1Nodes9Processors2() {
-        PROCESSOR_COUNT = 2;
-        graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_9_SeriesParallel.dot"));
-        graph.finalise();
-        solver = new DFSSolver(graph, PROCESSOR_COUNT);
-        solver.doSolve();
-
+        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_9_SeriesParallel.dot"));
         assertEquals(55, solver.getFinalTime()); // test final time
     }
 
     @Test
     public void testMilestone1Nodes10Processors2() {
-        PROCESSOR_COUNT = 2;
-        graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot"));
-        graph.finalise();
-        solver = new DFSSolver(graph, PROCESSOR_COUNT);
-        solver.doSolve();
-
+        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot"));
         assertEquals(50, solver.getFinalTime()); // test final time
     }
 
     @Test
     public void testMilestone1Nodes11Processors2() {
-        PROCESSOR_COUNT = 2;
-        graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_11_OutTree.dot"));
-        graph.finalise();
-        solver = new DFSSolver(graph, PROCESSOR_COUNT);
-        solver.doSolve();
-
+        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_11_OutTree.dot"));
         assertEquals(350, solver.getFinalTime()); // test final time
     }
 
     /**
-     * Tests for Milestone 1 input provided on canvas.
-     * Processors = 4.
+     * Tests for Milestone 1 input provided on canvas. Processors = 4.
      */
-
     @Test
     public void testMilestone1Nodes7Processors4() {
-        PROCESSOR_COUNT = 4;
-        graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_7_OutTree.dot"));
-        graph.finalise();
-        solver = new DFSSolver(graph, PROCESSOR_COUNT);
-        solver.doSolve();
-
+        solver = tester.doTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_7_OutTree.dot"));
         assertEquals(22, solver.getFinalTime()); // test final time
     }
 
     @Test
     public void testMilestone1Nodes8Processors4() {
-        PROCESSOR_COUNT = 4;
-        graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_8_Random.dot"));
-        graph.finalise();
-        solver = new DFSSolver(graph, PROCESSOR_COUNT);
-        solver.doSolve();
-
+        solver = tester.doTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_8_Random.dot"));
         assertEquals(581, solver.getFinalTime()); // test final time
     }
 
     @Test
     public void testMilestone1Nodes9Processors4() {
-        PROCESSOR_COUNT = 4;
-        graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_9_SeriesParallel.dot"));
-        graph.finalise();
-        solver = new DFSSolver(graph, PROCESSOR_COUNT);
-        solver.doSolve();
-
+        solver = tester.doTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_9_SeriesParallel.dot"));
         assertEquals(55, solver.getFinalTime()); // test final time
     }
 
     @Test
     public void testMilestone1Nodes10Processors4() {
-        PROCESSOR_COUNT = 4;
-        graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot"));
-        graph.finalise();
-        solver = new DFSSolver(graph, PROCESSOR_COUNT);
-        solver.doSolve();
-
+        solver = tester.doTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot"));
         assertEquals(50, solver.getFinalTime()); // test final time
     }
 
     @Test
     public void testMilestone1Nodes11Processors4() {
-        PROCESSOR_COUNT = 4;
-        graph = Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_11_OutTree.dot"));
-        graph.finalise();
-        solver = new DFSSolver(graph, PROCESSOR_COUNT);
-        solver.doSolve();
-
+        solver = tester.doTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_11_OutTree.dot"));
         assertEquals(227, solver.getFinalTime()); // test final time
     }
 
