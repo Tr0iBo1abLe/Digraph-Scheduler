@@ -84,6 +84,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
             this.priority = nextPriority;
         }
 
+
     }
 
     public static void initialise(Graph<Vertex, EdgeWithCost<Vertex>> graph) {
