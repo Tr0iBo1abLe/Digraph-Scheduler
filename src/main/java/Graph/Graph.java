@@ -101,11 +101,11 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
         return es.stream().map(e -> e.getFrom()).collect(Collectors.toList());
     }
 
-    private Set<E> getInwardEdges_(@NonNull final V v) {
+    private Set<E> getInwardEdges(@NonNull final V v) {
         return forwardEdges.stream().filter(e -> e.getTo().equals(v)).collect(Collectors.toSet());
     }
 
-    private Set<E> getOutwardEdges_(@NonNull final V v) {
+    private Set<E> getOutwardEdges(@NonNull final V v) {
         return forwardEdges.stream().filter(e -> e.getFrom().equals(v)).collect(Collectors.toSet());
     }
 
@@ -184,17 +184,17 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
     public void finalise() {
         assignIds();
         buildMaps();
-        getVertices().forEach(v -> calculateBottomLevels(v, 0));
+        getVertices().forEach(vertex -> calculateBottomLevels(vertex, 0));
     }
 
     private void buildMaps() {
-        getVertices().forEach(v -> {
-            Set<E> inwards = getInwardEdges_(v);
-            Set<E> outwards = getOutwardEdges_(v);
-            this.inwardEdgeMap.put(v, fj.data.List.iterableList(inwards));
-            this.outwardEdgeMap.put(v, fj.data.List.iterableList(outwards));
-            this.parentVertexMap.put(v, fj.data.List.iterableList(getReverseVertices(inwards)));
-            this.childrenVertexMap.put(v, fj.data.List.iterableList(getForwardVertices(outwards)));
+        getVertices().forEach(vertex -> {
+            Set<E> inwards = getInwardEdges(vertex);
+            Set<E> outwards = getOutwardEdges(vertex);
+            this.inwardEdgeMap.put(vertex, fj.data.List.iterableList(inwards));
+            this.outwardEdgeMap.put(vertex, fj.data.List.iterableList(outwards));
+            this.parentVertexMap.put(vertex, fj.data.List.iterableList(getReverseVertices(inwards)));
+            this.childrenVertexMap.put(vertex, fj.data.List.iterableList(getForwardVertices(outwards)));
         });
     }
 
@@ -204,26 +204,26 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
     @Synchronized
     private void assignIds() {
         int i = 0;
-        for (V v : getVertices()) {
-            v.setAssignedId(i);
-            this.verticesMap.put(i, v);
+        for (V vertex : getVertices()) {
+            vertex.setAssignedId(i);
+            this.verticesMap.put(i, vertex);
             i++;
         }
     }
 
     /**
-     * Exhaustively and recursively computed the bottom level for all the vertices.
+     * Exhaustively and recursively compute the bottom level for all the vertices.
      *
-     * @param v     the vertex to compute
+     * @param vertex the vertex to compute
      * @param level the current level
      */
-    private void calculateBottomLevels(@NonNull final V v,
+    private void calculateBottomLevels(@NonNull final V vertex,
                                        final int level) {
-        if (v.getBottomLevel() < level) {
-            v.setBottomLevel(level);
+        if (vertex.getBottomLevel() < level) {
+            vertex.setBottomLevel(level);
         } else {
-            getParentVertices(v).forEach(
-                    w -> calculateBottomLevels(w, level + v.getCost()));
+            getParentVertices(vertex).forEach(parentVertex ->
+                    calculateBottomLevels(parentVertex, level + vertex.getCost()));
         }
     }
 

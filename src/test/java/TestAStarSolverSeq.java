@@ -135,4 +135,12 @@ public class TestAStarSolverSeq {
         assertEquals(227, solver.getFinalTime()); // test final time
     }
 
+    /**
+     * Attempting to use ALOT of memory with many search states.
+     */
+    @Test
+    public void hugeSearchStateUseUpMemory(){
+
+    }
+
 }

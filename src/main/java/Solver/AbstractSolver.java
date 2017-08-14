@@ -25,23 +25,17 @@ abstract public class AbstractSolver implements ISolver {
     @Getter
     protected int finalTime;
 
-    protected void scheduleVertices(SearchState s) {
-        final int[] processors = Arrays.stream(s.getProcessors()).map(x -> x + 1).toArray();
-        final int[] startTimes = s.getStartTimes();
-        final int[] max = {-1};
-        graph.getVertices().forEach(v -> {
-            int id = v.getAssignedId();
+    protected void scheduleVertices(SearchState completeSchedule) {
+        final int[] processors = Arrays.stream(completeSchedule.getProcessors()).map(x -> x + 1).toArray();
+        final int[] startTimes = completeSchedule.getStartTimes();
+        finalTime = completeSchedule.getPriority();
+
+        graph.getVertices().forEach(vertex -> {
+            int id = vertex.getAssignedId();
             try {
-                graph.scheduleVertex(v, processors[id], startTimes[id]);
-                // get the ending time
-                int temp = startTimes[id] + v.getCost();
-                if (temp > max[0]) {
-                    max[0] = temp;
-                }
-                finalTime = max[0];
+                graph.scheduleVertex(vertex, processors[id], startTimes[id]);
             } catch (GraphException e) {
                 e.printStackTrace();
-
             }
         });
     }
@@ -53,11 +47,11 @@ abstract public class AbstractSolver implements ISolver {
     protected static class GUIUpdater {
         IUpdatableState ui;
 
-        public GUIUpdater(IUpdatableState ui) {
+        protected GUIUpdater(IUpdatableState ui) {
             this.ui = ui;
         }
 
-        public void update(ISearchState searchState) {
+        protected void update(ISearchState searchState) {
             ui.updateWithState(searchState);
         }
     }

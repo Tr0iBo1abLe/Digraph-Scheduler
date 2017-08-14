@@ -91,7 +91,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
 
     }
 
-    public static void init(Graph<Vertex, EdgeWithCost<Vertex>> graph) {
+    public static void initialise(Graph<Vertex, EdgeWithCost<Vertex>> graph) {
         SearchState.graph = graph;
         totalSize = graph.getVertices().size();
     }

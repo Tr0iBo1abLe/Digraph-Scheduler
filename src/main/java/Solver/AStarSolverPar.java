@@ -24,7 +24,7 @@ public final class AStarSolverPar extends AbstractSolver {
 
     @Override
     public void doSolve() {
-        SearchState.init(graph);
+        SearchState.initialise(graph);
 
 
         if (updater != null) {

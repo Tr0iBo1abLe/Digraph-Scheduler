@@ -39,7 +39,6 @@ public class CommonTester {
      */
     public AbstractSolver doTest(int processorCount, File inputDOTFile){
         Graph graph = Helper.fileToGraph(inputDOTFile);
-        graph.finalise();
 
         AbstractSolver solver = null;
         try {

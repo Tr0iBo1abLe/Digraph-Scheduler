@@ -22,7 +22,7 @@ public final class AStarSolver extends AbstractSolver {
     @Override
     public void doSolve() {
         /* This method is blocking, we need a way to notify the GUI */
-        SearchState.init(graph);
+        SearchState.initialise(graph);
 
         if (updater != null) {
             /* We have an updater and a UI to update */
@@ -39,21 +39,21 @@ public final class AStarSolver extends AbstractSolver {
         queue.add(new SearchState());
 
         while (true) {
-            SearchState searchState = queue.remove();
+            SearchState currentBestSchedule = queue.remove();
 
-            if (searchState.getSize() == graph.getVertices().size()) {
+            if (currentBestSchedule.getSize() == graph.getVertices().size()) {
                 // We have found THE optimal solution
-                scheduleVertices(searchState);
+                scheduleVertices(currentBestSchedule);
                 if (updater != null && timer != null) {
-                    updater.update(searchState);
+                    updater.update(currentBestSchedule);
                     timer.cancel();
                 }
                 return;
             }
 
-            for (Vertex vertex : searchState.getLegalVertices()) {
+            for (Vertex vertex : currentBestSchedule.getLegalVertices()) {
                 for (int processorID = 0; processorID < processorCount; processorID++) {
-                    SearchState nextSearchState = new SearchState(searchState, vertex, processorID);
+                    SearchState nextSearchState = new SearchState(currentBestSchedule, vertex, processorID);
                     if (!queue.contains(nextSearchState)) {
                         queue.add(nextSearchState);
                     }
