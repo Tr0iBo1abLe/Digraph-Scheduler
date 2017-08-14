@@ -1,8 +1,8 @@
+import Graph.Edge;
 import Graph.EdgeWithCost;
 import Graph.Exceptions.GraphException;
 import Graph.Graph;
 import Graph.Vertex;
-import Graph.Edge;
 import Parser.EdgeCtor;
 import Parser.InputParser;
 import Parser.VertexCtor;
@@ -12,18 +12,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Unit tests for the input parser.
  * Tests that the data structures (Graph,Vertex and Edge) store the correct data for various input orders/types.
- *
+ * <p>
  * Created by will on 7/29/17.
  */
 public class TestParser {
@@ -36,7 +33,7 @@ public class TestParser {
     private Vertex[] vertices;
 
     @Before
-    public void setup(){
+    public void setup() {
         graph = new Graph<Vertex, EdgeWithCost<Vertex>>();
         parser = new InputParser<Vertex, EdgeWithCost<Vertex>>(new VertexCtor(), new EdgeCtor());
     }
@@ -45,18 +42,18 @@ public class TestParser {
      * Destroy any testing objects.
      */
     @After
-    public void cleanup(){
+    public void cleanup() {
         vertices = null;
     }
 
     /**
      * Three tests for a simple input with all Vertices being parsed before Edges.
-     *
+     * <p>
      * Makes sure Edges correspond to existing Vertex structures and their costs are correct.
      */
-    private void nodesBeforeEdgesSetup(){
+    private void nodesBeforeEdgesSetup() {
         // Parse file to graph
-        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"verticesBeforeEdges.dot");
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH + "verticesBeforeEdges.dot");
 
         // Create expected vertices
         vertices = new Vertex[4];
@@ -70,7 +67,7 @@ public class TestParser {
      * Test set of stored Vertices is correct.
      */
     @Test
-    public void testNodesBeforeEdgesVertexSet(){
+    public void testNodesBeforeEdgesVertexSet() {
         nodesBeforeEdgesSetup();
 
         Set<Vertex> actualVertices = graph.getVertices();
@@ -84,29 +81,29 @@ public class TestParser {
 
     /**
      * Test set of ForwardEdges is correct; note they include the edge cost.
-      */
+     */
     @Test
-    public void testNodesBeforeEdgesForwardEdgeSet(){
+    public void testNodesBeforeEdgesForwardEdgeSet() {
         nodesBeforeEdgesSetup();
 
         Set<EdgeWithCost<Vertex>> actualFwd = graph.getForwardEdges();
         Set<EdgeWithCost<Vertex>> expectedFwd = new HashSet<EdgeWithCost<Vertex>>();
-        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[0], vertices[1],1));
-        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[0], vertices[2],2));
-        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[1], vertices[3],2));
-        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[2], vertices[3],1));
+        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[0], vertices[1], 1));
+        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[0], vertices[2], 2));
+        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[1], vertices[3], 2));
+        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[2], vertices[3], 1));
         assertEquals(expectedFwd, actualFwd);
     }
 
     /**
      * Three tests for a simple input with all Edges before Vertices.
-     *
+     * <p>
      * When edges are read in first temporary vertices are created. These tests ensures those vertices have their
      * costs updated once the corresponding vertices are read in.
      */
-    private void verticesBeforeEdgesSetup(){
+    private void verticesBeforeEdgesSetup() {
         // Parse file to graph
-        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"edgesBeforeVertices.dot");
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH + "edgesBeforeVertices.dot");
 
         // Create expected vertices
         vertices = new Vertex[4];
@@ -121,7 +118,7 @@ public class TestParser {
      * Test set of stored Vertices is correct.
      */
     @Test
-    public void testVerticesBeforeEdgesVertexSet(){
+    public void testVerticesBeforeEdgesVertexSet() {
         verticesBeforeEdgesSetup();
 
         Set<Vertex> actualVertices = graph.getVertices();
@@ -137,33 +134,33 @@ public class TestParser {
      * Test set of ForwardEdges is correct; note they include the edge cost.
      */
     @Test
-    public void testVerticesBeforeEdgesFwdEdgeSet(){
+    public void testVerticesBeforeEdgesFwdEdgeSet() {
         verticesBeforeEdgesSetup();
 
         Set<EdgeWithCost<Vertex>> actualFwd = graph.getForwardEdges();
         Set<EdgeWithCost<Vertex>> expectedFwd = new HashSet<EdgeWithCost<Vertex>>();
-        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[0], vertices[1],1));
-        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[0], vertices[2],2));
-        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[1], vertices[3],2));
-        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[2], vertices[3],1));
+        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[0], vertices[1], 1));
+        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[0], vertices[2], 2));
+        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[1], vertices[3], 2));
+        expectedFwd.add(new EdgeWithCost<Vertex>(vertices[2], vertices[3], 1));
         assertEquals(expectedFwd, actualFwd);
     }
 
     /**
      * Ensures Graph.getForwardVertices returns the set of "To" vertices for a given vertex.
      * The order doesn't matter.
-     *
+     * <p>
      * In this case the graph looks like:
-     *    b <-- a --> c
+     * b <-- a --> c
      */
     @Test
-    public void testGetForwardVertices(){
+    public void testGetForwardVertices() {
         vertices = new Vertex[3];
         vertices[0] = new Vertex("a", 2);
         vertices[1] = new Vertex("b", 3);
         vertices[2] = new Vertex("c", 3);
 
-        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"sampleinput.dot");
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH + "sampleinput.dot");
 
         List<Vertex> actual = graph.getChildrenVertices(vertices[0]);
 
@@ -178,23 +175,23 @@ public class TestParser {
     /**
      * Ensures Graph.getReverseVertices returns the set of "From" vertices for a given vertex.
      * The order doesn't matter.
-     *
+     * <p>
      * In this case the graph looks like:
-     *    b --> d <-- c
+     * b --> d <-- c
      */
     @Test
-    public void testGetReverseVertices(){
+    public void testGetReverseVertices() {
         vertices = new Vertex[3];
         vertices[0] = new Vertex("d", 2);
         vertices[1] = new Vertex("b", 3);
         vertices[2] = new Vertex("c", 3);
 
-        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"sampleinput.dot");
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH + "sampleinput.dot");
 
         List<Vertex> actual = graph.getParentVertices(vertices[0]);
 
         ArrayList<Vertex> expectedSetup = new ArrayList<Vertex>();
-        expectedSetup.add(vertices[2]); // TODO, order matters? If not use a set?
+        expectedSetup.add(vertices[2]);
         expectedSetup.add(vertices[1]);
         List<Vertex> expected = fj.data.List.iterableList(expectedSetup);
 
@@ -205,11 +202,11 @@ public class TestParser {
      * Ensures getForwardEdge returns the correct edge (from: a, to: b, cost: 1). (a -(1)-> b)
      */
     @Test
-    public void testGetForwardEdge(){
-        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"sampleinput.dot");
+    public void testGetForwardEdge() {
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH + "sampleinput.dot");
 
         Vertex a = new Vertex("a", 2);
-        Vertex b = new Vertex("b",3);
+        Vertex b = new Vertex("b", 3);
         Edge edgeExpected = new EdgeWithCost(a, b, 1);
         Edge edgeActual = graph.getForwardEdge(a, b);
 
@@ -221,8 +218,8 @@ public class TestParser {
      * Ensures null is returned when looking up a vertex that doesn't exist in the graph.
      */
     @Test
-    public void testLookupVertexByIDVertexDoesntExist(){
-        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"sampleinput.dot");
+    public void testLookupVertexByIDVertexDoesntExist() {
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH + "sampleinput.dot");
         // Graph has a,b,c,d NOT z
         assertNull(graph.lookUpVertexById("z"));
     }
@@ -232,8 +229,8 @@ public class TestParser {
      * when looking up a vertex that exists in the graph.
      */
     @Test
-    public void testLookupVertexByIDVertexExists(){
-        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"sampleinput.dot");
+    public void testLookupVertexByIDVertexExists() {
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH + "sampleinput.dot");
         Vertex aActual = graph.lookUpVertexById("a");
         Vertex aExpected = new Vertex("a", 2);
         assertEquals(aExpected, aActual);
@@ -244,8 +241,8 @@ public class TestParser {
      * that doesn't exist in the graph.
      */
     @Test
-    public void testScheduleVertexNonExistingException(){
-        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"sampleinput.dot");
+    public void testScheduleVertexNonExistingException() {
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH + "sampleinput.dot");
         try {
             // Graph has a,b,c,d NOT z
             graph.scheduleVertex(new Vertex("z", 2), 0, 0);
@@ -259,19 +256,17 @@ public class TestParser {
      * Ensures a Scheduled vertex has had its processor and start time values set correctly.
      */
     @Test
-    public void testScheduleVertexUpdatesCorrectly(){
-        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH +"sampleinput.dot");
+    public void testScheduleVertexUpdatesCorrectly() {
+        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH + "sampleinput.dot");
         Vertex a = graph.lookUpVertexById("a");
         try {
-            graph.scheduleVertex(a, 0, 0 );
+            graph.scheduleVertex(a, 0, 0);
         } catch (GraphException e) {
             e.printStackTrace();
         }
-        assertEquals(a.getProcessor(),0);
-        assertEquals(a.getStartTime(),0);
+        assertEquals(a.getProcessor(), 0);
+        assertEquals(a.getStartTime(), 0);
     }
-
-
 
 
 }

@@ -1,4 +1,4 @@
-package SolverOld.Parallel;
+package Solver.Parallel;
 
 import akka.actor.AbstractActor;
 

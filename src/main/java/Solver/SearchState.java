@@ -1,46 +1,41 @@
 package Solver;
 
 import CommonInterface.ISearchState;
+import Graph.EdgeWithCost;
+import Graph.Graph;
+import Graph.Vertex;
 import fj.F;
 import fj.data.IterableW;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A class of partial solution
  */
-public class SearchState implements Comparable<SearchState>, ISearchState{
+@EqualsAndHashCode
+public class SearchState implements Comparable<SearchState>, ISearchState {
     @Getter
-    private static Graph graph;
+    private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
     @Getter
     private static int totalSize;
-    @Getter
-    private int priority;
-    @Getter
-    private Node lastVertex;
     @Getter
     private final int[] processors;
     @Getter
     private final int[] startTimes;
     @Getter
+    private int priority;
+    @Getter
+    private Vertex lastVertex;
+    @Getter
     private int size;
 
     @Getter
-    private int dfCost;
-
-    public static void init(Graph g) {
-        graph = g;
-        totalSize = g.getNodeCount();
-    }
+    private int DFcost; // Required for DFSSolver
 
     public SearchState() {
         this.priority = 0;
@@ -50,7 +45,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState{
         this.startTimes = Arrays.stream(new int[totalSize]).map(_i -> -1).toArray();
     }
 
-    public SearchState(SearchState prevState, Node vertex, int processorId) {
+    public SearchState(SearchState prevState, Vertex vertex, int processorId) {
         this.priority = prevState.priority;
         this.size = prevState.size;
         this.processors = Arrays.copyOf(prevState.processors, prevState.processors.length);
@@ -59,56 +54,59 @@ public class SearchState implements Comparable<SearchState>, ISearchState{
 
         this.size++;
 
-        F<Double, F<Edge, Double>> dependencyFoldingFn = t -> e -> {
-            int aid = e.getSourceNode().getIndex();
-            if(this.processors[aid] != processorId && this.processors[aid] != -1) {
-                double newTime = (this.startTimes[aid] + (Double)e.getSourceNode().getAttribute("Weight") + (Double)e.getAttribute("Weight"));
-                if(newTime > t) return newTime;
+        F<Integer, F<EdgeWithCost<Vertex>, Integer>> dependencyFoldingFn = t -> e -> {
+            Vertex v = e.getFrom();
+            int aid = v.getAssignedId();
+            if (this.processors[aid] != processorId && this.processors[aid] != -1) {
+                int newTime = this.startTimes[aid] + v.getCost() + e.getCost();
+                if (newTime > t) return newTime;
             }
             return t;
         };
 
-        F<Double, F<Node, Double>> schedulerFoldingFn = t -> v -> {
-            int id = v.getIndex();
-            if(this.processors[id] == processorId && this.processors[id] != -1) {
-                Double newTime = (this.startTimes[id] + (Double)graph.getNode(id).getAttribute("Weight"));
-                if(newTime > t) return newTime;
+        F<Integer, F<Vertex, Integer>> schedulerFoldingFn = t -> v -> {
+            int id = v.getAssignedId();
+            if (this.processors[id] == processorId && this.processors[id] != -1) {
+                int newTime = this.startTimes[id] + graph.getVertex(id).getCost();
+                if (newTime > t) return newTime;
             }
             return t;
         };
 
-        double time = 0;
-        final IterableW<Node> iterableV = IterableW.wrap(graph.getNodeSet());
-        final IterableW<Edge> iterableP = IterableW.wrap(lastVertex.getEachEnteringEdge());
+        int time = 0;
+        final IterableW<Vertex> iterableV = IterableW.wrap(graph.getVertices());
         time = iterableV.foldLeft(schedulerFoldingFn, time);
-        time = iterableP.foldLeft(dependencyFoldingFn, time);
+        time = graph.getInwardsEdges(lastVertex).foldLeft(dependencyFoldingFn, time);
 
-        this.processors[this.lastVertex.getIndex()] = processorId;
-        this.startTimes[this.lastVertex.getIndex()] = (int)time;
+        this.processors[this.lastVertex.getAssignedId()] = processorId;
+        this.startTimes[this.lastVertex.getAssignedId()] = time;
 
-        int nextP = (int) (time + ((Double) this.lastVertex.getAttribute("Weight")) + ((Double) this.lastVertex.getAttribute("BL")));
+        int nextPriority = time + this.lastVertex.getCost() + this.lastVertex.getBottomLevel();
 
-        if(this.priority < nextP) {
-            this.priority = nextP;
+        if (this.priority < nextPriority) {
+            this.priority = nextPriority;
         }
-        
-        dfCost = nextP;
-        
+
+        DFcost = nextPriority;
+
     }
 
-    Set<Node> getLegalVertices() {
-        Set<Node> set = new HashSet<>();
-        F<Boolean, F<Object, Boolean>> fn = b -> v -> {
-            if(b.equals(true)) return b;
-            Node n = (Node) v;
-            return processors[n.getIndex()] < 0;
+    public static void initialise(Graph<Vertex, EdgeWithCost<Vertex>> graph) {
+        SearchState.graph = graph;
+        totalSize = graph.getVertices().size();
+    }
+
+    Set<Vertex> getLegalVertices() {
+        Set<Vertex> set = new HashSet<>();
+        F<Boolean, F<Vertex, Boolean>> fn = b -> v -> {
+            if (b.equals(true)) return b;
+            return processors[v.getAssignedId()] < 0;
         };
         /* This could be short-circuited */
-        for(int i = 0; i < totalSize; i++) {
-            Node v = graph.getNode(i);
-            if(processors[i] < 0) {
-                final IterableW<Object> wrap = IterableW.wrap(v.getEnteringEdgeSet().stream().map(Edge::getSourceNode).collect(Collectors.toSet()));
-                if(wrap.foldLeft(fn, false)) continue;
+        for (int i = 0; i < totalSize; i++) {
+            Vertex v = graph.getVertex(i);
+            if (processors[i] < 0) {
+                if (graph.getParentVertices(v).foldLeft(fn, false)) continue;
                 set.add(v);
             }
         }

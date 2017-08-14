@@ -30,14 +30,13 @@ public class Helper {
                                              final double level) {
         Double res;
         res = v.getAttribute("BL", Double.class);
-        if(res == null) {
+        if (res == null) {
             v.setAttribute("BL", 0d);
             res = 0d;
         }
-        if(res < level) {
+        if (res < level) {
             v.setAttribute("BL", level);
-        }
-        else {
+        } else {
             v.getEnteringEdgeSet().forEach(e -> {
                 Node n = e.getSourceNode();
                 calculateBottomLevels(n, level + v.getAttribute("Weight", Double.class));
@@ -46,9 +45,7 @@ public class Helper {
     }
 
     public static void stripUneeded(@NonNull final org.graphstream.graph.Graph g) {
-        g.getNodeSet().forEach(e -> {
-            e.removeAttribute("BL");
-        });
+        g.getNodeSet().forEach(e -> e.removeAttribute("BL"));
     }
 
     public static org.graphstream.graph.Graph convertToGsGraph(Graph<? extends Vertex, ? extends EdgeWithCost> convertee) {
@@ -96,7 +93,7 @@ public class Helper {
         return graph;
     }
 
-    public static String gsGraphToDOTString(org.graphstream.graph.Graph graph){
+    public static String gsGraphToDOTString(org.graphstream.graph.Graph graph) {
         FileSink sink = new FileSinkDOT();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
