@@ -10,6 +10,7 @@ import Solver.AbstractSolver;
 import TestCommon.CommonTester;
 import Util.FileUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -66,7 +67,7 @@ public class TestAStarSolverSeq {
     @Test
     public void test8Nodes0Edges() {
         solver = tester.doTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_8nodes_0edges.dot"));
-        assertEquals(3, solver.getFinalTime()); // test final time
+        assertEquals(3, solver.getFinalTime());
     }
 
     /**
@@ -75,31 +76,31 @@ public class TestAStarSolverSeq {
     @Test
     public void testMilestone1Nodes7Processors2() {
         solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_7_OutTree.dot"));
-        assertEquals(28, solver.getFinalTime()); // test final time
+        assertEquals(28, solver.getFinalTime());
     }
 
     @Test
     public void testMilestone1Nodes8Processors2() {
         solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_8_Random.dot"));
-        assertEquals(581, solver.getFinalTime()); // test final time
+        assertEquals(581, solver.getFinalTime());
     }
 
     @Test
     public void testMilestone1Nodes9Processors2() {
         solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_9_SeriesParallel.dot"));
-        assertEquals(55, solver.getFinalTime()); // test final time
+        assertEquals(55, solver.getFinalTime());
     }
 
     @Test
     public void testMilestone1Nodes10Processors2() {
         solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot"));
-        assertEquals(50, solver.getFinalTime()); // test final time
+        assertEquals(50, solver.getFinalTime());
     }
 
     @Test
     public void testMilestone1Nodes11Processors2() {
         solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_11_OutTree.dot"));
-        assertEquals(350, solver.getFinalTime()); // test final time
+        assertEquals(350, solver.getFinalTime());
     }
 
     /**
@@ -108,39 +109,31 @@ public class TestAStarSolverSeq {
     @Test
     public void testMilestone1Nodes7Processors4() {
         solver = tester.doTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_7_OutTree.dot"));
-        assertEquals(22, solver.getFinalTime()); // test final time
+        assertEquals(22, solver.getFinalTime());
     }
 
     @Test
     public void testMilestone1Nodes8Processors4() {
         solver = tester.doTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_8_Random.dot"));
-        assertEquals(581, solver.getFinalTime()); // test final time
+        assertEquals(581, solver.getFinalTime());
     }
 
     @Test
     public void testMilestone1Nodes9Processors4() {
         solver = tester.doTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_9_SeriesParallel.dot"));
-        assertEquals(55, solver.getFinalTime()); // test final time
+        assertEquals(55, solver.getFinalTime());
     }
 
     @Test
     public void testMilestone1Nodes10Processors4() {
         solver = tester.doTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot"));
-        assertEquals(50, solver.getFinalTime()); // test final time
+        assertEquals(50, solver.getFinalTime());
     }
 
     @Test
     public void testMilestone1Nodes11Processors4() {
         solver = tester.doTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_11_OutTree.dot"));
-        assertEquals(227, solver.getFinalTime()); // test final time
-    }
-
-    /**
-     * Attempting to use ALOT of memory with many search states.
-     */
-    @Test
-    public void hugeSearchStateUseUpMemory(){
-
+        assertEquals(227, solver.getFinalTime());
     }
 
 }
