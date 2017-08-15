@@ -17,8 +17,10 @@ import java.util.stream.IntStream;
 
 /**
  * A class of partial solution
+ *
+ * @author Dovahkiin Huang, Will Molloy
  */
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"processors", "startTimes"})
 public class SearchState implements Comparable<SearchState>, ISearchState {
     @Getter
     private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
@@ -89,10 +91,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         if (this.priority < nextPriority) {
             this.priority = nextPriority;
         }
-
-
     }
-
 
     Set<Vertex> getLegalVertices() {
         Set<Vertex> set = new HashSet<>();
