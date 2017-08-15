@@ -96,7 +96,7 @@ public class SwingMain implements Runnable, IUpdatableState {
         return panel1;
     }
 
-    
+
 
     private class SolverWorker extends SwingWorker<Void, Void> {
 
