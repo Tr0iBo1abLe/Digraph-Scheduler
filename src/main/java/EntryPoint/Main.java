@@ -61,16 +61,18 @@ public class Main {
         ArgumentParser argumentParser = ArgumentParsers.newArgumentParser("HDNW")
                 .defaultHelp(true)
                 .description("A GPU Scheduling program");
+        /*
         argumentParser.addArgument("-l", "--library")
                 .choices("gs", "old")
                 .setDefault("gs")
                 .required(false)
                 .help("Choose library to use. gs -> Use graphstream library, old -> use old parser and datastructure");
+                */
         argumentParser.addArgument("-g", "--gui")
                 .action(Arguments.storeTrue())
                 .help("Choose whether to use GUI(Not implemented at the moment)");
         argumentParser.addArgument("-a", "--algorithm")
-                .choices("as")
+                .choices("as", "bnb")
                 .setDefault("as")
                 .required(false)
                 .help("Choose the algorithm to use");
@@ -106,7 +108,7 @@ public class Main {
         }
 
         int procN, parN;
-        String fileName, libraryStr, outfileName;
+        String fileName, outfileName;
         OutputStream os = null;
         boolean gui;
         Algo algo;
