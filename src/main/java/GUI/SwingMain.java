@@ -96,6 +96,7 @@ public class SwingMain implements Runnable, IUpdatableState {
         return panel1;
     }
 
+    
 
     private class SolverWorker extends SwingWorker<Void, Void> {
 
@@ -122,6 +123,7 @@ public class SwingMain implements Runnable, IUpdatableState {
         protected void done() {
             GraphViewer graphViewer = (GraphViewer)viewer;
             graphViewer.colorNodes(visualGraph);
+            // print output, graph exporter
         }
 
 
@@ -298,6 +300,7 @@ public class SwingMain implements Runnable, IUpdatableState {
             } else return stylesStr[i];
         }
     }
+
 
 
 }
