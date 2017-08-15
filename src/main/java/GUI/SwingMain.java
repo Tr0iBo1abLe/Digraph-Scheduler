@@ -261,6 +261,11 @@ public class SwingMain implements Runnable, IUpdatableState {
             solver.doSolve();
             return null;
         }
+
+        @Override
+        protected void done() {
+            // print output, graph exporter
+        }
     }
 
 }

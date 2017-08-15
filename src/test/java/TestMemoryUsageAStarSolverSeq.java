@@ -6,6 +6,7 @@ import Parser.InputParser;
 import Parser.VertexCtor;
 import Solver.AStarSolver;
 import Solver.AbstractSolver;
+import Solver.DFSSolver;
 import TestCommon.CommonTester;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -41,22 +42,22 @@ public class TestMemoryUsageAStarSolverSeq {
 
     @Before
     public void setup() {
-        tester = new CommonTester(AStarSolver.class);
+        tester = new CommonTester(DFSSolver.class);
     }
 
-    @Ignore
+    @Test
     public void memoryTest96Nodes(){
         solver = tester.doTest(96, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_96nodes_0edges.dot"));
         assertEquals(3, solver.getFinalTime());
     }
 
-    @Ignore
+    @Test
     public void memoryTest48Nodes(){
         solver = tester.doTest(48, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_48nodes_0edges.dot"));
         assertEquals(3, solver.getFinalTime());
     }
 
-    @Ignore
+    @Test
     public void memoryTest24Nodes(){
         solver = tester.doTest(24, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_24nodes_0edges.dot"));
         assertEquals(3, solver.getFinalTime());
@@ -68,7 +69,7 @@ public class TestMemoryUsageAStarSolverSeq {
         assertEquals(3, solver.getFinalTime());
     }
 
-    @Ignore
+    @Test
     public void memoryTest16Nodes8Cores(){
         solver = tester.doTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_16nodes_0edges.dot"));
         assertEquals(3, solver.getFinalTime());
