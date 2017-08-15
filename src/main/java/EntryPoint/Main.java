@@ -6,6 +6,9 @@ import GUI.SwingMain;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
+import Solver.AStarSolver;
+import Solver.AStarSolverPar;
+import Solver.DFSSolver;
 import Util.Helper;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
@@ -22,18 +25,29 @@ public class Main {
     private Main() {
         //Ensure this class is not instantiated
     }
+
+    private enum Algo{AS, BNB}
         /*
          * Now this is the place where namespaces come in handy!
          * Sadly, we are in Java
          */
 
-    private static void callSolverOld(File file, int procN, int parN, OutputStream os) {
+    private static void callSolver(File file, int procN, int parN, Algo algo, OutputStream os) {
         Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(file);
-        ISolver solver;
-        if (parN != 1) {
-            solver = new Solver.AStarSolverPar(graph, procN);
-        } else {
-            solver = new Solver.AStarSolver(graph, procN);
+        ISolver solver = null;
+        switch(algo) {
+            case AS:
+                if (parN != 1) {
+                    solver = new AStarSolverPar(graph, procN);
+                } else {
+                    solver = new AStarSolver(graph, procN);
+                }
+                break;
+            case BNB:
+                if (true) { // Change this when parallel is done
+                    solver = new DFSSolver(graph, procN);
+                }
+                break;
         }
         solver.doSolve();
 
@@ -95,17 +109,21 @@ public class Main {
         String fileName, libraryStr, outfileName;
         OutputStream os = null;
         boolean gui;
+        Algo algo;
 
         gui = ns.getBoolean("gui");
         procN = (int) ns.getList("processors").get(0);
         parN = (int) ns.getList("parallel").get(0);
         fileName = (String) ns.getList("infile").get(0);
-        String s = ns.getString("outfile");
-        if (s == null) {
+        String outfile = ns.getString("outfile");
+        String algoStr = ns.getString("algorithm");
+        if(algoStr.matches("as")) algo = Algo.AS;
+        else algo = Algo.BNB;
+        if (outfile == null) {
             os = new BufferedOutputStream(System.out);
         } else {
             try {
-                os = new FileOutputStream(new File(s));
+                os = new FileOutputStream(new File(outfile));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -122,7 +140,7 @@ public class Main {
             SwingMain.init(graph, solver);
             SwingUtilities.invokeLater(new SwingMain());
         } else {
-            callSolverOld(inputFile, procN, parN, os);
+            callSolver(inputFile, procN, parN, algo, os);
         }
     }
 }
