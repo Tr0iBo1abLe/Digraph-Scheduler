@@ -44,7 +44,7 @@ public class SwingMain implements Runnable, IUpdatableState {
     private static final ColorManager colorManager = new ColorManager();
     private static ISolver solver;
     private static org.graphstream.graph.Graph visualGraph = null;
-    private static Viewer viewer = null;
+    private static GraphViewer viewer = null;
     private static ViewPanel viewPanel = null;
     private static ViewerPipe viewerPipe = null;
     private static JFrame rootFrame;
@@ -121,8 +121,7 @@ public class SwingMain implements Runnable, IUpdatableState {
          */
         @Override
         protected void done() {
-            GraphViewer graphViewer = (GraphViewer)viewer;
-            graphViewer.colorNodes(visualGraph);
+            viewer.colorNodes(visualGraph);
             // print output, graph exporter
         }
 
@@ -204,6 +203,7 @@ public class SwingMain implements Runnable, IUpdatableState {
         System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
         WebLookAndFeel.install();
         viewer = new GraphViewer(visualGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+        viewer.initializeLabels(visualGraph);
         viewer.enableAutoLayout();
         viewerPipe = viewer.newViewerPipe();
         viewPanel = viewer.addDefaultView(false);
@@ -262,10 +262,18 @@ public class SwingMain implements Runnable, IUpdatableState {
                 seriesList.add(series);
             }
         });
+
+
+        //update the GS viewer
+        viewer.updateNodes(visualGraph);
+
+
+        //update progress bar
         int curSize = searchState.getSize();
         if (progressBar1.getValue() < curSize) {
             progressBar1.setValue(curSize);
         }
+
 
         Platform.runLater(() -> {
             scheduleChart.getData().clear();
@@ -273,6 +281,7 @@ public class SwingMain implements Runnable, IUpdatableState {
             scheduleChart.getData().addAll(seriesList.toArray(seriesArr));
         });
     }
+
 
     private void initFX(JFXPanel fxPanel) {
         Scene scene = new Scene(scheduleChart);

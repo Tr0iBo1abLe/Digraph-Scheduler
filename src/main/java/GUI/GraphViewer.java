@@ -1,5 +1,6 @@
 package GUI;
 
+import lombok.Synchronized;
 import org.graphstream.graph.Graph;
 import org.graphstream.stream.ProxyPipe;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
@@ -23,10 +24,11 @@ public class GraphViewer extends Viewer{
     private void setHQ(){
         graph.addAttribute("ui.quality");
         graph.addAttribute("ui.antialias");
-        addHeader();
     }
 
-    private void addHeader(){
+
+    @Synchronized
+    public void initializeLabels(Graph graph){
         SpriteManager sman = new SpriteManager(graph);
         Sprite header = sman.addSprite("header");
         header.addAttribute("ui.label", "Mouse LB: drag and move;  " +
@@ -34,13 +36,38 @@ public class GraphViewer extends Viewer{
                 "Mouse RB: resize graph;  " +
                 "Double-click: show/remove all attributes");
         header.setPosition(Units.PX, 0, 15, 0);
+        int i = 0;
+        graph.getNodeSet().stream().forEach(n -> {
+            Sprite defaultAttr = sman.addSprite("idAndWeight"+n.getId());
+            defaultAttr.addAttribute("ui.label",
+                    "ID:" + n.getAttribute("id") +
+                            " Wt:" + n.getAttribute("Weight"));
+            defaultAttr.addAttribute("ui.style",
+                    "text-alignment: center;\n" +
+                            "\ttext-background-mode: rounded-box;\n" +
+                            "\ttext-background-color: yellow;\n" +
+                            "\ttext-size: 15px;\n");
+            defaultAttr.attachToNode(n.getAttribute("id"));
+            n.setAttribute("ui.label",
+                    "\tProc:"+n.getAttribute("processor")+" \n"+
+                            "\tSTime:"+n.getAttribute("startTime"));
+            n.setAttribute("ui.style", "text-mode: hidden;");
+                }
+        );
+        graph.getEdgeSet().stream().forEach(eg -> {
+            eg.setAttribute("ui.label",
+                            "Wt:"+eg.getAttribute("Weight"));
+            eg.setAttribute("ui.style", "text-mode: hidden;");
+                }
+        );
     }
 
+    @Synchronized
     public void colorNodes(Graph graph){
         graph.getNodeSet().stream().forEach(n -> {
-            if ((n.getAttribute("Processor")!=null)&&((int)n.getAttribute("Processor")!=(-1))){
+            if ((n.getAttribute("processor")!=null)&&((int)n.getAttribute("processor")!=(-1))){
 
-                double color = (double) (int) n.getAttribute("Processor");
+                double color = (double) (int) n.getAttribute("processor");
 
                 if (color < 10.00){
                     color = color*(0.1);
@@ -55,5 +82,13 @@ public class GraphViewer extends Viewer{
                 n.setAttribute("ui.color", color);
             }
         });
+    }
+
+    @Synchronized
+    public void updateNodes(Graph graph){
+        graph.getNodeSet().stream().forEach(n -> n.setAttribute("ui.label",
+                "\tProc:"+n.getAttribute("processor")+" \n"+
+                        "\tSTime:"+n.getAttribute("startTime"))
+        );
     }
 }

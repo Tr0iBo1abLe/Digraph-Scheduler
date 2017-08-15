@@ -1,6 +1,8 @@
 package GUI.Models;
 
 
+import GUI.GraphViewer;
+import lombok.Synchronized;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -24,9 +26,9 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
 
     private boolean checkpoint = false;
 
-    public GMouseManager(View v, Graph g) {
+    public GMouseManager(View v, Graph graph) {
         this.view = v;
-        this.graph = g;
+        this.graph = graph;
         view.addMouseMotionListener(this);
         view.addMouseListener(this);
     }
@@ -38,31 +40,38 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
      * @param e
      */
     @Override
+    @Synchronized
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON3){
             view.getCamera().resetView();
         }else{
             if (e.getClickCount()==2){
                 if (!checkpoint){
-                    graph.getNodeSet().stream().forEach(n -> n.addAttribute("ui.label",
-                            "ID:"+n.getAttribute("label")+" \n"+
-                                    "\tWt:"+n.getAttribute("Weight")+" \n"+
-                                    "\tProc:"+n.getAttribute("Processor")+" \n"+
-                                    "\tSTime:"+n.getAttribute("Start"))
-                    );
-                    graph.getEdgeSet().stream().forEach(eg -> eg.addAttribute("ui.label",
-                            "Wt:"+eg.getAttribute("Weight"))
-                    );
+                    enableAttrDisplay();
                 }else {
-                    graph.getNodeSet().stream().forEach(n -> n.removeAttribute("ui.label"));
-                    graph.getEdgeSet().stream().forEach(eg -> eg.removeAttribute("ui.label"));
+                    disableAttrDisplay();
                 }
                 checkpoint = !checkpoint;
             }
         }
     }
 
+    @Synchronized
+    private void enableAttrDisplay(){
+        graph.getNodeSet().stream().forEach(n -> n.setAttribute("ui.style", "text-mode: normal;"));
+        graph.getEdgeSet().stream().forEach(eg -> eg.setAttribute("ui.style", "text-mode: normal;"));
+    }
+
+
+    @Synchronized
+    private void disableAttrDisplay(){
+        graph.getNodeSet().stream().forEach(n -> n.setAttribute("ui.style", "text-mode: hidden;"));
+        graph.getEdgeSet().stream().forEach(eg -> eg.setAttribute("ui.style", "text-mode: hidden;"));
+    }
+
+
     @Override
+    @Synchronized
     public void mousePressed(MouseEvent event) {
 //        super.mousePressed(event);
         previousX = event.getX();
@@ -101,21 +110,16 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
     }
 
     @Override
+    @Synchronized
     public void mouseDragged(MouseEvent event) {
-//        super.mouseDragged(event);
-//        System.out.println(event.getSource().getClass().toString());
         GraphicElement ge = view.findNodeOrSpriteAt((double)event.getX(), (double)event.getY());
         if (ge == null){
             int y = event.getY();
             int x = event.getX();
-//            System.out.println(x + " " + y);
-//            System.out.println(((double)x - (double)previousX)+" "+((double)y - (double)previousY));
             Point3 p = view.getCamera().getViewCenter();
-//            System.out.println(p.x + " " + p.y);
             Point3 px = view.getCamera().transformGuToPx(p.x, p.y, p.z);
             Point3 pgu = view.getCamera().transformPxToGu(px.x + ((double)x - (double)previousX)*(-1.00), px.y + ((double)y - (double)previousY)*(-1.00));
             view.getCamera().setViewCenter(pgu.x, pgu.y, pgu.z);
-//        view.getCamera().setViewCenter((double)x,(double)y,p.z);
             previousX = x;
             previousY = y;
         }
@@ -139,13 +143,12 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
      * @see MouseWheelEvent
      */
     @Override
+    @Synchronized
     public void mouseWheelMoved(MouseWheelEvent e) {
-
         if (e.getWheelRotation()<0){
             view.getCamera().setViewPercent(view.getCamera().getViewPercent()*0.8);
         }else if ((e.getWheelRotation()>0)){
             view.getCamera().setViewPercent(view.getCamera().getViewPercent()*1.5);
         }
-
     }
 }
