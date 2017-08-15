@@ -4,6 +4,9 @@ import org.graphstream.graph.Graph;
 import org.graphstream.stream.ProxyPipe;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.view.Viewer;
+import org.graphstream.ui.spriteManager.SpriteManager;
+import org.graphstream.ui.spriteManager.Sprite;
+import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
 import org.graphstream.ui.view.ViewerListener;
 
 import java.awt.event.*;
@@ -20,6 +23,17 @@ public class GraphViewer extends Viewer{
     private void setHQ(){
         graph.addAttribute("ui.quality");
         graph.addAttribute("ui.antialias");
+        addHeader();
+    }
+
+    private void addHeader(){
+        SpriteManager sman = new SpriteManager(graph);
+        Sprite header = sman.addSprite("header");
+        header.addAttribute("ui.label", "Mouse LB: drag and move;  " +
+                "Mouse Wheel: zoom in/out;  " +
+                "Mouse RB: resize graph;  " +
+                "Double-click: show/remove all attributes");
+        header.setPosition(Units.PX, 0, 15, 0);
     }
 
     public void colorNodes(Graph graph){

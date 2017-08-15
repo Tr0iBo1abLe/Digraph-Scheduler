@@ -45,7 +45,7 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
             if (e.getClickCount()==2){
                 if (!checkpoint){
                     graph.getNodeSet().stream().forEach(n -> n.addAttribute("ui.label",
-                            "ID:"+n.getId()+" \n"+
+                            "ID:"+n.getAttribute("label")+" \n"+
                                     "\tWt:"+n.getAttribute("Weight")+" \n"+
                                     "\tProc:"+n.getAttribute("Processor")+" \n"+
                                     "\tSTime:"+n.getAttribute("Start"))

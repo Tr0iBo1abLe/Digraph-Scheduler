@@ -41,5 +41,12 @@ public class GraphCSS {
             "\tarrow-size: 45px, 18px;\n" +
             "\ttext-size: 15px;\n" +
             "\t}\n" +
+            "\n" +
+            "\n" +
+            "sprite {\n" +
+            "\ttext-alignment: at-right;\n" +
+            "\ttext-size: 12px;\n" +
+            "\tfill-color: rgba(0,0,0,0);\n" +
+            "\t}\n" +
             "\n";
 }
