@@ -51,4 +51,9 @@ public class CommonTester {
         assert solver != null;
         return solver; // so we can analyse output with JUnit
     }
+
+    @Override
+    public String toString(){
+        return solverClass.getName();
+    }
 }

@@ -23,7 +23,7 @@ abstract public class AbstractSolver implements ISolver {
     protected final int processorCount;
     protected GUIUpdater updater;
     @Getter
-    protected int finalTime;
+    private int finalTime;
 
     protected void scheduleVertices(SearchState completeSchedule) {
         final int[] processors = Arrays.stream(completeSchedule.getProcessors()).map(x -> x + 1).toArray();

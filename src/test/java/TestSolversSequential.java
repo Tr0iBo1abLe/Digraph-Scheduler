@@ -1,21 +1,16 @@
-import Exporter.GraphExporter;
-import Graph.EdgeWithCost;
-import Graph.Graph;
-import Graph.Vertex;
-import Parser.EdgeCtor;
-import Parser.InputParser;
-import Parser.VertexCtor;
+import Solver.AStarSolver;
 import Solver.AbstractSolver;
 import Solver.DFSSolver;
 import TestCommon.CommonTester;
-import Util.FileUtils;
-import Util.Helper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
 
 import static TestCommon.TestConfig.TEST_FILE_PATH;
 import static TestCommon.TestConfig.TEST_MILESTONE_1_INPUT_PATH;
@@ -23,34 +18,39 @@ import static TestCommon.TestConfig.TEST_SOLVER_PATH;
 import static junit.framework.TestCase.assertEquals;
 
 /**
- * Unit tests for the DFS Solver implementation that's sequential (no parallel programming is tested here).
+ * Unit tests for the A* Solver implementation that's sequential (no parallel programming is tested here).
  * <p>
- * Created by mason on 7/31/17.
+ * This tests a possible solution for Milestone1 where we need a valid schedule (doesn't have to be optimal) and
+ * doesn't need to be parallel.
+ * <p>
+ * Note: the final time is confirmed for the optimal schedule but coming up with the actual optimal schedule
+ * takes a while so only asserting the final test time for now. TODO Possible solution to this is an isValidSchedule() method.
+ * <p>
+ * Created by will on 7/31/17.
  */
-public class TestDFSSolverSeq {
+@RunWith(Parameterized.class)
+public class TestSolversSequential {
 
-    private static final String TEST_FILES_PATH = "src/test/resources/TestSolver/";
-    private Graph<Vertex, EdgeWithCost<Vertex>> graph;
-    private InputParser<Vertex, EdgeWithCost<Vertex>> parser;
     private AbstractSolver solver;
     private CommonTester tester;
 
-    @Before
-    public void setup() {
-        tester = new CommonTester(DFSSolver.class);
-        graph = new Graph<Vertex, EdgeWithCost<Vertex>>();
-        parser = new InputParser<Vertex, EdgeWithCost<Vertex>>(new VertexCtor(), new EdgeCtor());
+    public TestSolversSequential(CommonTester tester){
+        this.tester = tester;
     }
 
+    @Parameters(name = "{0}") // tester.toString()
+    public static Collection data() {
+        return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class));
+    }
+
+    /**
+     * This test ensures the schedule is valid as the solver may place nodes on other cores in parallel when it
+     * cannot. The optimal schedule here only uses 1 core.
+     */
     @Test
     public void testStraightLine() {
-        graph = parser.doParseAndFinaliseGraph(TEST_FILES_PATH + "input_straightline_4nodes.dot");
-        solver = new DFSSolver(graph, 4); // Must construct solver only after graph has been parsed in.
-        solver.doSolve();
-
-        String actual = GraphExporter.exportGraphToString(graph);
-        String expected = FileUtils.readFileToString(TEST_FILES_PATH + "output_straightline_4nodes.dot");
-        assertEquals(expected, actual);
+        solver = tester.doTest(6, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_straightline_4nodes.dot"));
+        assertEquals(12, solver.getFinalTime());
     }
 
     /**
