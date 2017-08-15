@@ -48,6 +48,7 @@ public class GraphViewer extends Viewer{
                             "\ttext-background-color: yellow;\n" +
                             "\ttext-size: 15px;\n");
             defaultAttr.attachToNode(n.getAttribute("id"));
+            defaultAttr.setPosition(Units.PX,50,180,90);
             n.setAttribute("ui.label",
                     "\tProc:"+n.getAttribute("processor")+" \n"+
                             "\tSTime:"+n.getAttribute("startTime"));

@@ -9,6 +9,7 @@ import Graph.Graph;
 import Graph.Vertex;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Arrays;
 
@@ -24,6 +25,10 @@ abstract public class AbstractSolver implements ISolver {
     protected GUIUpdater updater;
     @Getter
     private int finalTime;
+    @Getter
+    protected boolean isUpdatableProgressBar = false; //make progress bar compatible with both algorithms if necessary
+    @Getter
+    protected int stateCounter = 0; //essentially a loop counter, used by GUI to update progress bar
 
     protected void scheduleVertices(SearchState completeSchedule) {
         final int[] processors = Arrays.stream(completeSchedule.getProcessors()).map(x -> x + 1).toArray();
@@ -51,8 +56,8 @@ abstract public class AbstractSolver implements ISolver {
             this.ui = ui;
         }
 
-        protected void update(ISearchState searchState) {
-            ui.updateWithState(searchState);
+        protected void update(ISearchState searchState, AbstractSolver solver) {
+            ui.updateWithState(searchState, solver);
         }
     }
 }

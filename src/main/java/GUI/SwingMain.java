@@ -7,6 +7,7 @@ import GUI.Models.GMouseManager;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
+import Solver.AbstractSolver;
 import Util.Helper;
 import com.alee.laf.WebLookAndFeel;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -28,6 +29,7 @@ import org.graphstream.ui.view.util.DefaultMouseManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -122,6 +124,7 @@ public class SwingMain implements Runnable, IUpdatableState {
         @Override
         protected void done() {
             viewer.colorNodes(visualGraph);
+            progressBar1.setValue(progressBar1.getMaximum());
             // print output, graph exporter
         }
 
@@ -217,7 +220,8 @@ public class SwingMain implements Runnable, IUpdatableState {
     @Override
     public void run() {
         if (!inited) throw new RuntimeException(getClass() + " has to be initialise'd before running");
-        progressBar1.setMaximum(visualGraph.getNodeSet().size());
+        //estimate of the maximum number of states
+        progressBar1.setMaximum(visualGraph.getNodeSet().size()*visualGraph.getNodeSet().size()*solver.getProcessorCount());
         rootFrame.setContentPane(panel1);
         rootFrame.pack();
         rootFrame.setPreferredSize(new Dimension(1000, 1000));
@@ -227,7 +231,7 @@ public class SwingMain implements Runnable, IUpdatableState {
 
     @Override
     @Synchronized
-    public void updateWithState(ISearchState searchState) {
+    public void updateWithState(ISearchState searchState, AbstractSolver solver) {
         if (searchState == null) return;
         // Remove the past data
         visualGraph.getNodeSet().forEach(e -> {
@@ -269,7 +273,7 @@ public class SwingMain implements Runnable, IUpdatableState {
 
 
         //update progress bar
-        int curSize = searchState.getSize();
+        int curSize = solver.getStateCounter();
         if (progressBar1.getValue() < curSize) {
             progressBar1.setValue(curSize);
         }

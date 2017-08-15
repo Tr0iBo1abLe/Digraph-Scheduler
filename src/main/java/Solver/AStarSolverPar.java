@@ -29,11 +29,13 @@ public final class AStarSolverPar extends AbstractSolver {
 
         if (updater != null) {
             /* We have an updater and a UI to update */
+            isUpdatableProgressBar = true;
+            AbstractSolver solver = this; //provide a reference to GUI classes
             timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
                                           @Override
                                           public void run() {
-                                              updater.update(queue.peek());
+                                              updater.update(queue.peek(), solver);
                                           }
                                       },
                     100, 100);
@@ -46,17 +48,21 @@ public final class AStarSolverPar extends AbstractSolver {
             if (s.getSize() == graph.getVertices().size()) {
                 // We have found THE optimal solution
                 if (updater != null && timer != null) {
-                    updater.update(s);
+                    updater.update(s,this);
                     timer.cancel();
                 }
                 scheduleVertices(s);
                 return;
             }
             s.getLegalVertices().parallelStream().forEach(v -> IntStream.range(0, processorCount).parallel().forEach(i -> {
-                        SearchState next = new SearchState(s, v, i);
-                        if (!queue.contains(next)) {
-                            queue.add(next);
-                        }
+                SearchState next = new SearchState(s, v, i);
+                if (!queue.contains(next)) {
+                    queue.add(next);
+                }
+                //increase the state counter for GUI, process only when there is a GUI to update
+                if (isUpdatableProgressBar){ //true if there is a GUI progress bar needs to be updated
+                    stateCounter++;
+                }
                     }
             ));
             /* Expansion */

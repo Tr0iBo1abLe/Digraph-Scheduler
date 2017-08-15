@@ -10,6 +10,7 @@ import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
 import org.graphstream.ui.view.View;
+import org.graphstream.ui.view.util.DefaultMouseManager;
 
 
 import java.awt.event.*;
@@ -73,10 +74,8 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
     @Override
     @Synchronized
     public void mousePressed(MouseEvent event) {
-//        super.mousePressed(event);
         previousX = event.getX();
         previousY = event.getY();
-//        System.out.println(previousX + " " + previousY);
     }
 
     /**
@@ -85,8 +84,9 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
      * @param e
      */
     @Override
+    @Synchronized
     public void mouseReleased(MouseEvent e) {
-
+        //don't care
     }
 
     /**
@@ -95,8 +95,9 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
      * @param e
      */
     @Override
+    @Synchronized
     public void mouseEntered(MouseEvent e) {
-
+        //don't care
     }
 
     /**
@@ -105,8 +106,9 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
      * @param e
      */
     @Override
+    @Synchronized
     public void mouseExited(MouseEvent e) {
-
+        //don't care
     }
 
     @Override
@@ -132,8 +134,9 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
      * @param e
      */
     @Override
+    @Synchronized
     public void mouseMoved(MouseEvent e) {
-
+        //don't care
     }
 
     /**
