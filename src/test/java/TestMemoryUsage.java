@@ -1,18 +1,17 @@
-import Graph.EdgeWithCost;
-import Graph.Graph;
-import Graph.Vertex;
-import Parser.EdgeCtor;
-import Parser.InputParser;
-import Parser.VertexCtor;
 import Solver.AStarSolver;
 import Solver.AbstractSolver;
 import Solver.DFSSolver;
 import TestCommon.CommonTester;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collection;
 
 import static TestCommon.TestConfig.TEST_FILE_PATH;
 import static TestCommon.TestConfig.TEST_SOLVER_PATH;
@@ -34,18 +33,22 @@ import static org.junit.Assert.assertEquals;
  *
  * @author Will Molloy, wmol664
  */
-@Ignore
-public class TestMemoryUsageAStarSolverSeq {
+@RunWith(Parameterized.class)
+public class TestMemoryUsage {
 
     private AbstractSolver solver;
     private CommonTester tester;
 
-    @Before
-    public void setup() {
-        tester = new CommonTester(DFSSolver.class);
+    public TestMemoryUsage(CommonTester tester){
+        this.tester = tester;
     }
 
-    @Test
+    @Parameters(name = "{0}") // tester.toString()
+    public static Collection data() {
+        return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class));
+    }
+
+    @Ignore
     public void memoryTest96Nodes(){
         solver = tester.doTest(96, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_96nodes_0edges.dot"));
         assertEquals(3, solver.getFinalTime());
@@ -69,10 +72,10 @@ public class TestMemoryUsageAStarSolverSeq {
         assertEquals(3, solver.getFinalTime());
     }
 
-    @Test
+    @Ignore
     public void memoryTest16Nodes8Cores(){
         solver = tester.doTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_16nodes_0edges.dot"));
-        assertEquals(3, solver.getFinalTime());
+        assertEquals(6, solver.getFinalTime());
     }
 
     @Test

@@ -16,11 +16,11 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 /**
- * A class of partial solution
+ * Represents a partial schedule.
  *
  * @author Dovahkiin Huang, Will Molloy
  */
-@EqualsAndHashCode(exclude = {"processors", "startTimes"})
+@EqualsAndHashCode(exclude = {"processors", "startTimes"}) // exclude partial schedules where nodes only differ by their processor
 public class SearchState implements Comparable<SearchState>, ISearchState {
     @Getter
     private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
