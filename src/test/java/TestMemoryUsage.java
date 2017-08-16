@@ -1,4 +1,5 @@
 import Solver.AStarSolver;
+import Solver.AStarSolverPar;
 import Solver.AbstractSolver;
 import Solver.DFSSolver;
 import TestCommon.CommonTester;
@@ -45,11 +46,17 @@ public class TestMemoryUsage {
 
     @Parameters(name = "{0}") // tester.toString()
     public static Collection data() {
-        return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class));
+        return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class), new CommonTester(AStarSolverPar.class));
     }
 
     @Ignore
-    public void memoryTest96Nodes(){
+    public void memoryTest96Nodes1Core(){
+        solver = tester.doTest(1, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_96nodes_0edges.dot"));
+        assertEquals(288, solver.getFinalTime());
+    }
+
+    @Ignore
+    public void memoryTest96Nodes96Core(){
         solver = tester.doTest(96, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_96nodes_0edges.dot"));
         assertEquals(3, solver.getFinalTime());
     }
