@@ -46,7 +46,7 @@ public class TestMemoryUsage {
 
     @Parameters(name = "{0}") // tester.toString()
     public static Collection data() {
-        return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(AStarSolverPar.class));
+        return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class), new CommonTester(AStarSolverPar.class));
     }
 
     @Ignore
