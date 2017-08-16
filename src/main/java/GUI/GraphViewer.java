@@ -102,12 +102,12 @@ public class GraphViewer extends Viewer{
                     return;
                 }
 
-                color = "fill-color: rgb("+(int)(new Random().nextDouble()*255d)+","+
-                        (int)(new Random().nextDouble()*255d)+","+
-                        (int)(new Random().nextDouble()*255d)+"), " +
-                        "rgb("+(int)((1d - new Random().nextDouble())*255d)+","+
-                        (int)((1d - new Random().nextDouble())*255d)+","+
-                        (int)((1d - new Random().nextDouble())*255d)+");";
+                color = "fill-color: rgb("+(int)Math.sqrt((new Random().nextDouble()*255d * new Random().nextDouble()*255d))+","+
+                        (int)Math.sqrt((new Random().nextDouble()*255d * new Random().nextDouble()*255d))+","+
+                        (int)Math.sqrt((new Random().nextDouble()*255d * new Random().nextDouble()*255d))+"), " +
+                        "rgb("+(int)Math.sqrt(((1d - new Random().nextDouble())*255d * (1d - new Random().nextDouble())*255d))+","+
+                        (int)Math.sqrt(((1d - new Random().nextDouble())*255d * (1d - new Random().nextDouble())*255d))+","+
+                        (int)Math.sqrt(((1d - new Random().nextDouble())*255d * (1d - new Random().nextDouble())*255d))+");";
                 n.setAttribute("ui.style", color);
 
                 colorSet.put(n.getAttribute("processor"), color);
