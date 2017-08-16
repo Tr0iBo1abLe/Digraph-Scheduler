@@ -101,7 +101,7 @@ public class GraphViewer extends Viewer{
                     n.setAttribute("ui.style", color);
                     return;
                 }
-                
+
                 color = "fill-color: rgb("+(int)(new Random().nextDouble()*255d)+","+
                         (int)(new Random().nextDouble()*255d)+","+
                         (int)(new Random().nextDouble()*255d)+"), " +
