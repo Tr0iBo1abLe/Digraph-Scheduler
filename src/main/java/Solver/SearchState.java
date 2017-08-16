@@ -35,7 +35,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
     @Getter
     private Vertex lastVertex;
     @Getter
-    private int size;
+    private int numVertices;
 
     public static void initialise(Graph<Vertex, EdgeWithCost<Vertex>> graph) {
         SearchState.graph = graph;
@@ -44,7 +44,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
 
     public SearchState() {
         this.priority = 0;
-        this.size = 0;
+        this.numVertices = 0;
         this.lastVertex = null;
         this.processors = Arrays.stream(new int[totalSize]).map(_i -> -1).toArray();
         this.startTimes = Arrays.stream(new int[totalSize]).map(_i -> -1).toArray();
@@ -52,12 +52,12 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
 
     public SearchState(SearchState prevState, Vertex vertex, int processorId) {
         this.priority = prevState.priority;
-        this.size = prevState.size;
+        this.numVertices = prevState.numVertices;
         this.processors = Arrays.copyOf(prevState.processors, prevState.processors.length);
         this.startTimes = Arrays.copyOf(prevState.startTimes, prevState.startTimes.length);
         this.lastVertex = vertex;
 
-        this.size++;
+        this.numVertices++;
 
         F<Integer, F<EdgeWithCost<Vertex>, Integer>> dependencyFoldingFn = t -> e -> {
             Vertex v = e.getFrom();

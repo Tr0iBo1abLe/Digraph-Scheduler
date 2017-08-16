@@ -8,5 +8,5 @@ public interface ISearchState {
 
     int[] getStartTimes();
 
-    int getSize();
+    int getNumVertices();
 }

@@ -179,7 +179,7 @@ public class SwingMain implements Runnable, IUpdatableState {
                 seriesList.add(series);
             }
         });
-        int curSize = searchState.getSize();
+        int curSize = searchState.getNumVertices();
         if (progressBar1.getValue() < curSize) {
             progressBar1.setValue(curSize);
         }
