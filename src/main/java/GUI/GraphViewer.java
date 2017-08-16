@@ -101,13 +101,13 @@ public class GraphViewer extends Viewer{
                     n.setAttribute("ui.style", color);
                     return;
                 }
-
-                color = "fill-color: rgb("+(int)(new Random().nextDouble()*255)+","+
-                        (int)(new Random().nextDouble()*255)+","+
-                        (int)(new Random().nextDouble()*255)+"), " +
-                        "rgb("+(int)((1 - new Random().nextDouble())*255)+","+
-                        (int)((1 - new Random().nextDouble())*255)+","+
-                        (int)((1 - new Random().nextDouble())*255)+");";
+                
+                color = "fill-color: rgb("+(int)(new Random().nextDouble()*255d)+","+
+                        (int)(new Random().nextDouble()*255d)+","+
+                        (int)(new Random().nextDouble()*255d)+"), " +
+                        "rgb("+(int)((1d - new Random().nextDouble())*255d)+","+
+                        (int)((1d - new Random().nextDouble())*255d)+","+
+                        (int)((1d - new Random().nextDouble())*255d)+");";
                 n.setAttribute("ui.style", color);
 
                 colorSet.put(n.getAttribute("processor"), color);
