@@ -57,8 +57,6 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         this.startTimes = Arrays.copyOf(prevState.startTimes, prevState.startTimes.length);
         this.lastVertex = vertex;
 
-        this.numVertices++;
-
         F<Integer, F<EdgeWithCost<Vertex>, Integer>> dependencyFoldingFn = t -> e -> {
             Vertex v = e.getFrom();
             int aid = v.getAssignedId();
@@ -79,8 +77,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         };
 
         int time = 0;
-        final IterableW<Vertex> iterableV = IterableW.wrap(graph.getVertices());
-        time = iterableV.foldLeft(schedulerFoldingFn, time);
+        time = IterableW.wrap(graph.getVertices()).foldLeft(schedulerFoldingFn, time);
         time = graph.getInwardsEdges(lastVertex).foldLeft(dependencyFoldingFn, time);
 
         this.processors[this.lastVertex.getAssignedId()] = processorId;
@@ -91,6 +88,8 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         if (this.priority < nextPriority) {
             this.priority = nextPriority;
         }
+
+        this.numVertices++;
     }
 
     Set<Vertex> getLegalVertices() {
