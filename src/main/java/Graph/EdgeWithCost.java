@@ -19,7 +19,6 @@ public class EdgeWithCost<V extends Vertex> extends Edge<V> implements IHasCost 
                         final int cost) {
         super(from, to);
         this.cost = cost;
-
     }
 
     @Override
