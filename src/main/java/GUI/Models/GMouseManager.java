@@ -9,6 +9,7 @@ import org.graphstream.graph.Node;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
 import org.graphstream.ui.graphicGraph.GraphicGraph;
+import org.graphstream.ui.spriteManager.SpriteManager;
 import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.util.DefaultMouseManager;
 
@@ -21,15 +22,17 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
 
     private View view;
     private Graph graph;
+    private GraphViewer graphViewer;
 
     private int previousX;
     private int previousY;
 
     private boolean checkpoint = false;
 
-    public GMouseManager(View v, Graph graph) {
+    public GMouseManager(View v, Graph graph, GraphViewer graphViewer) {
         this.view = v;
         this.graph = graph;
+        this.graphViewer = graphViewer;
         view.addMouseMotionListener(this);
         view.addMouseListener(this);
     }
@@ -59,14 +62,24 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
 
     @Synchronized
     private void enableAttrDisplay(){
-        graph.getNodeSet().stream().forEach(n -> n.setAttribute("ui.style", "text-mode: normal;"));
+//        graph.getNodeSet().stream().forEach(n -> n.setAttribute("ui.style", "text-mode: normal;"));
+        graphViewer.getSman().forEach(s -> {
+            if (!(graphViewer.getSpriteSet().contains(s))){
+                s.setAttribute("ui.style", "text-mode: normal;");
+            }
+        });
         graph.getEdgeSet().stream().forEach(eg -> eg.setAttribute("ui.style", "text-mode: normal;"));
     }
 
 
     @Synchronized
     private void disableAttrDisplay(){
-        graph.getNodeSet().stream().forEach(n -> n.setAttribute("ui.style", "text-mode: hidden;"));
+//        graph.getNodeSet().stream().forEach(n -> n.setAttribute("ui.style", "text-mode: hidden;"));
+        graphViewer.getSman().forEach(s -> {
+            if (!(graphViewer.getSpriteSet().contains(s))){
+                s.setAttribute("ui.style", "text-mode: hidden;");
+            }
+        });
         graph.getEdgeSet().stream().forEach(eg -> eg.setAttribute("ui.style", "text-mode: hidden;"));
     }
 

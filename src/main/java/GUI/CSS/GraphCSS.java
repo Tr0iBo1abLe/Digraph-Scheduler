@@ -6,7 +6,7 @@ public class GraphCSS {
             "}\n" +
             "\n" +
             "node {\n" +
-            "\tsize: 60px;\n" +
+            "\tsize: 70px;\n" +
             "\tshape: circle;\n" +
             "\tfill-mode: gradient-diagonal2;\n" +
             "\tfill-color: orange, red;\n" +
@@ -15,8 +15,8 @@ public class GraphCSS {
             "\tshadow-mode: gradient-vertical;\n" +
             "\ttext-background-mode: rounded-box;\n" +
             "\ttext-background-color: yellow;\n" +
-            "\ttext-alignment: above;\n" +
-            "\ttext-size: 15px;\n" +
+            "\ttext-alignment: center;\n" +
+            "\ttext-size: 16px;\n" +
             "}\n" +
             "\n" +
             "\n" +
@@ -45,7 +45,7 @@ public class GraphCSS {
             "\n" +
             "sprite {\n" +
             "\ttext-alignment: at-right;\n" +
-            "\ttext-size: 12px;\n" +
+            "\ttext-size: 15px;\n" +
             "\tfill-color: rgba(0,0,0,0);\n" +
             "\t}\n" +
             "\n";

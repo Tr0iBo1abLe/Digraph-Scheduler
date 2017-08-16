@@ -206,12 +206,12 @@ public class SwingMain implements Runnable, IUpdatableState {
         System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
         WebLookAndFeel.install();
         viewer = new GraphViewer(visualGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-        viewer.initializeLabels(visualGraph);
+        viewer.initializeLabels(visualGraph); //make sure this method get called immediately after the call to constructor
         viewer.enableAutoLayout();
         viewerPipe = viewer.newViewerPipe();
         viewPanel = viewer.addDefaultView(false);
-        viewPanel.addMouseListener(new GMouseManager(viewPanel, visualGraph));
-        viewPanel.addMouseWheelListener(new GMouseManager(viewPanel, visualGraph));
+        viewPanel.addMouseListener(new GMouseManager(viewPanel, visualGraph, viewer));
+        viewPanel.addMouseWheelListener(new GMouseManager(viewPanel, visualGraph, viewer));
 //        visualGraph.addAttribute("ui.stylesheet", STYLE_RESORUCE);
         rootFrame = new JFrame();
         inited = true;
@@ -269,7 +269,7 @@ public class SwingMain implements Runnable, IUpdatableState {
 
 
         //update the GS viewer
-        viewer.updateNodes(visualGraph);
+        viewer.updateNodes();
 
 
         //update progress bar
