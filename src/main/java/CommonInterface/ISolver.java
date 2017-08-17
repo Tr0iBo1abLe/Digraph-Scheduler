@@ -1,6 +1,6 @@
 package CommonInterface;
 
-import GUI.IUpdatableState;
+import GUI.Interfaces.IUpdatableState;
 
 /**
  * Created by e on 30/07/17.

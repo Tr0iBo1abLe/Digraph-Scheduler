@@ -1,4 +1,4 @@
-package GUI;
+package GUI.Interfaces;
 
 import CommonInterface.ISearchState;
 import Solver.AbstractSolver;

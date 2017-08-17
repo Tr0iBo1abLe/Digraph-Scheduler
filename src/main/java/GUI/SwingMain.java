@@ -3,7 +3,11 @@ package GUI;
 import CommonInterface.ISearchState;
 import CommonInterface.ISolver;
 import GUI.CSS.GraphCSS;
+import GUI.Events.SysInfoMonitoringThread;
+import GUI.Interfaces.IUpdatableState;
+import GUI.Interfaces.SwingMainInterface;
 import GUI.Models.GMouseManager;
+import GUI.Models.SysInfoModel;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
@@ -21,15 +25,12 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.paint.Color;
 import lombok.Synchronized;
-import org.graphstream.graph.implementations.Graphs;
 import org.graphstream.ui.swingViewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.ViewerPipe;
-import org.graphstream.ui.view.util.DefaultMouseManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -39,7 +40,7 @@ import java.util.stream.IntStream;
 /**
  * Created by e on 7/08/17.
  */
-public class SwingMain implements Runnable, IUpdatableState {
+public class SwingMain implements SwingMainInterface {
 
     public static final String STYLE_RESORUCE = "url('style.css')";
     private static final String procStr = "Processor";
@@ -131,11 +132,14 @@ public class SwingMain implements Runnable, IUpdatableState {
 
     }
 
-    public SwingMain() {
+    public SwingMain() { //TODO - Pause and resume feature
         $$$setupUI$$$();
         startButton.addActionListener(actionEvent -> {
             solverWorker = new SolverWorker();
             solverWorker.execute();
+            SysInfoMonitoringThread sysInfoMonitoringThread = new SysInfoMonitoringThread(SysInfoModel.getInstance());
+            sysInfoMonitoringThread.addListener(SwingMain.this);
+            sysInfoMonitoringThread.start();
         });
         Platform.runLater(() -> initFX(jfxPanel1));
         stopButton.addActionListener(actionEvent -> {
@@ -286,6 +290,21 @@ public class SwingMain implements Runnable, IUpdatableState {
         });
     }
 
+    @Override
+    public void notifyOfSolversThreadComplete() {
+        //TODO - Update colorNode AND set progress bar to maximum here;
+    }
+
+    @Override
+    public void notifyOfSysInfoThreadUpdate() {
+        updateSysInfo(SysInfoModel.getInstance());
+    }
+
+    @Override
+    public void updateSysInfo(SysInfoModel sysInfoModel) {
+        //TODO - Update sys info in GUI.
+        System.out.println("test event handler");
+    }
 
     private void initFX(JFXPanel fxPanel) {
         Scene scene = new Scene(scheduleChart);

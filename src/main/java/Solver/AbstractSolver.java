@@ -2,14 +2,13 @@ package Solver;
 
 import CommonInterface.ISearchState;
 import CommonInterface.ISolver;
-import GUI.IUpdatableState;
+import GUI.Interfaces.IUpdatableState;
 import Graph.EdgeWithCost;
 import Graph.Exceptions.GraphException;
 import Graph.Graph;
 import Graph.Vertex;
 import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Arrays;
 

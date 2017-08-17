@@ -3,11 +3,21 @@ package GUI.Events;
 import CommonInterface.ISolver;
 import Exporter.GraphExporter;
 import GUI.GraphViewer;
+import GUI.Interfaces.ThreadCompleteListener;
+import GUI.SwingMain;
 import Graph.Edge;
 import Graph.Vertex;
 import lombok.Getter;
 
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+
 public class SolversThread extends Thread {
+
+    private final Set<ThreadCompleteListener> listeners = new CopyOnWriteArraySet<>();
+
+    @Getter
+    private SwingMain swingMain;
     @Getter
     private ISolver iSolver;
     @Getter
@@ -15,8 +25,9 @@ public class SolversThread extends Thread {
     @Getter
     private GraphExporter<Vertex, Edge<Vertex>> graphExporter;
 
-    public SolversThread(ISolver iSolver, GraphViewer graphViewer, GraphExporter<Vertex, Edge<Vertex>> graphExporter){
+    public SolversThread(SwingMain swingMain, ISolver iSolver, GraphViewer graphViewer, GraphExporter<Vertex, Edge<Vertex>> graphExporter){
         super();
+        this.swingMain = swingMain;
         this.iSolver = iSolver;
         this.graphViewer = graphViewer;
         this.graphExporter = graphExporter;
@@ -55,10 +66,31 @@ public class SolversThread extends Thread {
      *
      * @see #start()
      * @see #stop()
-     * @see #Thread(ThreadGroup, Runnable, String)
      */
     @Override
-    public void run() {
-        super.run();
+    public final void run() {
+        try {
+            doRun();
+        } finally {
+            notifyListeners();
+        }
     }
+
+    public final void addListener(final ThreadCompleteListener listener) {
+        listeners.add(listener);
+    }
+
+    public final void removeListener(final ThreadCompleteListener listener) {
+        listeners.remove(listener);
+    }
+
+    private final void notifyListeners() {
+        for (ThreadCompleteListener listener : listeners) {
+            listener.notifyOfSolversThreadComplete();
+        }
+    }
+
+    public void doRun(){
+        //TODO
+    };
 }

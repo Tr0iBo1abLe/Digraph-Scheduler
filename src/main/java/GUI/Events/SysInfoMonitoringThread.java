@@ -1,11 +1,41 @@
 package GUI.Events;
 
 
+import GUI.Interfaces.ThreadCompleteListener;
+import GUI.Models.SysInfoModel;
+
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArraySet;
+
 public class SysInfoMonitoringThread extends Thread{
 
+    private final Set<ThreadCompleteListener> listeners = new CopyOnWriteArraySet<>();
 
-    public SysInfoMonitoringThread (){
+    private Timer timer;
 
+    @lombok.Getter
+    private SysInfoModel sysInfoModel;
+
+    public SysInfoMonitoringThread (SysInfoModel sysInfoModel){
+        super();
+        this.sysInfoModel = sysInfoModel;
+        timer = new Timer();
+    }
+
+    public final void addListener(final ThreadCompleteListener listener) {
+        listeners.add(listener);
+    }
+
+    public final void removeListener(final ThreadCompleteListener listener) {
+        listeners.remove(listener);
+    }
+
+    private final void notifyListeners() {
+        for (ThreadCompleteListener listener : listeners) {
+            listener.notifyOfSysInfoThreadUpdate();
+        }
     }
 
     /**
@@ -41,10 +71,19 @@ public class SysInfoMonitoringThread extends Thread{
      *
      * @see #start()
      * @see #stop()
-     * @see #Thread(ThreadGroup, Runnable, String)
      */
     @Override
     public void run() {
-        super.run();
+        timer.scheduleAtFixedRate(new TimerTask() {
+                                      @Override
+                                      public void run() {
+                                          try{
+                                              sysInfoModel.update();
+                                          }finally {
+                                              notifyListeners();
+                                          }
+                                      }
+                                  },
+                100, 100);
     }
 }
