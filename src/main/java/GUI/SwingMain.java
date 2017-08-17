@@ -242,7 +242,9 @@ public class SwingMain implements SwingMainInterface {
     public void run() {
         if (!inited) throw new RuntimeException(getClass() + " has to be initialise'd before running");
         //estimate of the maximum number of states
-        progressBar1.setMaximum(visualGraph.getNodeSet().size()*visualGraph.getNodeSet().size()*solver.getProcessorCount());
+        progressBar1.setMaximum((int) (Math.pow((double) visualGraph.getNodeCount(),
+                (double) solver.getProcessorCount()) / Math.pow(2d, (double) (solver.getProcessorCount() + 1))
+                    / (double)visualGraph.getNodeCount()));
         rootFrame.setContentPane(panel1);
         rootFrame.pack();
         rootFrame.setPreferredSize(new Dimension(1000, 1000));
