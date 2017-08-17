@@ -36,7 +36,7 @@ public class SysInfoModel {
         String currentLibPath = System.getProperty("java.library.path");
         File currentDirFile = new File(".");
         String helper = currentDirFile.getAbsolutePath();
-        String newLibPath = currentLibPath + ":" + helper + "/sigar-bin/slib";
+        String newLibPath = currentLibPath + ":" + helper + "/sigar-bin/slib" + ":" + helper;
         System.setProperty("java.library.path", newLibPath);
         sigar = new Sigar();
         mem = null;
