@@ -17,6 +17,12 @@ public class SysInfoModel {
     private Mem mem;
     @Getter
     private Cpu[] cpuList;
+    @Getter
+    private int cpuCount;
+    @Getter
+    private long totalMem;
+    @Getter
+    private long totalMemInMByte;
 
     public static SysInfoModel getInstance(){
         if (sysInfoModel == null){
@@ -35,7 +41,15 @@ public class SysInfoModel {
         sigar = new Sigar();
         mem = null;
         cpuPerc = null;
-        cpuList = null;
+        try {
+            cpuList = sigar.getCpuList();
+            cpuCount = cpuList.length;
+            mem = sigar.getMem();
+            totalMem = mem.getTotal();
+            totalMemInMByte = totalMem/1024l/1024l;
+        } catch (SigarException e) {
+            e.printStackTrace();
+        }
         update();
     }
 
@@ -43,14 +57,8 @@ public class SysInfoModel {
         try {
             mem = sigar.getMem();
             cpuPerc = sigar.getCpuPerc();
-            cpuList = sigar.getCpuList();
         } catch (SigarException se) {
             se.printStackTrace();
         }
-
-
-        System.out.print(mem.getUsedPercent()+"\t");
-        System.out.print((cpuPerc.getCombined()*100)+"\t");
-        System.out.print(cpuList.length+"\n");
     }
 }

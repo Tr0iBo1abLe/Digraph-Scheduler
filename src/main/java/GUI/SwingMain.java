@@ -2,6 +2,7 @@ package GUI;
 
 import CommonInterface.ISearchState;
 import CommonInterface.ISolver;
+import Exporter.GraphExporter;
 import GUI.CSS.GraphCSS;
 import GUI.Events.SysInfoMonitoringThread;
 import GUI.Interfaces.IUpdatableState;
@@ -60,6 +61,8 @@ public class SwingMain implements SwingMainInterface {
     private JProgressBar progressBar1;
     private SolverWorker solverWorker;
     private ScheduleChart<Number, String> scheduleChart;
+
+    private static Graph _graph;
 
 //    public static final String STYLE_RESORUCE = "url('style.css')";
 
@@ -127,6 +130,8 @@ public class SwingMain implements SwingMainInterface {
             viewer.colorNodes(visualGraph);
             progressBar1.setValue(progressBar1.getMaximum());
             // print output, graph exporter
+            System.out.println(GraphExporter.exportGraphToString(_graph));
+//            System.out.println(Helper.gsGraphToDOTString(visualGraph));
         }
 
 
@@ -135,11 +140,11 @@ public class SwingMain implements SwingMainInterface {
     public SwingMain() { //TODO - Pause and resume feature
         $$$setupUI$$$();
         startButton.addActionListener(actionEvent -> {
-            solverWorker = new SolverWorker();
-            solverWorker.execute();
             SysInfoMonitoringThread sysInfoMonitoringThread = new SysInfoMonitoringThread(SysInfoModel.getInstance());
             sysInfoMonitoringThread.addListener(SwingMain.this);
             sysInfoMonitoringThread.start();
+            solverWorker = new SolverWorker();
+            solverWorker.execute();
         });
         Platform.runLater(() -> initFX(jfxPanel1));
         stopButton.addActionListener(actionEvent -> {
@@ -200,6 +205,7 @@ public class SwingMain implements SwingMainInterface {
     }
 
     public static void init(Graph<? extends Vertex, ? extends EdgeWithCost> graph, ISolver solveri) {
+        _graph = graph;
         visualGraph = Helper.convertToGsGraph(graph);
         visualGraph.addAttribute("ui.stylesheet", GraphCSS.css);
         solver = solveri;
@@ -304,6 +310,10 @@ public class SwingMain implements SwingMainInterface {
     public void updateSysInfo(SysInfoModel sysInfoModel) {
         //TODO - Update sys info in GUI.
         System.out.println("test event handler");
+        //TODO - delete following statements once GUI implementation finishes
+        System.out.print("Memory Usage: " + sysInfoModel.getMem().getUsedPercent()+"\t");
+        System.out.println("CPU Usage:    " + (sysInfoModel.getCpuPerc().getCombined()*100)+"\t");
+
     }
 
     private void initFX(JFXPanel fxPanel) {
