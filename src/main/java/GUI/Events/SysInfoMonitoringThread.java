@@ -87,4 +87,21 @@ public class SysInfoMonitoringThread extends Thread{
                                   },
                 100, 100);
     }
+
+    /**
+     * Terminate the run()
+     * @Param long countdown - time to wait before cancelling the timer
+     */
+    public void stopTimer(long countdown){
+        if (countdown == 0l){
+            timer.cancel();
+        }else{
+            try {
+                wait(countdown);
+                timer.cancel();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

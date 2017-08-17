@@ -140,7 +140,7 @@ public class SwingMain implements SwingMainInterface {
 
     }
 
-    public SwingMain() { //TODO - Pause and resume feature
+    public SwingMain() { //Pause and resume feature
         $$$setupUI$$$();
         startButton.addActionListener(actionEvent -> {
             SysInfoMonitoringThread sysInfoMonitoringThread = new SysInfoMonitoringThread(SysInfoModel.getInstance());
@@ -151,27 +151,19 @@ public class SwingMain implements SwingMainInterface {
             solversThread = new SolversThread(SwingMain.this, solver);
             solversThread.addListener(SwingMain.this);
             solversThread.start();
+            stopButton.setEnabled(true);
         });
         Platform.runLater(() -> initFX(jfxPanel1));
         stopButton.addActionListener(actionEvent -> {
-//            if (solverWorker != null) {
-//                solverWorker.cancel(true);
-//                solverWorker = null;
-//            }
             if ((solversThread != null)&&(solversThread.isAlive())){
-                try {
-                    solversThread.wait();
-                    System.out.println("waited");
-                    startButton.removeActionListener(startButton.getActionListeners()[0]);
-                    startButton.addActionListener(actionEventResume -> {
-                        solversThread.notify();
-                        System.out.println("notified");
-                    });
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                solversThread.suspend();
+                startButton.removeActionListener(startButton.getActionListeners()[0]);
+                startButton.addActionListener(actionEventResume -> {
+                    solversThread.resume();
+                });
             }
         });
+        stopButton.setEnabled(false);
     }
 
 
@@ -335,8 +327,8 @@ public class SwingMain implements SwingMainInterface {
     public void updateSysInfo(SysInfoModel sysInfoModel) {
         //TODO - Update sys info in GUI.
         //TODO - delete following statements once GUI implementation finishes
-        System.out.print("Memory Usage: " + sysInfoModel.getMem().getUsedPercent()+"\t");
-        System.out.println("CPU Usage:    " + (sysInfoModel.getCpuPerc().getCombined()*100)+"\t");
+//        System.out.print("Memory Usage: " + sysInfoModel.getMem().getUsedPercent()+"\t");
+//        System.out.println("CPU Usage:    " + (sysInfoModel.getCpuPerc().getCombined()*100)+"\t");
     }
 
     private void initFX(JFXPanel fxPanel) {
