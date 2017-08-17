@@ -4,6 +4,7 @@ import CommonInterface.ISearchState;
 import CommonInterface.ISolver;
 import Exporter.GraphExporter;
 import GUI.CSS.GraphCSS;
+import GUI.Events.SolversThread;
 import GUI.Events.SysInfoMonitoringThread;
 import GUI.Interfaces.IUpdatableState;
 import GUI.Interfaces.SwingMainInterface;
@@ -63,6 +64,8 @@ public class SwingMain implements SwingMainInterface {
     private ScheduleChart<Number, String> scheduleChart;
 
     private static Graph _graph;
+
+    private static SolversThread solversThread = null;
 
 //    public static final String STYLE_RESORUCE = "url('style.css')";
 
@@ -143,14 +146,30 @@ public class SwingMain implements SwingMainInterface {
             SysInfoMonitoringThread sysInfoMonitoringThread = new SysInfoMonitoringThread(SysInfoModel.getInstance());
             sysInfoMonitoringThread.addListener(SwingMain.this);
             sysInfoMonitoringThread.start();
-            solverWorker = new SolverWorker();
-            solverWorker.execute();
+//            solverWorker = new SolverWorker();
+//            solverWorker.execute();
+            solversThread = new SolversThread(SwingMain.this, solver);
+            solversThread.addListener(SwingMain.this);
+            solversThread.start();
         });
         Platform.runLater(() -> initFX(jfxPanel1));
         stopButton.addActionListener(actionEvent -> {
-            if (solverWorker != null) {
-                solverWorker.cancel(true);
-                solverWorker = null;
+//            if (solverWorker != null) {
+//                solverWorker.cancel(true);
+//                solverWorker = null;
+//            }
+            if ((solversThread != null)&&(solversThread.isAlive())){
+                try {
+                    solversThread.wait();
+                    System.out.println("waited");
+                    startButton.removeActionListener(startButton.getActionListeners()[0]);
+                    startButton.addActionListener(actionEventResume -> {
+                        solversThread.notify();
+                        System.out.println("notified");
+                    });
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -298,7 +317,13 @@ public class SwingMain implements SwingMainInterface {
 
     @Override
     public void notifyOfSolversThreadComplete() {
-        //TODO - Update colorNode AND set progress bar to maximum here;
+        //Update colorNode AND set progress bar to maximum here;
+        viewer.colorNodes(visualGraph);
+        progressBar1.setValue(progressBar1.getMaximum());
+        startButton.setEnabled(false);
+        stopButton.setEnabled(false);
+        // print output, graph exporter
+        System.out.println(GraphExporter.exportGraphToString(_graph));
     }
 
     @Override
@@ -309,11 +334,9 @@ public class SwingMain implements SwingMainInterface {
     @Override
     public void updateSysInfo(SysInfoModel sysInfoModel) {
         //TODO - Update sys info in GUI.
-        System.out.println("test event handler");
         //TODO - delete following statements once GUI implementation finishes
         System.out.print("Memory Usage: " + sysInfoModel.getMem().getUsedPercent()+"\t");
         System.out.println("CPU Usage:    " + (sysInfoModel.getCpuPerc().getCombined()*100)+"\t");
-
     }
 
     private void initFX(JFXPanel fxPanel) {

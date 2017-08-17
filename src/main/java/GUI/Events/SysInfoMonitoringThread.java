@@ -11,6 +11,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 public class SysInfoMonitoringThread extends Thread{
 
+    //Make sure to add listeners
     private final Set<ThreadCompleteListener> listeners = new CopyOnWriteArraySet<>();
 
     private Timer timer;

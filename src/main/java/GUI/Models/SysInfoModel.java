@@ -56,7 +56,7 @@ public class SysInfoModel {
     public void update(){
         try {
             mem = sigar.getMem();
-            cpuPerc = sigar.getCpuPerc();
+            cpuPerc = sigar.getCpuPerc(); //NaN can be returned by this call, GUI needs to handle String 'NaN' if necessary
         } catch (SigarException se) {
             se.printStackTrace();
         }

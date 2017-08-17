@@ -17,9 +17,9 @@ public class SolversThread extends Thread {
     private final Set<ThreadCompleteListener> listeners = new CopyOnWriteArraySet<>();
 
     @Getter
-    private SwingMain swingMain;
+    private SwingMain swingMain; //Make sure to add listeners
     @Getter
-    private ISolver iSolver;
+    private ISolver solver;
     @Getter
     private GraphViewer graphViewer;
     @Getter
@@ -28,9 +28,17 @@ public class SolversThread extends Thread {
     public SolversThread(SwingMain swingMain, ISolver iSolver, GraphViewer graphViewer, GraphExporter<Vertex, Edge<Vertex>> graphExporter){
         super();
         this.swingMain = swingMain;
-        this.iSolver = iSolver;
+        this.solver = iSolver;
         this.graphViewer = graphViewer;
         this.graphExporter = graphExporter;
+    }
+
+    public SolversThread(SwingMain swingMain, ISolver iSolver){
+        super();
+        this.swingMain = swingMain;
+        this.solver = iSolver;
+        this.graphViewer = null;
+        this.graphExporter = null;
     }
 
     /**
@@ -69,11 +77,16 @@ public class SolversThread extends Thread {
      */
     @Override
     public final void run() {
-        try {
+        try{
             doRun();
         } finally {
             notifyListeners();
         }
+    }
+
+    public void doRun(){
+        solver.associateUI(swingMain);
+        solver.doSolve();
     }
 
     public final void addListener(final ThreadCompleteListener listener) {
@@ -89,8 +102,4 @@ public class SolversThread extends Thread {
             listener.notifyOfSolversThreadComplete();
         }
     }
-
-    public void doRun(){
-        //TODO
-    };
 }
