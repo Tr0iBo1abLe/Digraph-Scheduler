@@ -198,7 +198,7 @@ public class SwingMain implements SwingMainInterface {
         yAxis.setLabel("");
         yAxis.setTickLabelFill(Color.CHOCOLATE);
         yAxis.setTickLabelGap(10);
-        yAxis.setCategories(FXCollections.<String>observableArrayList(procStrNames));
+        yAxis.setCategories(FXCollections.observableArrayList(procStrNames));
 
         scheduleChart.setLegendVisible(false);
         scheduleChart.setBlockHeight(50);
