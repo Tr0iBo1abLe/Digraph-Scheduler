@@ -14,6 +14,8 @@ public class SysInfoModel {
     @Getter
     private CpuPerc cpuPerc;
     @Getter
+    private double cpuPercentage = 0d;
+    @Getter
     private Mem mem;
     @Getter
     private Cpu[] cpuList;
@@ -57,6 +59,10 @@ public class SysInfoModel {
         try {
             mem = sigar.getMem();
             cpuPerc = sigar.getCpuPerc(); //NaN can be returned by this call, GUI needs to handle String 'NaN' if necessary
+            double temp = cpuPerc.getCombined()*100d;
+            if (temp != Double.NaN){
+                cpuPercentage = temp;
+            }
         } catch (SigarException se) {
             se.printStackTrace();
         }

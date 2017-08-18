@@ -6,7 +6,6 @@ import Exporter.GraphExporter;
 import GUI.CSS.GraphCSS;
 import GUI.Events.SolversThread;
 import GUI.Events.SysInfoMonitoringThread;
-import GUI.Interfaces.IUpdatableState;
 import GUI.Interfaces.SwingMainInterface;
 import GUI.Models.GMouseManager;
 import GUI.Models.SysInfoModel;
@@ -66,6 +65,8 @@ public class SwingMain implements SwingMainInterface {
     private static Graph _graph;
 
     private static SolversThread solversThread = null;
+
+    private static SysInfolPieChart sysInfolPieChart = SysInfolPieChart.getInstance();
 
 //    public static final String STYLE_RESORUCE = "url('style.css')";
 
@@ -143,9 +144,6 @@ public class SwingMain implements SwingMainInterface {
     public SwingMain() { //Pause and resume feature
         $$$setupUI$$$();
         startButton.addActionListener(actionEvent -> {
-            SysInfoMonitoringThread sysInfoMonitoringThread = new SysInfoMonitoringThread(SysInfoModel.getInstance());
-            sysInfoMonitoringThread.addListener(SwingMain.this);
-            sysInfoMonitoringThread.start();
 //            solverWorker = new SolverWorker();
 //            solverWorker.execute();
             solversThread = new SolversThread(SwingMain.this, solver);
@@ -164,6 +162,9 @@ public class SwingMain implements SwingMainInterface {
             }
         });
         stopButton.setEnabled(false);
+        SysInfoMonitoringThread sysInfoMonitoringThread = new SysInfoMonitoringThread(SysInfoModel.getInstance());
+        sysInfoMonitoringThread.addListener(SwingMain.this);
+        sysInfoMonitoringThread.start();
     }
 
 
@@ -250,6 +251,8 @@ public class SwingMain implements SwingMainInterface {
         rootFrame.setPreferredSize(new Dimension(1000, 1000));
         rootFrame.setMinimumSize(new Dimension(1000, 1000));
         rootFrame.setVisible(true);
+
+        Platform.runLater(sysInfolPieChart);
     }
 
     @Override
@@ -327,6 +330,7 @@ public class SwingMain implements SwingMainInterface {
 
     @Override
     public void updateSysInfo(SysInfoModel sysInfoModel) {
+        SysInfolPieChart.getInstance().updateCPUChart(sysInfoModel.getCpuPercentage(), sysInfoModel.getMem().getUsedPercent());
         //TODO - Update sys info in GUI.
         //TODO - delete following statements once GUI implementation finishes
 //        System.out.print("Memory Usage: " + sysInfoModel.getMem().getUsedPercent()+"\t");
