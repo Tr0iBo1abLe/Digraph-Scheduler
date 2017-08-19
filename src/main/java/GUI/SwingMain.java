@@ -5,6 +5,7 @@ import CommonInterface.ISolver;
 import Exporter.GraphExporter;
 import GUI.Events.SolversThread;
 import GUI.Events.SysInfoMonitoringThread;
+import GUI.Frame.MainVisualization;
 import GUI.Interfaces.SwingMainInterface;
 import GUI.Util.ColorManager;
 import GUI.Models.GMouseManager;
@@ -17,6 +18,7 @@ import Util.Helper;
 import com.alee.laf.WebLookAndFeel;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.JFXPanel;
@@ -252,6 +254,7 @@ public class SwingMain implements SwingMainInterface {
         rootFrame.setVisible(true);
 
         Platform.runLater(sysInfolPieChart);
+        Application.launch(MainVisualization.class);
     }
 
     @Override
