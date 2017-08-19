@@ -1,6 +1,7 @@
 package jmh.Benchmarks;
 
 import EntryPoint.Main;
+import lombok.experimental.var;
 import org.openjdk.jmh.annotations.GenerateMicroBenchmark;
 
 /**
@@ -30,4 +31,5 @@ public class BM {
                         "-r", "4",
                         FN});
     }
+
 }
