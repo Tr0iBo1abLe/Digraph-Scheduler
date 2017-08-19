@@ -3,10 +3,10 @@ package GUI;
 import CommonInterface.ISearchState;
 import CommonInterface.ISolver;
 import Exporter.GraphExporter;
-import GUI.CSS.GraphCSS;
 import GUI.Events.SolversThread;
 import GUI.Events.SysInfoMonitoringThread;
 import GUI.Interfaces.SwingMainInterface;
+import GUI.Util.ColorManager;
 import GUI.Models.GMouseManager;
 import GUI.Models.SysInfoModel;
 import Graph.EdgeWithCost;
@@ -45,7 +45,7 @@ public class SwingMain implements SwingMainInterface {
 
     public static final String STYLE_RESORUCE = "url('style.css')";
     private static final String procStr = "Processor";
-    private static final ColorManager colorManager = new ColorManager();
+    private static final ColorManager1 COLOR_MANAGER_1 = new ColorManager1();
     private static ISolver solver;
     private static org.graphstream.graph.Graph visualGraph = null;
     private static GraphViewer viewer = null;
@@ -209,7 +209,7 @@ public class SwingMain implements SwingMainInterface {
 
     public static void init(org.graphstream.graph.Graph graph, ISolver solveri) {
         visualGraph = graph;
-        visualGraph.addAttribute("ui.stylesheet", GraphCSS.css);
+        visualGraph.addAttribute("ui.stylesheet", "url('./src/main/java/GUI/Frame/view/Graph.css')");
         solver = solveri;
         initRest();
     }
@@ -217,8 +217,9 @@ public class SwingMain implements SwingMainInterface {
     public static void init(Graph<? extends Vertex, ? extends EdgeWithCost> graph, ISolver solveri) {
         _graph = graph;
         visualGraph = Helper.convertToGsGraph(graph);
-        visualGraph.addAttribute("ui.stylesheet", GraphCSS.css);
+        visualGraph.addAttribute("ui.stylesheet", "url('./src/main/java/GUI/Frame/view/Graph.css')");
         solver = solveri;
+        ColorManager.generateColor(9);
         initRest();
     }
 
@@ -285,7 +286,7 @@ public class SwingMain implements SwingMainInterface {
                 }
                 series.getData().add(new XYChart.Data(startTimes[index]
                         , procStr + String.valueOf(procOn + 1)
-                        , new ScheduleChart.ExtraData(cost, colorManager.next(), n.getId())));
+                        , new ScheduleChart.ExtraData(cost, COLOR_MANAGER_1.next(), n.getId())));
 
                 seriesList.add(series);
             }
@@ -342,7 +343,7 @@ public class SwingMain implements SwingMainInterface {
     }
 
 
-    private static class ColorManager implements Iterator<String> {
+    private static class ColorManager1 implements Iterator<String> {
         static final String[] stylesStr = {"status-red", "status-blue", "status-green", "status-magenta", "status-yellow", "status-cyan"};
         private AtomicInteger atomicInteger = new AtomicInteger();
 

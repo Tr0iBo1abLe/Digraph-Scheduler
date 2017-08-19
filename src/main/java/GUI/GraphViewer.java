@@ -1,5 +1,6 @@
 package GUI;
 
+import GUI.Util.ColorManager;
 import lombok.Getter;
 import lombok.Synchronized;
 import org.graphstream.graph.Graph;
@@ -9,15 +10,10 @@ import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.spriteManager.SpriteManager;
 import org.graphstream.ui.spriteManager.Sprite;
 import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
-import org.graphstream.ui.view.ViewerListener;
 
-import java.awt.event.*;
 import java.util.*;
 
 public class GraphViewer extends Viewer{
-
-    @Getter
-    private Map<String, String> colorSet = new HashMap<String, String>(); //A mapping between rgb colors and processor ids
 
     @Getter
     private Set<Sprite> spriteSet = new HashSet<Sprite>(); // maintain a local copy of the set of header sprites
@@ -94,23 +90,8 @@ public class GraphViewer extends Viewer{
         graph.getNodeSet().stream().forEach(n -> {
             if ((n.getAttribute("processor")!=null)&&((int)n.getAttribute("processor")!=(-1))){
                 n.removeAttribute("ui.class");
-                String color;
-
-                if (colorSet.keySet().contains(n.getAttribute("processor"))){
-                    color = colorSet.get(n.getAttribute("processor"));
-                    n.setAttribute("ui.style", color);
-                    return;
-                }
-
-                color = "fill-color: rgb("+(int)Math.sqrt((new Random().nextDouble()*255d * new Random().nextDouble()*255d))+","+
-                        (int)Math.sqrt((new Random().nextDouble()*255d * new Random().nextDouble()*255d))+","+
-                        (int)Math.sqrt((new Random().nextDouble()*255d * new Random().nextDouble()*255d))+"), " +
-                        "rgb("+(int)Math.sqrt(((1d - new Random().nextDouble())*255d * (1d - new Random().nextDouble())*255d))+","+
-                        (int)Math.sqrt(((1d - new Random().nextDouble())*255d * (1d - new Random().nextDouble())*255d))+","+
-                        (int)Math.sqrt(((1d - new Random().nextDouble())*255d * (1d - new Random().nextDouble())*255d))+");";
-                n.setAttribute("ui.style", color);
-
-                colorSet.put(n.getAttribute("processor"), color);
+                String color = ColorManager.getColorSetForGraphNodes().get(n.getAttribute("processor")+"");
+                n.setAttribute("ui.style", "fill-color: " + color);
             }
         });
     }
