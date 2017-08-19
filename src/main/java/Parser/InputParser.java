@@ -193,7 +193,7 @@ public class InputParser<V extends Vertex, E extends Edge<V>> {
         return STATE.NEXT;
     }
 
-    public STATE processOne() throws ParserException {
+    private STATE processOne() throws ParserException {
         @NonNull char c = input.charAt(pos);
         if (c == ' ' || c == '\t') {
             if (strBuffer.length() == 0) {
