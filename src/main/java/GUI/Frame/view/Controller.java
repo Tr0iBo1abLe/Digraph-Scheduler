@@ -1,13 +1,10 @@
 package GUI.Frame.view;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 
-import com.jfoenix.controls.JFXListView;
-
 import GUI.Frame.DataVisualization;
+import GUI.Frame.GraphVisualization;
 import GUI.Frame.MyButton;
-import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -38,7 +35,12 @@ public class Controller {
     	AnchorPane.setTopAnchor(data, 0d);
     	AnchorPane.setBottomAnchor(data, 0d);
     	
-    	BuildListView();
+    	GraphVisualization graph=new GraphVisualization();
+    	ListPane.getChildren().add(graph);
+    	AnchorPane.setLeftAnchor(graph, 0d);
+    	AnchorPane.setRightAnchor(graph, 0d);
+    	AnchorPane.setTopAnchor(graph, 0d);
+    	AnchorPane.setBottomAnchor(graph, 0d);
     	
     	Buttons.setBackground(new Background(new BackgroundFill(Color.rgb(40,45,50), CornerRadii.EMPTY, Insets.EMPTY)));
     	Buttons.getChildren().add(new MyButton("START"));
@@ -47,24 +49,4 @@ public class Controller {
     	
 
     }
-    
-    private void BuildListView() {
-    	JFXListView<Label> list = new JFXListView<>();
-        list.getItems().add(new Label("Graph"));
-        list.getItems().add(new Label("Current Solution"));
-        list.getStyleClass().add("mylistview");
-        list.setBackground(new Background(new BackgroundFill(Color.rgb(40,45,50), CornerRadii.EMPTY, Insets.EMPTY)));
-        
-        ListPane.getChildren().add(list);
-        ListPane.setBackground(new Background(new BackgroundFill(Color.rgb(40,45,50), CornerRadii.EMPTY, Insets.EMPTY)));
-        Platform.runLater(new Runnable() {
-
-			@Override
-			public void run() {
-				list.depthProperty().set(1);
-		        list.setExpanded(true);
-				
-			}});
-    }
-    
 }

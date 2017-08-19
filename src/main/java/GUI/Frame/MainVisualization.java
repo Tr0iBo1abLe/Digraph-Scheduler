@@ -27,7 +27,7 @@ public class MainVisualization extends Application {
             AnchorPane personOverview = (AnchorPane) loader.load();
             
             Scene scene = new Scene(personOverview);
-            scene.getStylesheets().add(MyButton.class.getResource("view/jfoenix-components.css").toExternalForm());
+            scene.getStylesheets().add(MainVisualization.class.getResource("view/jfoenix-components.css").toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (IOException e) {
