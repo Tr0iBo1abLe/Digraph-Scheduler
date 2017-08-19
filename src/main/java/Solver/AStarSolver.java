@@ -1,59 +1,72 @@
 package Solver;
 
-import CommonInterface.ISearchState;
-import Datastructure.FastPriorityBlockingQueue;
 import Datastructure.FastPriorityQueue;
-import lombok.Data;
-import org.graphstream.graph.Graph;
+import Graph.EdgeWithCost;
+import Graph.Graph;
+import Graph.Vertex;
 
-import java.util.*;
-import java.util.stream.IntStream;
+import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
 
-@Data
-public final class AStarSolver extends AbstractSolver{
+public final class AStarSolver extends AbstractSolver {
 
     private final Queue<SearchState> queue;
+    private Timer timer;
 
-    public AStarSolver(Graph graph, int processorCount) {
+    public AStarSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
         queue = new FastPriorityQueue<>();
     }
 
     @Override
     public void doSolve() {
-        SearchState.init(graph);
+        /* This method is blocking, we need a way to notify the GUI */
+        SearchState.initialise(graph);
 
-        if(updater != null) {
+        if (updater != null) {
             /* We have an updater and a UI to update */
-            Timer timer = new Timer();
+            timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
                                           @Override
                                           public void run() {
                                               updater.update(queue.peek());
                                           }
                                       },
-                    500, 500);
+                    100, 100);
         }
 
         queue.add(new SearchState());
-        while(true) {
-            SearchState s = queue.remove();
-            System.err.println(s.getSize() + " " + s.getPriority() + " " + queue.size());
-            if(s.getSize() == graph.getNodeCount()) {
+
+        while (true) {
+            SearchState currentBestSchedule = queue.remove();
+
+            if (currentBestSchedule.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
-                scheduleVertices(s);
+                scheduleVertices(currentBestSchedule);
+                if (updater != null && timer != null) {
+                    updater.update(currentBestSchedule);
+                    timer.cancel();
+                }
                 return;
             }
-            s.getLegalVertices().forEach( v -> {
-                IntStream.of(0, processorCount-1).forEach(i -> {
-                            SearchState next = new SearchState(s, v, i);
-                            if(!queue.contains(next)) {
-                                queue.add(next);
-                            }
-                        }
-                );
-            });
+
+            for (Vertex vertex : currentBestSchedule.getLegalVertices()) {
+                for (int processorID = 0; processorID < processorCount; processorID++) {
+                    SearchState nextSearchState = new SearchState(currentBestSchedule, vertex, processorID);
+                    if (!queue.contains(nextSearchState)) {
+                        queue.add(nextSearchState);
+                    }
+                }
+            }
         }
     }
 
+    /*
+    OPEN ← emptyState
+    while OPEN 6 = ∅ do s ← PopHead ( OPEN )
+    if s is complete solution then return s as optimal solution
+    Expand state s into children and compute f ( s child )
+     for each OPEN ← new states
+     */
 }

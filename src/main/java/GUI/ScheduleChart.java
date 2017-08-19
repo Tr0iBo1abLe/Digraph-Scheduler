@@ -1,45 +1,32 @@
 package GUI;
 
-import javafx.scene.chart.Axis;
-
-import javafx.scene.chart.XYChart;
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.beans.NamedArg;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.ValueAxis;
+import javafx.scene.chart.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextBoundsType;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScheduleChart<X, Y> extends XYChart<X, Y> {
 
-    public static class ExtraData {
-        @Getter @Setter
-        public long length;
-        @Getter @Setter
-        public String styleClass;
-        public ExtraData(long lengthMs, String styleClass) {
-            super();
-            this.length = lengthMs;
-            this.styleClass = styleClass;
-        }
-    }
-
-    @Getter @Setter
+    @Getter
+    @Setter
     private double blockHeight = 10;
 
     public ScheduleChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis) {
         this(xAxis, yAxis, FXCollections.<Series<X, Y>>observableArrayList());
     }
 
-    public ScheduleChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis, @NamedArg("data") ObservableList<Series<X,Y>> data) {
+    public ScheduleChart(@NamedArg("xAxis") Axis<X> xAxis, @NamedArg("yAxis") Axis<Y> yAxis, @NamedArg("data") ObservableList<Series<X, Y>> data) {
         super(xAxis, yAxis);
         if (!(xAxis instanceof ValueAxis && yAxis instanceof CategoryAxis)) {
             throw new IllegalArgumentException("Axis type incorrect, X should be NumberAxis and Y should be a Category Axis");
@@ -48,49 +35,59 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
     }
 
     private static String getStyleClass(Object obj) {
-        return ((ExtraData)obj).getStyleClass();
+        return ((ExtraData) obj).getStyleClass();
     }
 
-    private static double getLength( Object obj) {
-        return ((ExtraData)obj).getLength();
+    private static double getLength(Object obj) {
+        return ((ExtraData) obj).getLength();
+    }
+
+    private static String getLabel(Object obj) {
+        return ((ExtraData) obj).getLabel();
     }
 
     @Override
     protected void layoutPlotChildren() {
-        getData().forEach(e -> {
-            getDisplayedDataIterator(e).forEachRemaining(n -> {
-                double x, y;
-                x = getXAxis().getDisplayPosition(n.getXValue());
-                y = getYAxis().getDisplayPosition(n.getYValue());
-                if(Double.isNaN(x) || Double.isNaN(y)) return;
-                Node block = n.getNode();
-                Rectangle rect;
-                if(block != null) {
-                    if(block instanceof StackPane) {
-                        StackPane region = (StackPane)block;
-                        if(region.getShape() == null) {
-                            rect = new Rectangle(getLength(n.getExtraValue()), getBlockHeight());
-                        }
-                        else if(region.getShape() instanceof Rectangle) {
-                            rect = (Rectangle)region.getShape();
-                        }
-                        else {
-                            return;
-                        }
-                        rect.setWidth(getLength(n.getExtraValue()) * ((NumberAxis)getXAxis()).getScale());
-                        rect.setHeight(getBlockHeight());
-                        y -= getBlockHeight() / 2.0f;
-                        region.setShape(null);
-                        region.setShape(rect);
-                        region.setScaleShape(false);
-                        region.setCenterShape(false);
-                        region.setCacheShape(false);
-                        block.setLayoutX(x);
-                        block.setLayoutY(y);
+        getData().forEach(e -> getDisplayedDataIterator(e).forEachRemaining(n -> {
+            double x, y;
+            x = getXAxis().getDisplayPosition(n.getXValue());
+            y = getYAxis().getDisplayPosition(n.getYValue());
+            if (Double.isNaN(x) || Double.isNaN(y)) return;
+            Node block = n.getNode();
+            Rectangle rect;
+            @NonNull final String label = getLabel(n.getExtraValue());
+            Text text = new Text(label);
+            text.setTranslateX(x);
+            text.setTranslateY(getBlockHeight());
+            text.setBoundsType(TextBoundsType.VISUAL);
+            if (block != null) {
+                if (block instanceof StackPane) {
+                    StackPane region = (StackPane) block;
+                    if (region.getShape() == null) {
+                        rect = new Rectangle(getLength(n.getExtraValue()), getBlockHeight());
+                    } else if (region.getShape() instanceof Rectangle) {
+                        rect = (Rectangle) region.getShape();
+                    } else {
+                        return;
                     }
+                    y -= getBlockHeight() / 2.0f;
+                    text.setTranslateX(getLength(n.getExtraValue()) / 1.0f);
+                    text.setTranslateY(getBlockHeight() / 2.0f);
+                    if (!region.getChildren().contains(rect) && !region.getChildren().contains(text)) {
+                        region.getChildren().addAll(text);
+                    }
+                    rect.setWidth(getLength(n.getExtraValue()) * ((NumberAxis) getXAxis()).getScale());
+                    rect.setHeight(getBlockHeight());
+                    region.setShape(null);
+                    region.setShape(rect);
+                    region.setScaleShape(false);
+                    region.setCenterShape(false);
+                    region.setCacheShape(false);
+                    block.setLayoutX(x);
+                    block.setLayoutY(y);
                 }
-            });
-        });
+            }
+        }));
 
     }
 
@@ -112,8 +109,8 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
     }
 
     @Override
-    protected void seriesAdded(Series<X,Y> series, int seriesIndex) {
-        for (int j=0; j < series.getData().size(); j++) {
+    protected void seriesAdded(Series<X, Y> series, int seriesIndex) {
+        for (int j = 0; j < series.getData().size(); j++) {
             Data<X, Y> item = series.getData().get(j);
             Node container = createContainer(series, seriesIndex, item, j);
             getPlotChildren().add(container);
@@ -121,7 +118,7 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
     }
 
     @Override
-    protected void seriesRemoved(final Series<X,Y> series) {
+    protected void seriesRemoved(final Series<X, Y> series) {
         for (XYChart.Data<X, Y> d : series.getData()) {
             final Node container = d.getNode();
             getPlotChildren().remove(container);
@@ -129,7 +126,7 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
         removeSeriesFromDisplay(series);
     }
 
-    private Node createContainer(Series<X, Y> series, int seriesIndex, final Data<X,Y> item, int itemIndex) {
+    private Node createContainer(Series<X, Y> series, int seriesIndex, final Data<X, Y> item, int itemIndex) {
         Node container = item.getNode();
 
         if (container == null) {
@@ -148,20 +145,36 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
         final Axis<Y> ya = getYAxis();
         List<X> xData = xa.isAutoRanging() ? new ArrayList<>() : null;
         List<Y> yData = ya.isAutoRanging() ? new ArrayList<>() : null;
-        if(xData != null || yData != null) {
-            getData().forEach(a -> {
-                a.getData().forEach( b -> {
-                    if(xData != null) {
-                        xData.add(b.getXValue());
-                        xData.add(xa.toRealValue(xa.toNumericValue(b.getXValue()) + getLength(b.getExtraValue())));
-                    }
-                    if(yData != null){
-                        yData.add(b.getYValue());
-                    }
-                });
-            });
-            if(xData != null) xa.invalidateRange(xData);
-            if(yData != null) ya.invalidateRange(yData);
+        if (xData != null || yData != null) {
+            getData().forEach(a -> a.getData().forEach(b -> {
+                if (xData != null) {
+                    xData.add(b.getXValue());
+                    xData.add(xa.toRealValue(xa.toNumericValue(b.getXValue()) + getLength(b.getExtraValue())));
+                }
+                if (yData != null) {
+                    yData.add(b.getYValue());
+                }
+            }));
+            if (xData != null) xa.invalidateRange(xData);
+            if (yData != null) ya.invalidateRange(yData);
+        }
+    }
+
+    public static class ExtraData {
+        @Getter
+        @Setter
+        protected long length;
+        @Getter
+        @Setter
+        protected String styleClass;
+        @Getter
+        @Setter
+        protected String label;
+
+        public ExtraData(long lengthMs, String styleClass, String label) {
+            this.length = lengthMs;
+            this.styleClass = styleClass;
+            this.label = label;
         }
     }
 }

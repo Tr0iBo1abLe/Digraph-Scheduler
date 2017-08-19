@@ -13,7 +13,7 @@ public class VertexCtor implements IVertexCtor<Vertex> {
     @Override
     public Vertex makeVertex(String id, Map<String, String> attrs) throws GraphException {
         String weight = attrs.get("Weight");
-        if(weight == null)
+        if (weight == null)
             throw new GraphException("Vertex has no cost");
         return new Vertex(id, Integer.parseInt(attrs.getOrDefault("Weight", "0")));
     }

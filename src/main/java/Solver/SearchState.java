@@ -1,123 +1,160 @@
 package Solver;
 
 import CommonInterface.ISearchState;
+import Graph.EdgeWithCost;
+import Graph.Graph;
+import Graph.Vertex;
 import fj.F;
 import fj.data.IterableW;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
- * A class of partial solution
+ * Represents a partial schedule.
+ * Include that current scheduled processor and their start time.
+ *
+ * @author Dovahkiin Huang, Will Molloy
  */
-public class SearchState implements Comparable<SearchState>, ISearchState{
+@EqualsAndHashCode(exclude = {"processors", "startTimes"}) // exclude partial schedules where nodes only differ by their processor
+public final class SearchState implements Comparable<SearchState>, ISearchState {
     @Getter
-    private static Graph graph;
-    @Getter
-    private static int totalSize;
-    @Getter
-    private int priority;
-    @Getter
-    private Node lastVertex;
+    private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
     @Getter
     private final int[] processors;
     @Getter
     private final int[] startTimes;
     @Getter
-    private int size;
-
+    private int underestimate;
     @Getter
-    private int dfCost;
+    private Vertex lastVertex;
+    @Getter
+    private int numVertices;
 
-    public static void init(Graph g) {
-        graph = g;
-        totalSize = g.getNodeCount();
+    public static void initialise(Graph<Vertex, EdgeWithCost<Vertex>> graph) {
+        SearchState.graph = graph;
     }
 
     public SearchState() {
-        this.priority = 0;
-        this.size = 0;
-        this.lastVertex = null;
-        this.processors = Arrays.stream(new int[totalSize]).map(_i -> -1).toArray();
-        this.startTimes = Arrays.stream(new int[totalSize]).map(_i -> -1).toArray();
+        underestimate = 0;
+        numVertices = 0;
+        lastVertex = null;
+        int graphVerticesSize = graph.getVertices().size();
+        processors = IntStream.generate(() -> -1).limit(graphVerticesSize).toArray();
+        startTimes = processors.clone();
     }
 
-    public SearchState(SearchState prevState, Node vertex, int processorId) {
-        this.priority = prevState.priority;
-        this.size = prevState.size;
-        this.processors = Arrays.copyOf(prevState.processors, prevState.processors.length);
-        this.startTimes = Arrays.copyOf(prevState.startTimes, prevState.startTimes.length);
-        this.lastVertex = vertex;
+    public SearchState(SearchState prevState, Vertex vertex, int processorId) {
+        underestimate = prevState.underestimate;
+        numVertices = prevState.numVertices;
+        /* clone() is slightly faster */
+        processors = prevState.processors.clone();
+        startTimes = prevState.startTimes.clone();
+        lastVertex = vertex;
 
-        this.size++;
-
-        F<Double, F<Edge, Double>> dependencyFoldingFn = t -> e -> {
-            int aid = e.getSourceNode().getIndex();
-            if(this.processors[aid] != processorId && this.processors[aid] != -1) {
-                double newTime = (this.startTimes[aid] + (Double)e.getSourceNode().getAttribute("Weight") + (Double)e.getAttribute("Weight"));
-                if(newTime > t) return newTime;
+        /*
+         * The Scheduler Folding Function, responsible for figuring out the earliest possible
+         * start time on the given processor ID
+         */
+        F<Integer, F<Vertex, Integer>> schedulerFoldingFn = t -> v -> {
+            // For each vertex on the SAME processor id, we find the last finish time,
+            // which in turn, yields the earliest possible start time.
+            int aid = v.getAssignedId();
+            if (processors[aid] == processorId) {
+                int newTime = startTimes[aid] + graph.getVertex(aid).getCost();
+                if (newTime > t) return newTime;
             }
             return t;
         };
 
-        F<Double, F<Node, Double>> schedulerFoldingFn = t -> v -> {
-            int id = v.getIndex();
-            if(this.processors[id] == processorId && this.processors[id] != -1) {
-                Double newTime = (this.startTimes[id] + (Double)graph.getNode(id).getAttribute("Weight"));
-                if(newTime > t) return newTime;
+        /*
+         * The dependency folding function, responsible for finding out the minimal start time
+         * given the parent is on a different processor.
+         */
+        F<Integer, F<EdgeWithCost<Vertex>, Integer>> dependencyFoldingFn = t -> e -> {
+            // For each edge, we check if the parent task (vertex) has been scheduled and
+            // not on the same processor, for this particular state.
+            // If it has a parent (dependency) on a different processor, then the cost must include the
+            // edge cost as well.
+            // This function does not check if the actual dependencies are being satisfied,
+            // users should use getLegalVertices() to ensure the Vertex can be scheduled.
+            Vertex v = e.getFrom();
+            int aid = v.getAssignedId();
+            if (processors[aid] != processorId) {
+                int newTime = this.startTimes[aid] + v.getCost() + e.getCost();
+                if (newTime > t) return newTime;
             }
             return t;
         };
 
-        double time = 0;
-        final IterableW<Node> iterableV = IterableW.wrap(graph.getNodeSet());
-        final IterableW<Edge> iterableP = IterableW.wrap(lastVertex.getEachEnteringEdge());
-        time = iterableV.foldLeft(schedulerFoldingFn, time);
-        time = iterableP.foldLeft(dependencyFoldingFn, time);
 
-        this.processors[this.lastVertex.getIndex()] = processorId;
-        this.startTimes[this.lastVertex.getIndex()] = (int)time;
+        int time = 0;
+        /*
+         * Alternative scheduler implementation, performs marginally worse than functional
+         * java variant. For demo purpose only(?)
+        */
+        /*
+        time = IntStream.range(0, processors.length).reduce(0, (acc, n) -> {
+            if (processors[n] == processorId) {
+                int newTime = startTimes[n]  + graph.getVertex(n).getCost();
+                if (newTime > acc) return newTime;
+            }
+            return acc;
+        });
+        */
+        /* Fold over the vertices and find the minimal cost given the same processor */
+        time = IterableW.wrap(graph.getVertices()).foldLeft(schedulerFoldingFn, time);
+        /* Fold over the parent vertices and find the minimal cost if there is a parent on another processor */
+        time = graph.getInwardsEdges(vertex).foldLeft(dependencyFoldingFn, time);
 
-        int nextP = (int) (time + ((Double) this.lastVertex.getAttribute("Weight")) + ((Double) this.lastVertex.getAttribute("BL")));
+        // Store the result we obtained
+        processors[vertex.getAssignedId()] = processorId;
+        startTimes[vertex.getAssignedId()] = time;
 
-        if(this.priority < nextP) {
-            this.priority = nextP;
-        }
-        
-        dfCost = nextP;
-        
+        // Underestimate function
+        int nextPriority = time + vertex.getCost() + vertex.getBottomLevel();
+
+        if (underestimate < nextPriority) underestimate = nextPriority;
+
+        numVertices++;
     }
 
-    Set<Node> getLegalVertices() {
-        Set<Node> set = new HashSet<>();
-        F<Boolean, F<Object, Boolean>> fn = b -> v -> {
-            if(b.equals(true)) return b;
-            Node n = (Node) v;
-            return processors[n.getIndex()] < 0;
+    /**
+     * Get the legal vertices of a state, meaning the dependencies have been satisfied for these vertices.
+     * @return the set of legal vertices
+     */
+    Set<Vertex> getLegalVertices() {
+        Set<Vertex> set = new HashSet<>();
+        F<Boolean, F<Vertex, Boolean>> fn = b -> v -> {
+            if (b.equals(true)) return b;
+            return processors[v.getAssignedId()] < 0;
         };
-        /* This could be short-circuited */
-        for(int i = 0; i < totalSize; i++) {
-            Node v = graph.getNode(i);
-            if(processors[i] < 0) {
-                final IterableW<Object> wrap = IterableW.wrap(v.getEnteringEdgeSet().stream().map(Edge::getSourceNode).collect(Collectors.toSet()));
-                if(wrap.foldLeft(fn, false)) continue;
+        graph.getVertices().forEach(v -> {
+            if (processors[v.getAssignedId()] < 0) {
+                // Skip any assigned processor
+                if (graph.getParentVertices(v).foldLeft(fn, false)) return;
+                // Add the available vertex to the set
                 set.add(v);
             }
-        }
+        });
         return set;
     }
 
+    /**
+     * Needed for Comparable interface
+     * @param searchState
+     * @return diff in priority
+     * @see java.util.PriorityQueue
+     * @see Comparable
+     */
     @Override
     public int compareTo(@NonNull SearchState searchState) {
-        return this.priority - searchState.priority;
+        return this.underestimate - searchState.underestimate;
     }
 
 }

@@ -1,0 +1,18 @@
+digraph example {
+    a [Weight=3];
+    b [Weight=3];
+    c [Weight=3];
+    d [Weight=3];
+    e [Weight=3];
+    f [Weight=3];
+    g [Weight=3];
+    h [Weight=3];
+        a2 [Weight=3];
+        b2 [Weight=3];
+        c2 [Weight=3];
+        d2 [Weight=3];
+        e2 [Weight=3];
+        f2 [Weight=3];
+        g2 [Weight=3];
+        h2 [Weight=3];
+}
