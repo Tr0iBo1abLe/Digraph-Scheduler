@@ -9,6 +9,9 @@ import fj.data.IterableW;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Value;
+import lombok.experimental.NonFinal;
+import lombok.experimental.Wither;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -21,19 +24,15 @@ import java.util.stream.IntStream;
  *
  * @author Dovahkiin Huang, Will Molloy
  */
+
+@Value
 @EqualsAndHashCode(exclude = {"processors", "startTimes"}) // exclude partial schedules where nodes only differ by their processor
-public final class SearchState implements Comparable<SearchState>, ISearchState {
-    @Getter
-    private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
-    @Getter
+public class SearchState implements Comparable<SearchState>, ISearchState {
+    @NonFinal private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
     private final int[] processors;
-    @Getter
     private final int[] startTimes;
-    @Getter
-    private int underestimate;
-    @Getter
+    @NonFinal private int underestimate;
     private Vertex lastVertex;
-    @Getter
     private int numVertices;
 
     public static void initialise(Graph<Vertex, EdgeWithCost<Vertex>> graph) {
@@ -51,7 +50,6 @@ public final class SearchState implements Comparable<SearchState>, ISearchState 
 
     public SearchState(SearchState prevState, Vertex vertex, int processorId) {
         underestimate = prevState.underestimate;
-        numVertices = prevState.numVertices;
         /* clone() is slightly faster */
         processors = prevState.processors.clone();
         startTimes = prevState.startTimes.clone();
@@ -121,7 +119,7 @@ public final class SearchState implements Comparable<SearchState>, ISearchState 
 
         if (underestimate < nextPriority) underestimate = nextPriority;
 
-        numVertices++;
+        numVertices = prevState.getNumVertices() + 1;
     }
 
     /**
