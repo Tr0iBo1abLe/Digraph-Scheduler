@@ -1,7 +1,7 @@
 # SE306
 Build status ![](https://circleci.com/gh/qhua948/SE306.png?circle-token=3c376333dfa42e6f783718d8741ade5adb351b21)
 
-<p align="center"> <img src = asserts/3.png/></p>
+<p align="center"> <img src = assets/3.png/></p>
 # Usage
 
 ```
