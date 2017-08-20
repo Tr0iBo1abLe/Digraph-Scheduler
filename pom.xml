@@ -152,6 +152,7 @@
             <resource>
                 <filtering>false</filtering>
                 <directory>${basedir}/src/main/java/GUI/Frame/view</directory>
+                <targetPath>GUI/Frame/view</targetPath>
                 <includes>
                     <include>*.css</include>
                     <include>*.fxml</include>
@@ -160,6 +161,7 @@
             <resource>
                 <filtering>false</filtering>
                 <directory>${basedir}/sigar-bin/slib</directory>
+                <targetPath>sigar-bin/slib</targetPath>
                 <includes>
                     <include>*.*</include>
                 </includes>
