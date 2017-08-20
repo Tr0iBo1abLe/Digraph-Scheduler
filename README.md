@@ -1,9 +1,9 @@
 # SE306
 Build status ![](https://circleci.com/gh/qhua948/SE306.png?circle-token=3c376333dfa42e6f783718d8741ade5adb351b21)
 
-![](assets/3.png)
+<p align="center">![](assets/3.png)</p>
 # Usage
-
+```
 usage: Scheduler [-h] [-g] [-a {as,bnb}] -p N [-r M] INFILENAME
                  [OUTFILENAME]
 
@@ -21,3 +21,4 @@ optional arguments:
                          Choose the algorithm to use (default: as)
   -p N, --processors N   Processor count
   -r M, --parallel M     Use parallel processing (default: [1])
+```
