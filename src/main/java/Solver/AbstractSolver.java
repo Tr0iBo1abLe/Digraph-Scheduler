@@ -28,7 +28,7 @@ abstract public class AbstractSolver implements ISolver {
     protected void scheduleVertices(SearchState completeSchedule) {
         final int[] processors = Arrays.stream(completeSchedule.getProcessors()).map(x -> x + 1).toArray();
         final int[] startTimes = completeSchedule.getStartTimes();
-        finalTime = completeSchedule.getPriority();
+        finalTime = completeSchedule.getUnderestimate();
 
         graph.getVertices().forEach(vertex -> {
             int id = vertex.getAssignedId();
