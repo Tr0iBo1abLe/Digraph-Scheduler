@@ -20,17 +20,13 @@ import javax.swing.*;
 import java.io.*;
 import java.util.Arrays;
 
-public class Main {
+public final class Main {
 
     private Main() {
         //Ensure this class is not instantiated
     }
 
     private enum Algo{AS, BNB}
-        /*
-         * Now this is the place where namespaces come in handy!
-         * Sadly, we are in Java
-         */
 
     private static void callSolver(File file, int procN, int parN, Algo algo, OutputStream os) {
         Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(file);
@@ -48,6 +44,7 @@ public class Main {
                     solver = new DFSSolver(graph, procN);
                 }
                 break;
+                // TODO, Make this a factory
         }
         solver.doSolve();
 
@@ -58,16 +55,9 @@ public class Main {
 
     public static void main(String[] args) {
         Namespace ns = null;
-        ArgumentParser argumentParser = ArgumentParsers.newArgumentParser("HDNW")
+        ArgumentParser argumentParser = ArgumentParsers.newArgumentParser("Scheduler")
                 .defaultHelp(true)
                 .description("A GPU Scheduling program");
-        /*
-        argumentParser.addArgument("-l", "--library")
-                .choices("gs", "old")
-                .setDefault("gs")
-                .required(false)
-                .help("Choose library to use. gs -> Use graphstream library, old -> use old parser and datastructure");
-                */
         argumentParser.addArgument("-g", "--gui")
                 .action(Arguments.storeTrue())
                 .help("Choose whether to use GUI(Not implemented at the moment)");
