@@ -17,6 +17,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+/**
+ * Controller is used to get the components in fxml file as java instants and
+ * set event handler for those components.
+ * 
+ * @author Vincent
+ */
 public class Controller {
 
 	@FXML

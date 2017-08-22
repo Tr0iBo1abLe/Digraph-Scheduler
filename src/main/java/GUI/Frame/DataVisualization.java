@@ -14,6 +14,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * This class is pane to show the status of cpu usage, memory usage, time
+ * remaining and other relevant information.
+ * 
+ * @author Vincent
+ * @see Gauge
+ */
 public class DataVisualization extends GridPane {
 	private Gauge cpu;
 	private Gauge memory;
@@ -21,6 +28,13 @@ public class DataVisualization extends GridPane {
 	private Label id;
 	private Label time;
 
+	/**
+	 * DataVisualization.
+	 * <p>
+	 * public DataVisualization()
+	 * <p>
+	 * Creates and initialize DataVisualization to show informations.
+	 */
 	public DataVisualization() {
 		GaugeBuilder builder = GaugeBuilder.create().skinType(SkinType.SLIM);
 		cpu = builder.decimals(1).maxValue(100).unit("%").build();
@@ -54,6 +68,12 @@ public class DataVisualization extends GridPane {
 
 	}
 
+	/**
+	 * Add a bar and a short explain for a gauge. And set a color for them.
+	 * 
+	 * @param TEXT
+	 * @return VBox
+	 */
 	private VBox getGaugeVBox(final String TEXT, final Color COLOR, final Gauge gauge) {
 		Rectangle bar = new Rectangle(200, 3);
 		bar.setArcWidth(6);
@@ -74,7 +94,13 @@ public class DataVisualization extends GridPane {
 		return vBox;
 	}
 
-	private VBox getLabelVBox(final String TEXT, final Color COLOR, Label l) {
+	/**
+	 * Add a bar and a short explain for a label. And set a color for them.
+	 * 
+	 * @param TEXT
+	 * @return VBox
+	 */
+	private VBox getLabelVBox(final String TEXT, final Color COLOR, Label LABEL) {
 		Rectangle bar = new Rectangle(200, 3);
 		bar.setArcWidth(6);
 		bar.setArcHeight(6);
@@ -84,15 +110,20 @@ public class DataVisualization extends GridPane {
 		label.setTextFill(COLOR);
 		label.setAlignment(Pos.CENTER);
 
-		l.setTextFill(COLOR);
-		l.setAlignment(Pos.CENTER);
+		LABEL.setTextFill(COLOR);
+		LABEL.setAlignment(Pos.CENTER);
 
-		VBox vBox = new VBox(bar, label, l);
+		VBox vBox = new VBox(bar, label, LABEL);
 		vBox.setSpacing(3);
 		vBox.setAlignment(Pos.CENTER);
 		return vBox;
 	}
 
+	/**
+	 * Set current cpu usage
+	 * 
+	 * @param
+	 */
 	public void setCpu(double usage) {
 		Color color = Color.rgb(100 + (int) (usage * 1.55), 255 - (int) (usage * 1.55), 50);
 		cpu.setValue(usage);
@@ -100,19 +131,39 @@ public class DataVisualization extends GridPane {
 
 	}
 
+	/**
+	 * Set current memory usage
+	 * 
+	 * @param
+	 */
 	public void setRam(double usage) {
 		memory.setValue(usage);
 		memory.setBarColor(Color.rgb(100 + (int) (usage * 1.55), 255 - (int) (usage * 1.55), 50));
 	}
 
+	/**
+	 * Set how much work has been done
+	 * 
+	 * @param
+	 */
 	public void setProgress(double p) {
 		progress.setValue(p);
 	}
 
+	/**
+	 * Set the time remaining.
+	 * 
+	 * @param
+	 */
 	public void setTimeRemaining(String time) {
 		this.time.setText(time);
 	}
 
+	/**
+	 * Set the last task id.
+	 * 
+	 * @param
+	 */
 	public void setTaskId(String id) {
 		this.id.setText(id);
 	}
