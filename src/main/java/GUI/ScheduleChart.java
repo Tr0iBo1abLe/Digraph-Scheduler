@@ -7,6 +7,8 @@ import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import lombok.Getter;
@@ -57,6 +59,7 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
             Rectangle rect;
             @NonNull final String label = getLabel(n.getExtraValue());
             Text text = new Text(label);
+            text.setFont(Font.font ("fantasy", FontWeight.EXTRA_BOLD, 25));
             text.setTranslateX(x);
             text.setTranslateY(getBlockHeight());
             text.setBoundsType(TextBoundsType.VISUAL);
@@ -70,14 +73,15 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
                     } else {
                         return;
                     }
-                    y -= getBlockHeight() / 2.0f;
-                    text.setTranslateX(getLength(n.getExtraValue()) / 1.0f);
-                    text.setTranslateY(getBlockHeight() / 2.0f);
+                    text.setTranslateX(getLength(n.getExtraValue()) * 0.7d);
+                    text.setTranslateY(getBlockHeight() * 0.41d);
                     if (!region.getChildren().contains(rect) && !region.getChildren().contains(text)) {
                         region.getChildren().addAll(text);
                     }
-                    rect.setWidth(getLength(n.getExtraValue()) * ((NumberAxis) getXAxis()).getScale());
-                    rect.setHeight(getBlockHeight());
+                    rect.setWidth(getLength( n.getExtraValue()) * ((getXAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis)getXAxis()).getScale()) : 1));
+                    rect.setHeight((getBlockHeight() * ((getYAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis)getYAxis()).getScale()) : 1)) * (5d/6d));
+                    y = y - getBlockHeight() * 0.41d;
+                    region.setStyle(getStyleClass(n.getExtraValue()).toString());
                     region.setShape(null);
                     region.setShape(rect);
                     region.setScaleShape(false);
@@ -128,14 +132,10 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
 
     private Node createContainer(Series<X, Y> series, int seriesIndex, final Data<X, Y> item, int itemIndex) {
         Node container = item.getNode();
-
         if (container == null) {
             container = new StackPane();
             item.setNode(container);
         }
-
-        container.getStyleClass().add(getStyleClass(item.getExtraValue()));
-
         return container;
     }
 
@@ -171,9 +171,17 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
         @Setter
         protected String label;
 
-        public ExtraData(long lengthMs, String styleClass, String label) {
+        public ExtraData(long lengthMs, String color, String borderColor, String label) {
             this.length = lengthMs;
-            this.styleClass = styleClass;
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("-fx-background-color: ")
+                    .append(color+"\n")
+                    .append("-fx-border-color: ")
+                    .append(borderColor+"\n")
+                    .append("-fx-border-radius: 30deg;\n")
+                    .append("-fx-border-style: solid inside;\n")
+                    .append("-fx-border-width: 3px;");
+            this.styleClass = stringBuilder.toString();
             this.label = label;
         }
     }

@@ -20,8 +20,8 @@ digraph "OutTree-Balanced-MaxBf-3_Nodes_11_CCR_0.1_WeightType_Random" {
 	2 -> 9	 [Weight=10];
 	10	 [Weight=20];
 	3 -> 10	 [Weight=4];
-	7 -> 11  [Weight=70];
 	11	 [Weight=50];
+	7 -> 11  [Weight=70];
 	12	 [Weight=70];
 	11 -> 12	 [Weight=9];
 	13	 [Weight=90];
@@ -42,8 +42,8 @@ digraph "OutTree-Balanced-MaxBf-3_Nodes_11_CCR_0.1_WeightType_Random" {
 	12 -> 20	 [Weight=10];
 	21	 [Weight=20];
 	13 -> 21	 [Weight=4];
-	21 -> 22 [Weight=50];
 	22	 [Weight=50];
+	21 -> 22 [Weight=50];
 	23	 [Weight=70];
 	22 -> 23	 [Weight=9];
 	24	 [Weight=90];

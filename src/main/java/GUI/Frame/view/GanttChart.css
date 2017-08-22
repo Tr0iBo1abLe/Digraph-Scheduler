@@ -1,0 +1,4 @@
+.axis {
+    -fx-tick-label-font: bolder 14pt fantasy;
+    -fx-tick-label-fill: #663399;
+}

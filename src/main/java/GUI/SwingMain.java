@@ -26,6 +26,7 @@ import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
 import lombok.Synchronized;
 import org.graphstream.ui.swingViewer.ViewPanel;
@@ -47,7 +48,6 @@ public class SwingMain implements SwingMainInterface {
 
     public static final String STYLE_RESORUCE = "url('style.css')";
     private static final String procStr = "Processor";
-    private static final ColorManager1 COLOR_MANAGER_1 = new ColorManager1();
     private static ISolver solver;
     private static org.graphstream.graph.Graph visualGraph = null;
     private static GraphViewer viewer = null;
@@ -185,7 +185,7 @@ public class SwingMain implements SwingMainInterface {
             XYChart.Series series = new XYChart.Series();
             seriesArr[i] = series;
             procStrNames[i] = procStr.concat(String.valueOf(i + 1));
-            seriesArr[i].getData().add(new XYChart.Data(0, procStrNames[i], new ScheduleChart.ExtraData(0, "", "")));
+            seriesArr[i].getData().add(new XYChart.Data(0, procStrNames[i], new ScheduleChart.ExtraData(0, "rgba(0,0,0,0);", "rgba(0,0,0,0);","")));
         });
         String[] nodeNameArr = new String[visualGraph.getNodeSet().size()];
         for (int i = 0; i < seriesArr.length; i++) {
@@ -193,11 +193,9 @@ public class SwingMain implements SwingMainInterface {
         }
 
         xAxis.setLabel("");
-        xAxis.setTickLabelFill(Color.CHOCOLATE);
         xAxis.setMinorTickCount(4);
 
         yAxis.setLabel("");
-        yAxis.setTickLabelFill(Color.CHOCOLATE);
         yAxis.setTickLabelGap(10);
         yAxis.setCategories(FXCollections.observableArrayList(procStrNames));
 
@@ -205,7 +203,7 @@ public class SwingMain implements SwingMainInterface {
         scheduleChart.setBlockHeight(50);
         scheduleChart.getData().addAll(seriesArr);
 
-        scheduleChart.getStylesheets().add("chart.css");
+        scheduleChart.getStylesheets().add(MainVisualization.class.getResource("view/GanttChart.css").toExternalForm());
     }
 
 
@@ -221,7 +219,7 @@ public class SwingMain implements SwingMainInterface {
         visualGraph = Helper.convertToGsGraph(graph);
         visualGraph.addAttribute("ui.stylesheet", "url('./src/main/java/GUI/Frame/view/Graph.css')");
         solver = solveri;
-        ColorManager.generateColor(9);
+        ColorManager.generateColor(solveri.getProcessorCount());
         initRest();
     }
 
@@ -254,7 +252,9 @@ public class SwingMain implements SwingMainInterface {
         rootFrame.setVisible(true);
 
         Platform.runLater(sysInfolPieChart);
-        Application.launch(MainVisualization.class);
+
+        //TODO - SET NEW ENTRY POINT WHEN ALL FINISH
+//        Application.launch(MainVisualization.class);
     }
 
     @Override
@@ -289,7 +289,8 @@ public class SwingMain implements SwingMainInterface {
                 }
                 series.getData().add(new XYChart.Data(startTimes[index]
                         , procStr + String.valueOf(procOn + 1)
-                        , new ScheduleChart.ExtraData(cost, COLOR_MANAGER_1.next(), n.getId())));
+                        , new ScheduleChart.ExtraData(cost, ColorManager.getColorSetForGanttTasks().get(String.valueOf(procOn + 1)),
+                        ColorManager.getColorSetForGanttTasksBorder().get(String.valueOf(procOn + 1)), n.getId())));
 
                 seriesList.add(series);
             }
@@ -303,6 +304,7 @@ public class SwingMain implements SwingMainInterface {
         int curSize = solver.getStateCounter();
         if (progressBar1.getValue() < curSize) {
             progressBar1.setValue(curSize);
+            progressBar1.setMaximum(curSize + 10000000);
         }
 
 
@@ -340,31 +342,15 @@ public class SwingMain implements SwingMainInterface {
     }
 
     private void initFX(JFXPanel fxPanel) {
+//        scheduleChart.setPrefHeight(900);
+//        scheduleChart.setPrefWidth(1200);
+//        scheduleChart.setMinWidth(500);
+//        ScrollPane scrollPane = new ScrollPane();
+//        scrollPane.setContent(scheduleChart);
+//        Scene scene = new Scene(scrollPane);
         Scene scene = new Scene(scheduleChart);
         fxPanel.setScene(scene);
         fxPanel.setPreferredSize(new Dimension(500, 500));
     }
-
-
-    private static class ColorManager1 implements Iterator<String> {
-        static final String[] stylesStr = {"status-red", "status-blue", "status-green", "status-magenta", "status-yellow", "status-cyan"};
-        private AtomicInteger atomicInteger = new AtomicInteger();
-
-        @Override
-        public boolean hasNext() {
-            return true;
-        }
-
-        @Override
-        @Synchronized
-        public String next() {
-            int i = atomicInteger.incrementAndGet();
-            if (i >= stylesStr.length) {
-                atomicInteger.set(0);
-                return stylesStr[0];
-            } else return stylesStr[i];
-        }
-    }
-
 
 }

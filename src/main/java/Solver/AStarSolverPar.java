@@ -6,6 +6,7 @@ import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.Queue;
 import java.util.Timer;
