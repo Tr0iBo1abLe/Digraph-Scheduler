@@ -2,7 +2,7 @@ package EntryPoint;
 
 import CommonInterface.ISolver;
 import Exporter.GraphExporter;
-import GUI.SwingMain;
+import GUI.GUIMain;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
@@ -129,8 +129,8 @@ public final class Main {
         if (gui) {
             Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(inputFile);
             ISolver solver = new Solver.AStarSolver(graph, procN);
-            SwingMain.init(graph, solver);
-            SwingUtilities.invokeLater(new SwingMain());
+            GUIMain.init(graph, solver);
+            SwingUtilities.invokeLater(new GUIMain());
         } else {
             callSolver(inputFile, procN, parN, algo, os);
         }

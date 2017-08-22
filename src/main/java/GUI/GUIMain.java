@@ -5,7 +5,7 @@ import CommonInterface.ISolver;
 import Exporter.GraphExporter;
 import GUI.Events.SolversThread;
 import GUI.Events.SysInfoMonitoringThread;
-import GUI.Frame.MainVisualization;
+import GUI.Frame.GUIEntry;
 import GUI.Interfaces.SwingMainInterface;
 import GUI.Util.ColorManager;
 import GUI.Models.GMouseManager;
@@ -26,8 +26,6 @@ import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.paint.Color;
 import lombok.Synchronized;
 import org.graphstream.ui.swingViewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
@@ -36,15 +34,13 @@ import org.graphstream.ui.view.ViewerPipe;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 /**
  * Created by e on 7/08/17.
  */
-public class SwingMain implements SwingMainInterface {
+public class GUIMain implements SwingMainInterface {
 
     public static final String STYLE_RESORUCE = "url('style.css')";
     private static final String procStr = "Processor";
@@ -113,7 +109,7 @@ public class SwingMain implements SwingMainInterface {
 
         @Override
         protected Void doInBackground() throws Exception {
-            solver.associateUI(SwingMain.this);
+            solver.associateUI(GUIMain.this);
             solver.doSolve();
             return null;
         }
@@ -142,13 +138,13 @@ public class SwingMain implements SwingMainInterface {
 
     }
 
-    public SwingMain() { //Pause and resume feature
+    public GUIMain() { //Pause and resume feature
         $$$setupUI$$$();
         startButton.addActionListener(actionEvent -> {
 //            solverWorker = new SolverWorker();
 //            solverWorker.execute();
-            solversThread = new SolversThread(SwingMain.this, solver);
-            solversThread.addListener(SwingMain.this);
+            solversThread = new SolversThread(GUIMain.this, solver);
+            solversThread.addListener(GUIMain.this);
             solversThread.start();
             stopButton.setEnabled(true);
         });
@@ -164,7 +160,7 @@ public class SwingMain implements SwingMainInterface {
         });
         stopButton.setEnabled(false);
         SysInfoMonitoringThread sysInfoMonitoringThread = new SysInfoMonitoringThread(SysInfoModel.getInstance());
-        sysInfoMonitoringThread.addListener(SwingMain.this);
+        sysInfoMonitoringThread.addListener(GUIMain.this);
         sysInfoMonitoringThread.start();
     }
 
@@ -203,7 +199,7 @@ public class SwingMain implements SwingMainInterface {
         scheduleChart.setBlockHeight(50);
         scheduleChart.getData().addAll(seriesArr);
 
-        scheduleChart.getStylesheets().add(MainVisualization.class.getResource("view/GanttChart.css").toExternalForm());
+        scheduleChart.getStylesheets().add(GUIEntry.class.getResource("view/GanttChart.css").toExternalForm());
     }
 
 
@@ -254,7 +250,7 @@ public class SwingMain implements SwingMainInterface {
         Platform.runLater(sysInfolPieChart);
 
         //TODO - SET NEW ENTRY POINT WHEN ALL FINISH
-//        Application.launch(MainVisualization.class);
+//        Application.launch(GUIEntry.class);
     }
 
     @Override

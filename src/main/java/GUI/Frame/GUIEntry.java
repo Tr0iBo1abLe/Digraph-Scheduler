@@ -14,7 +14,7 @@ import javafx.stage.Stage;
  * @author Vincent
  * @see DataVisualization
  */
-public class Main extends Application {
+public class GUIEntry extends Application {
 
 	private Stage primaryStage;
 
@@ -27,16 +27,16 @@ public class Main extends Application {
 	}
 
 	/**
-	 * Load Layout.fxml to Main class and set Style.css to scene for using later
+	 * Load Layout.fxml to GUIEntry class and set Style.css to scene for using later
 	 */
 	private void initLayout() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(Main.class.getResource("view/Layout.fxml"));
+			loader.setLocation(GUIEntry.class.getResource("view/Layout.fxml"));
 			AnchorPane personOverview = (AnchorPane) loader.load();
 
 			Scene scene = new Scene(personOverview);
-			scene.getStylesheets().add(Main.class.getResource("view/Style.css").toExternalForm());
+			scene.getStylesheets().add(GUIEntry.class.getResource("view/Style.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.setResizable(false);
 			primaryStage.show();

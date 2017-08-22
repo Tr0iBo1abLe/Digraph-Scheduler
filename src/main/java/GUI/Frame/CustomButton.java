@@ -4,14 +4,14 @@ package GUI.Frame;
 import com.jfoenix.controls.JFXButton;
 
 /**
- * MyButton is a JFXButton which use a customer css style.
+ * CustomButton is a JFXButton which use a customer css style.
  * 
  * @author Vincent
  * @see JFXButton
  */
-public final class MyButton extends JFXButton {
+public final class CustomButton extends JFXButton {
 
-	public MyButton(String text) {
+	public CustomButton(String text) {
 		super(text);
 		this.getStyleClass().add("button-raised");
 	}

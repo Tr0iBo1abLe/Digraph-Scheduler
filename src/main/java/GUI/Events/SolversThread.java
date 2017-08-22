@@ -4,7 +4,7 @@ import CommonInterface.ISolver;
 import Exporter.GraphExporter;
 import GUI.GraphViewer;
 import GUI.Interfaces.ThreadCompleteListener;
-import GUI.SwingMain;
+import GUI.GUIMain;
 import Graph.Edge;
 import Graph.Vertex;
 import lombok.Getter;
@@ -17,7 +17,7 @@ public class SolversThread extends Thread {
     private final Set<ThreadCompleteListener> listeners = new CopyOnWriteArraySet<>();
 
     @Getter
-    private SwingMain swingMain; //Make sure to add listeners
+    private GUIMain GUIMain; //Make sure to add listeners
     @Getter
     private ISolver solver;
     @Getter
@@ -25,17 +25,17 @@ public class SolversThread extends Thread {
     @Getter
     private GraphExporter<Vertex, Edge<Vertex>> graphExporter;
 
-    public SolversThread(SwingMain swingMain, ISolver iSolver, GraphViewer graphViewer, GraphExporter<Vertex, Edge<Vertex>> graphExporter){
+    public SolversThread(GUIMain GUIMain, ISolver iSolver, GraphViewer graphViewer, GraphExporter<Vertex, Edge<Vertex>> graphExporter){
         super();
-        this.swingMain = swingMain;
+        this.GUIMain = GUIMain;
         this.solver = iSolver;
         this.graphViewer = graphViewer;
         this.graphExporter = graphExporter;
     }
 
-    public SolversThread(SwingMain swingMain, ISolver iSolver){
+    public SolversThread(GUIMain GUIMain, ISolver iSolver){
         super();
-        this.swingMain = swingMain;
+        this.GUIMain = GUIMain;
         this.solver = iSolver;
         this.graphViewer = null;
         this.graphExporter = null;
@@ -85,7 +85,7 @@ public class SolversThread extends Thread {
     }
 
     public void doRun(){
-        solver.associateUI(swingMain);
+        solver.associateUI(GUIMain);
         solver.doSolve();
     }
 

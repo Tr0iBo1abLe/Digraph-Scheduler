@@ -1,5 +1,6 @@
 package GUI.Frame.view;
 
+import GUI.Frame.CustomButton;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -8,7 +9,6 @@ import javafx.geometry.Insets;
 import com.jfoenix.controls.JFXToggleButton;
 
 import GUI.Frame.DataVisualization;
-import GUI.Frame.MyButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -44,9 +44,9 @@ public class Controller {
 	private Pane graphPane;
 	private Pane solutionPane;
 
-	private MyButton start;
-	private MyButton pause;
-	private MyButton stop;
+	private CustomButton start;
+	private CustomButton pause;
+	private CustomButton stop;
 
 	public Controller() {
 
@@ -77,9 +77,9 @@ public class Controller {
 	private void initButtons() {
 		buttonsPane.setBackground(
 				new Background(new BackgroundFill(Color.rgb(40, 45, 50), CornerRadii.EMPTY, Insets.EMPTY)));
-		start = new MyButton("START");
-		pause = new MyButton("PAUSE");
-		stop = new MyButton("STOP");
+		start = new CustomButton("START");
+		pause = new CustomButton("PAUSE");
+		stop = new CustomButton("STOP");
 		buttonsPane.getChildren().addAll(start, pause, stop);
 	}
 
