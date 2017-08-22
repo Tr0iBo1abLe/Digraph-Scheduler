@@ -9,13 +9,18 @@ import java.lang.reflect.InvocationTargetException;
 
 /**
  * Picks the best solver (A*, BnB) to run based on the input.
+ * This is required since we cannot manually pick the solver ourselves.
+ * BnB is needed because A* has memory problems for large input @see TestMemoryUsage.
  *
  * @author Will Molloy
  */
-public class SmartSolverSequential extends AbstractSolver {
+public class SmartSolver extends AbstractSolver implements ISolver {
 
+    /**
+     * List of available Solvers. (Parallel is to be added..)
+     */
     private enum Solver {
-        AStar(AStarSolver.class), BnB(DFSSolver.class);
+        AStar(AStarSolver.class), BnB(DFSSolver.class); // link type to actual class; avoids switch-case
         private Class<? extends AbstractSolver> solver;
 
         Solver(Class<? extends AbstractSolver> solver) {
@@ -28,18 +33,20 @@ public class SmartSolverSequential extends AbstractSolver {
     }
     private Solver solver;
     private AbstractSolver currentSolver;
+    private boolean parallel;
 
-    public SmartSolverSequential(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
+    public SmartSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
+        this.parallel = false; // ?? use par argument here otherwise class has to be duplicated.
         determineSolverToUse();
     }
 
     /**
-     * Pick the solver to use based on the program arguments.
+     * Picks the solver to use based on the program arguments.
      *
      * TODO Current ideas:
      *  Get memory available to the JVM (machine dependent)
-     *  get average size of search state (depends on num vertices)
+     *  get average memory size of search state (depends on num vertices)
      *  estimate number of search states (i.e. size of A* queue)
      *  if this exceeds available memory BnB will be selected.
      *
@@ -75,4 +82,17 @@ public class SmartSolverSequential extends AbstractSolver {
     public void doSolve() {
         currentSolver.doSolve();
     }
+
+    public int getFinalTime() {
+        return currentSolver.getFinalTime();
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("Smart Solver: ")
+                .append(currentSolver.toString())
+                .toString();
+    }
+
 }
