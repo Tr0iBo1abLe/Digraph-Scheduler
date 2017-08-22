@@ -2,6 +2,7 @@ package TestCommon;
 
 import Graph.Graph;
 import Solver.AbstractSolver;
+import Solver.SmartSolver;
 import Util.Helper;
 
 import java.io.File;

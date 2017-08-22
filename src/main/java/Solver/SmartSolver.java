@@ -5,6 +5,7 @@ import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
 import fj.data.List;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 
 import java.lang.reflect.InvocationTargetException;
@@ -35,6 +36,7 @@ public class SmartSolver extends AbstractSolver implements ISolver {
         }
     }
     private Solver solver;
+    @Getter
     private AbstractSolver currentSolver;
     private boolean parallel;
 
@@ -88,6 +90,11 @@ public class SmartSolver extends AbstractSolver implements ISolver {
     @Override
     public void doSolve() {
         currentSolver.doSolve();
+    }
+
+    @Override
+    public int getProcessorCount() {
+        return currentSolver.getProcessorCount();
     }
 
     public int getFinalTime() {
