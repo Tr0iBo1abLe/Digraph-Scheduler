@@ -30,6 +30,9 @@ public final class DFSSolver extends AbstractSolver {
         SearchState.initialise(graph);
         // Upper bound is initially all the nodes scheduled to one processor (when edge cost can be ignored)
         currentUpperBound = graph.getVertices().parallelStream().mapToInt(Vertex::getCost).sum();
+        if (processorCount == 1){
+            // TODO immediately add topological sort as the optimal solution
+        }
         SearchState s = new SearchState();
         solving(s);
         scheduleVertices(result);
