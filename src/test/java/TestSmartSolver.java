@@ -88,6 +88,7 @@ public class TestSmartSolver {
     public void testMilestone1Nodes10Processors2() {
         solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot"));
         assertEquals(50, solver.getFinalTime());
+        assertTrue(getSolverType() instanceof AStarSolver);
     }
 
     @Test

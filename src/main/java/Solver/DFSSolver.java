@@ -3,8 +3,12 @@ package Solver;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
+import fj.data.List;
+import fj.data.vector.V;
 import lombok.Data;
 
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
@@ -30,11 +34,11 @@ public final class DFSSolver extends AbstractSolver {
         SearchState.initialise(graph);
         // Upper bound is initially all the nodes scheduled to one processor (when edge cost can be ignored)
         currentUpperBound = graph.getVertices().parallelStream().mapToInt(Vertex::getCost).sum();
-        if (processorCount == 1){
-            // TODO immediately add topological sort as the optimal solution
+        currentUpperBound = topologicalSortSolve();
+        if (processorCount != 1) { // when processorCount = 1, topologicalSort is the solution.
+            SearchState s = new SearchState();
+            solving(s);
         }
-        SearchState s = new SearchState();
-        solving(s);
         scheduleVertices(result);
     }
 
@@ -59,6 +63,42 @@ public final class DFSSolver extends AbstractSolver {
             currentUpperBound = underestimate;
             result = s;
         }
+    }
+
+    public int topologicalSortSolve() {
+        // copy edges, this method will alter the graph (a copy of it)
+        Map<Vertex, fj.data.List<EdgeWithCost<Vertex>>> outwardEdges = new HashMap<>(graph.getOutwardEdgeMap());
+        Map<Vertex, fj.data.List<EdgeWithCost<Vertex>>> inwardEdges = new HashMap<>(graph.getInwardEdgeMap());
+
+        // list that will contain sorted vertices
+        java.util.List<Vertex> sortedVertices = new ArrayList<>();
+        int length = 0;
+        // set of nodes with no incoming edge (dependency satisfied)
+        Queue<Vertex> legalVertices = new LinkedList<>(graph.getVertices().parallelStream().filter(vertex -> inwardEdges.get(vertex).isEmpty()).collect(Collectors.toSet()));
+
+        // exhaust vertices until all have been added to sortedList
+        while(!legalVertices.isEmpty()){
+            Vertex currVertex = legalVertices.remove();
+            length += currVertex.getCost();
+            // add vertex to tail
+            sortedVertices.add(currVertex);
+
+            // iterate and exhaust all edges: from currentVertex to vertexTo
+            java.util.List<EdgeWithCost<Vertex>> edges = outwardEdges.get(currVertex).toJavaList();
+            for (EdgeWithCost<Vertex> edge : new ArrayList<>(edges)){
+                edges.remove(edge);
+                // check vertexTo has no other inwardEdges (i.e. none excluding this one)
+                Vertex vertexTo = edge.getTo();
+                if (inwardEdges.get(vertexTo).toStream().filter(e -> !e.getFrom().equals(currVertex)).isEmpty()){
+                    legalVertices.add(vertexTo);
+                }
+            }
+        }
+
+        // Sort is done
+
+        
+        return length;
     }
 
 }
