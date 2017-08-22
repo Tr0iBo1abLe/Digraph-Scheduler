@@ -9,8 +9,10 @@ import org.junit.runners.Parameterized.Parameters;
 
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static TestCommon.TestConfig.TEST_FILE_PATH;
 import static TestCommon.TestConfig.TEST_MILESTONE_1_INPUT_PATH;
@@ -18,15 +20,14 @@ import static TestCommon.TestConfig.TEST_SOLVER_PATH;
 import static junit.framework.TestCase.assertEquals;
 
 /**
- * Unit tests for the A* Solver implementation that's sequential (no parallel programming is tested here).
+ * Unit tests for the sequential solvers (A*, BnB).
  * <p>
- * This tests a possible solution for Milestone1 where we need a valid schedule (doesn't have to be optimal) and
- * doesn't need to be parallel.
- * <p>
- * Note: the final time is confirmed for the optimal schedule but coming up with the actual optimal schedule
- * takes a while so only asserting the final test time for now. TODO Possible solution to this is an isValidSchedule() method.
+ * Note: only the final times are confirmed for the milestone1 tests, the actual output isn't.
+ * Determining what the expected output is can be time consuming so this will only be tested on smaller graphs.
+ * TODO edge cases for actual output
  * <p>
  * Created by will on 7/31/17.
+ * @author Will Molloy
  */
 @RunWith(Parameterized.class)
 public class TestSolversSequential {
