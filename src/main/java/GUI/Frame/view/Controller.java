@@ -1,52 +1,129 @@
 package GUI.Frame.view;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 
+import com.jfoenix.controls.JFXToggleButton;
+
 import GUI.Frame.DataVisualization;
-import GUI.Frame.GraphVisualization;
 import GUI.Frame.MyButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;  
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 
 public class Controller {
-	
-	@FXML  
+
+	@FXML
+	private AnchorPane parentPane;
+
+	@FXML
 	private AnchorPane dataPane;
 
-	@FXML  
-	private HBox Buttons;
-	
-	@FXML  
-	private AnchorPane ListPane;
-	
+	@FXML
+	private HBox buttonsPane;
+
+	@FXML
+	private AnchorPane mainPane;
+
+	@FXML
+	private AnchorPane pane;
+
+	private JFXToggleButton switchButton;
+	private Pane graphPane;
+	private Pane solutionPane;
+
+	private MyButton start;
+	private MyButton pause;
+	private MyButton stop;
+
 	public Controller() {
-    }
 
-    @FXML
-    private void initialize() {
-    	DataVisualization data=new DataVisualization();
-    	dataPane.getChildren().add(data);
-    	AnchorPane.setLeftAnchor(data, 0d);
-    	AnchorPane.setRightAnchor(data, 0d);
-    	AnchorPane.setTopAnchor(data, 0d);
-    	AnchorPane.setBottomAnchor(data, 0d);
-    	
-    	GraphVisualization graph=new GraphVisualization();
-    	ListPane.getChildren().add(graph);
-    	AnchorPane.setLeftAnchor(graph, 0d);
-    	AnchorPane.setRightAnchor(graph, 0d);
-    	AnchorPane.setTopAnchor(graph, 0d);
-    	AnchorPane.setBottomAnchor(graph, 0d);
-    	
-    	Buttons.setBackground(new Background(new BackgroundFill(Color.rgb(40,45,50), CornerRadii.EMPTY, Insets.EMPTY)));
-    	Buttons.getChildren().add(new MyButton("START"));
-    	Buttons.getChildren().add(new MyButton("PAUSE"));
-    	Buttons.getChildren().add(new MyButton("STOP"));
-    	
+	}
 
-    }
+	@FXML
+	private void initialize() {
+
+		initDataPane();
+
+		initButtons();
+
+		initMainPane();
+
+		initSwitch();
+
+	}
+
+	private void initDataPane() {
+		DataVisualization data = new DataVisualization();
+		dataPane.getChildren().add(data);
+		AnchorPane.setBottomAnchor(data, 0d);
+		AnchorPane.setTopAnchor(data, 0d);
+		AnchorPane.setLeftAnchor(data, 0d);
+		AnchorPane.setRightAnchor(data, 0d);
+	}
+
+	private void initButtons() {
+		buttonsPane.setBackground(
+				new Background(new BackgroundFill(Color.rgb(40, 45, 50), CornerRadii.EMPTY, Insets.EMPTY)));
+		start = new MyButton("START");
+		pause = new MyButton("PAUSE");
+		stop = new MyButton("STOP");
+		buttonsPane.getChildren().addAll(start, pause, stop);
+	}
+
+	private void initMainPane() {
+		mainPane.setBackground(
+				new Background(new BackgroundFill(Color.rgb(40, 45, 50), CornerRadii.EMPTY, Insets.EMPTY)));
+		graphPane = new Pane();
+		graphPane.setBackground(
+				new Background(new BackgroundFill(Color.rgb(255, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
+		solutionPane = new Pane();
+		solutionPane.setBackground(
+				new Background(new BackgroundFill(Color.rgb(0, 255, 0), CornerRadii.EMPTY, Insets.EMPTY)));
+
+		pane.getChildren().add(graphPane);
+		AnchorPane.setBottomAnchor(graphPane, 0d);
+		AnchorPane.setTopAnchor(graphPane, 0d);
+		AnchorPane.setLeftAnchor(graphPane, 0d);
+		AnchorPane.setRightAnchor(graphPane, 0d);
+	}
+
+	private void initSwitch() {
+		switchButton = new JFXToggleButton();
+		switchButton.setText("Graph");
+		switchButton.setTextFill(Color.rgb(255, 255, 255));
+		switchButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				if (switchButton.getText().equals("Graph")) {
+					switchButton.setText("Current Optimal Solution");
+					pane.getChildren().remove(graphPane);
+					pane.getChildren().add(solutionPane);
+					AnchorPane.setBottomAnchor(solutionPane, 0d);
+					AnchorPane.setTopAnchor(solutionPane, 0d);
+					AnchorPane.setLeftAnchor(solutionPane, 0d);
+					AnchorPane.setRightAnchor(solutionPane, 0d);
+				} else {
+					switchButton.setText("Graph");
+					pane.getChildren().remove(solutionPane);
+					pane.getChildren().add(graphPane);
+					AnchorPane.setBottomAnchor(graphPane, 0d);
+					AnchorPane.setTopAnchor(graphPane, 0d);
+					AnchorPane.setLeftAnchor(graphPane, 0d);
+					AnchorPane.setRightAnchor(graphPane, 0d);
+				}
+			}
+		});
+		mainPane.getChildren().add(switchButton);
+		AnchorPane.setTopAnchor(switchButton, 5d);
+		AnchorPane.setLeftAnchor(switchButton, 25d);
+
+	}
 }

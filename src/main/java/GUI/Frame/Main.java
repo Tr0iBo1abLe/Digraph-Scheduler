@@ -8,7 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-public class MainVisualization extends Application {
+public class Main extends Application {
 
     private Stage primaryStage;
 
@@ -17,18 +17,19 @@ public class MainVisualization extends Application {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Scheduler");
 
-        initRootLayout();
+        initLayout();
     }
 
-    public void initRootLayout() {
+    public void initLayout() {
         try {
         	FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainVisualization.class.getResource("view/MainGUI.fxml"));
+            loader.setLocation(Main.class.getResource("view/Layout.fxml"));
             AnchorPane personOverview = (AnchorPane) loader.load();
             
             Scene scene = new Scene(personOverview);
-            scene.getStylesheets().add(MainVisualization.class.getResource("view/jfoenix-components.css").toExternalForm());
+            scene.getStylesheets().add(Main.class.getResource("view/Style.css").toExternalForm());
             primaryStage.setScene(scene);
+            primaryStage.setResizable(false);
             primaryStage.show();
         } catch (IOException e) {
             e.printStackTrace();
