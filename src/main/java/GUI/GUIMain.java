@@ -181,7 +181,7 @@ public class GUIMain implements SwingMainInterface {
             XYChart.Series series = new XYChart.Series();
             seriesArr[i] = series;
             procStrNames[i] = procStr.concat(String.valueOf(i + 1));
-            seriesArr[i].getData().add(new XYChart.Data(0, procStrNames[i], new ScheduleChart.ExtraData(0, "rgba(0,0,0,0);", "rgba(0,0,0,0);","")));
+            seriesArr[i].getData().add(new XYChart.Data(0, procStrNames[i], new ScheduleChart.ExtraData(0, "rgba(0,0,0,0), rgba(0,0,0,0)", "rgba(0,0,0,0);","")));
         });
         String[] nodeNameArr = new String[visualGraph.getNodeSet().size()];
         for (int i = 0; i < seriesArr.length; i++) {

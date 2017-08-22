@@ -174,8 +174,8 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
         public ExtraData(long lengthMs, String color, String borderColor, String label) {
             this.length = lengthMs;
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("-fx-background-color: ")
-                    .append(color+"\n")
+            stringBuilder.append("-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, ")
+                    .append(color+");\n")
                     .append("-fx-border-color: ")
                     .append(borderColor+"\n")
                     .append("-fx-border-radius: 30deg;\n")

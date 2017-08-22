@@ -50,19 +50,24 @@ public class ColorManager {
 
             colorForNode = colorForNode.substring(3);
             String[] helper = colorForNode.split(",");
-            String refactoredColor = "";
+            helper[3] = "rgba" + helper[3].substring(4);
+            String refactoredColorFirstHalf = "";
+            String refactoredColorSecondHalf = "";
             for (int j = 0; j < 3; j++){
-                refactoredColor += helper[j] + ",";
+                refactoredColorFirstHalf += helper[j] + ",";
             }
-            refactoredColor = refactoredColor.substring(0,refactoredColor.length() - 2);
-            String refactoredColorForBorder = refactoredColor + ",1);";
-            refactoredColor += ",0.5);";
-
-            colorForTask = "rgba" + refactoredColor;
+            for (int j = 3; j < 6; j++){
+                refactoredColorSecondHalf += helper[j] + ",";
+            }
+            refactoredColorFirstHalf = refactoredColorFirstHalf.substring(0,refactoredColorFirstHalf.length() - 2);
+            refactoredColorSecondHalf = refactoredColorSecondHalf.substring(0,refactoredColorSecondHalf.length()-3);
+            String refactoredColorForBorder = refactoredColorFirstHalf + ",1);";
+            refactoredColorFirstHalf += ",0.5), ";
+            refactoredColorSecondHalf += ",0.5)";
+            colorForTask = "rgba" + refactoredColorFirstHalf + refactoredColorSecondHalf;
 
             //prepare color for gantt tasks border
             String colorForTaskBorder = "rgba" + refactoredColorForBorder;
-
 
             colorSetForGanttTasks.put(i+"", colorForTask);
             colorSetForGanttTasksBorder.put(i+"", colorForTaskBorder);
