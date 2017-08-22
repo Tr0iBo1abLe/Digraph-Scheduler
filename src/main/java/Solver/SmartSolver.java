@@ -4,6 +4,8 @@ import CommonInterface.ISolver;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
+import fj.data.List;
+import lombok.extern.log4j.Log4j;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -14,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
  *
  * @author Will Molloy
  */
+@Log4j
 public class SmartSolver extends AbstractSolver implements ISolver {
 
     /**
@@ -56,12 +59,15 @@ public class SmartSolver extends AbstractSolver implements ISolver {
      *  .. any more?
      */
     private void determineSolverToUse() {
+        // Getting data about the input
+        int numEdges = (int) graph.getInwardEdgeMap().values().parallelStream().filter(List::isNotEmpty).count();
+        int numVertices = graph.getVertices().size();
 
          // "AI is just a bunch of if/then statements"
          // These decisions are in priority order
         if (processorCount == 1){ // BnB since upper bound is that of using one core
             solver = Solver.BnB;
-        } else if (graph.getInwardEdgeMap().isEmpty() && graph.getOutwardEdgeMap().isEmpty()){ // No edges
+        } else if (numEdges < 1){ // No edges, experimenting with this
             solver = Solver.BnB;
         } else {
             solver = Solver.AStar;
@@ -73,6 +79,7 @@ public class SmartSolver extends AbstractSolver implements ISolver {
     private void initialiseSolver() {
         try {
             currentSolver = solver.getSolver().getDeclaredConstructor(Graph.class, int.class).newInstance(graph, processorCount);
+            log.debug("initialised: " + this.toString());
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
         }
@@ -91,7 +98,7 @@ public class SmartSolver extends AbstractSolver implements ISolver {
     public String toString() {
         return new StringBuilder()
                 .append("Smart Solver: ")
-                .append(currentSolver.toString())
+                .append(currentSolver.getClass().getName())
                 .toString();
     }
 
