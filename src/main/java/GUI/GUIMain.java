@@ -5,8 +5,8 @@ import CommonInterface.ISolver;
 import Exporter.GraphExporter;
 import GUI.Events.SolversThread;
 import GUI.Events.SysInfoMonitoringThread;
-import GUI.Frame.GUIEntry;
-import GUI.Interfaces.SwingMainInterface;
+import GUI.Frame.DataVisualization;
+import GUI.Interfaces.GUIMainInterface;
 import GUI.Util.ColorManager;
 import GUI.Models.GMouseManager;
 import GUI.Models.SysInfoModel;
@@ -18,7 +18,6 @@ import Util.Helper;
 import com.alee.laf.WebLookAndFeel;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.JFXPanel;
@@ -29,7 +28,6 @@ import javafx.scene.chart.XYChart;
 import lombok.Synchronized;
 import org.graphstream.ui.swingViewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
-import org.graphstream.ui.view.ViewerPipe;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,25 +38,35 @@ import java.util.stream.IntStream;
 /**
  * Created by e on 7/08/17.
  */
-public class GUIMain implements SwingMainInterface {
+public class GUIMain implements GUIMainInterface {
 
-    public static final String STYLE_RESORUCE = "url('style.css')";
-    private static final String procStr = "Processor";
-    private static ISolver solver;
-    private static org.graphstream.graph.Graph visualGraph = null;
-    private static GraphViewer viewer = null;
-    private static ViewPanel viewPanel = null;
-    private static ViewerPipe viewerPipe = null;
+//    public static final String STYLE_RESORUCE = "url('style.css')";
+
+
+
+//    private static ViewerPipe viewerPipe = null;
     private static JFrame rootFrame;
     private static boolean inited = false;
-    private ViewPanel viewPanel1;
+
     private JPanel panel1;
     private JButton startButton;
     private JFXPanel jfxPanel1;
     private JButton stopButton;
+
+//    private SolverWorker solverWorker;
+
+    //TODO - PASS THE FOLLOWING TO CONTROLLER (DECLARE THEM AS PUBLIC STATIC FIELDS)
+    private static org.graphstream.graph.Graph visualGraph = null;
+    private static GraphViewer viewer = null;
+    private static ViewPanel viewPanel = null;
+    private ViewPanel viewPanel1;
+
     private JProgressBar progressBar1;
-    private SolverWorker solverWorker;
+
     private ScheduleChart<Number, String> scheduleChart;
+    private static final String procStr = "Processor";
+
+    private static ISolver solver;
 
     private static Graph _graph;
 
@@ -105,41 +113,42 @@ public class GUIMain implements SwingMainInterface {
 //    public static final String STYLE_RESORUCE = "url('style.css')";
 
 
-    private class SolverWorker extends SwingWorker<Void, Void> {
+//    private class SolverWorker extends SwingWorker<Void, Void> {
+//
+//        @Override
+//        protected Void doInBackground() throws Exception {
+//            solver.associateUI(GUIMain.this);
+//            solver.doSolve();
+//            return null;
+//        }
+//
+//        /**
+//         * Executed on the <i>Event Dispatch Thread</i> after the {@code doInBackground}
+//         * method is finished. The default
+//         * implementation does nothing. Subclasses may override this method to
+//         * perform completion actions on the <i>Event Dispatch Thread</i>. Note
+//         * that you can query status inside the implementation of this method to
+//         * determine the result of this task or whether this task has been cancelled.
+//         *
+//         * @see #doInBackground
+//         * @see #isCancelled()
+//         * @see #get
+//         */
+//        @Override
+//        protected void done() {
+//            viewer.colorNodes(visualGraph);
+//            progressBar1.setValue(progressBar1.getMaximum());
+//            // print output, graph exporter
+//            System.out.println(GraphExporter.exportGraphToString(_graph));
+////            System.out.println(Helper.gsGraphToDOTString(visualGraph));
+//        }
+//
+//
+//    }
 
-        @Override
-        protected Void doInBackground() throws Exception {
-            solver.associateUI(GUIMain.this);
-            solver.doSolve();
-            return null;
-        }
-
-        /**
-         * Executed on the <i>Event Dispatch Thread</i> after the {@code doInBackground}
-         * method is finished. The default
-         * implementation does nothing. Subclasses may override this method to
-         * perform completion actions on the <i>Event Dispatch Thread</i>. Note
-         * that you can query status inside the implementation of this method to
-         * determine the result of this task or whether this task has been cancelled.
-         *
-         * @see #doInBackground
-         * @see #isCancelled()
-         * @see #get
-         */
-        @Override
-        protected void done() {
-            viewer.colorNodes(visualGraph);
-            progressBar1.setValue(progressBar1.getMaximum());
-            // print output, graph exporter
-            System.out.println(GraphExporter.exportGraphToString(_graph));
-//            System.out.println(Helper.gsGraphToDOTString(visualGraph));
-        }
-
-
-    }
-
-    public GUIMain() { //Pause and resume feature
+    public GUIMain() {
         $$$setupUI$$$();
+        //TODO - delete the following codes after implementing buttons function in Controller (CustomButton)
         startButton.addActionListener(actionEvent -> {
 //            solverWorker = new SolverWorker();
 //            solverWorker.execute();
@@ -148,7 +157,6 @@ public class GUIMain implements SwingMainInterface {
             solversThread.start();
             stopButton.setEnabled(true);
         });
-        Platform.runLater(() -> initFX(jfxPanel1));
         stopButton.addActionListener(actionEvent -> {
             if ((solversThread != null) && (solversThread.isAlive())) {
                 solversThread.suspend();
@@ -164,7 +172,7 @@ public class GUIMain implements SwingMainInterface {
         sysInfoMonitoringThread.start();
     }
 
-
+    //TODO - MIGRATE TO CONTROLLER
     public void createUIComponents() {
         viewPanel1 = viewPanel;
         viewPanel1.setPreferredSize(new Dimension(500, 1000));
@@ -199,17 +207,30 @@ public class GUIMain implements SwingMainInterface {
         scheduleChart.setBlockHeight(50);
         scheduleChart.getData().addAll(seriesArr);
 
-        scheduleChart.getStylesheets().add(GUIEntry.class.getResource("view/GanttChart.css").toExternalForm());
+        scheduleChart.getStylesheets().add(DataVisualization.class.getResource("view/GanttChart.css").toExternalForm());
+        Platform.runLater(() -> initFX(jfxPanel1)); //TODO - WHEN MOVED TO CONTROLLER, USE THE PANE IT PROVIDES INSTEAD
     }
 
-
-    public static void init(org.graphstream.graph.Graph graph, ISolver solveri) {
-        visualGraph = graph;
-        visualGraph.addAttribute("ui.stylesheet", "url('./src/main/java/GUI/Frame/view/Graph.css')");
-        solver = solveri;
-        initRest();
+    private void initFX(JFXPanel fxPanel) {
+//        scheduleChart.setPrefHeight(900);
+//        scheduleChart.setPrefWidth(1200);
+//        scheduleChart.setMinWidth(500);
+//        ScrollPane scrollPane = new ScrollPane();
+//        scrollPane.setContent(scheduleChart);
+//        Scene scene = new Scene(scrollPane);
+        Scene scene = new Scene(scheduleChart);
+        fxPanel.setScene(scene);
+        fxPanel.setPreferredSize(new Dimension(500, 500));
     }
 
+//    public static void init(org.graphstream.graph.Graph graph, ISolver solveri) {
+//        visualGraph = graph;
+//        visualGraph.addAttribute("ui.stylesheet", "url('./src/main/java/GUI/Frame/view/Graph.css')");
+//        solver = solveri;
+//        initRest();
+//    }
+
+    //TODO - MIGRATE TO CONTROLLER
     public static void init(Graph<? extends Vertex, ? extends EdgeWithCost> graph, ISolver solveri) {
         _graph = graph;
         visualGraph = Helper.convertToGsGraph(graph);
@@ -219,13 +240,14 @@ public class GUIMain implements SwingMainInterface {
         initRest();
     }
 
+    //TODO - MIGRATE TO CONTROLLER
     private static void initRest() {
         System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
         WebLookAndFeel.install();
         viewer = new GraphViewer(visualGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         viewer.initializeLabels(visualGraph); //make sure this method get called immediately after the call to constructor
         viewer.enableAutoLayout();
-        viewerPipe = viewer.newViewerPipe();
+//        viewerPipe = viewer.newViewerPipe();
         viewPanel = viewer.addDefaultView(false);
         viewPanel.addMouseListener(new GMouseManager(viewPanel, visualGraph, viewer));
         viewPanel.addMouseWheelListener(new GMouseManager(viewPanel, visualGraph, viewer));
@@ -249,7 +271,8 @@ public class GUIMain implements SwingMainInterface {
 
         Platform.runLater(sysInfolPieChart);
 
-        //TODO - SET NEW ENTRY POINT WHEN ALL FINISH
+        //TODO - SET NEW ENTRY POINT WHEN ALL FINISH - This call is blocking, move features to Controller, keep this as a connection point.
+        //TODO - pass essential params to Controller.
 //        Application.launch(GUIEntry.class);
     }
 
@@ -292,7 +315,6 @@ public class GUIMain implements SwingMainInterface {
             }
         });
 
-
         //update the GS viewer
         viewer.updateNodes();
 
@@ -302,7 +324,6 @@ public class GUIMain implements SwingMainInterface {
             progressBar1.setValue(curSize);
             progressBar1.setMaximum(curSize + 10000000);
         }
-
 
         Platform.runLater(() -> {
             scheduleChart.getData().clear();
@@ -335,18 +356,6 @@ public class GUIMain implements SwingMainInterface {
         //TODO - delete following statements once GUI implementation finishes
 //        System.out.print("Memory Usage: " + sysInfoModel.getMem().getUsedPercent()+"\t");
 //        System.out.println("CPU Usage:    " + (sysInfoModel.getCpuPerc().getCombined()*100)+"\t");
-    }
-
-    private void initFX(JFXPanel fxPanel) {
-//        scheduleChart.setPrefHeight(900);
-//        scheduleChart.setPrefWidth(1200);
-//        scheduleChart.setMinWidth(500);
-//        ScrollPane scrollPane = new ScrollPane();
-//        scrollPane.setContent(scheduleChart);
-//        Scene scene = new Scene(scrollPane);
-        Scene scene = new Scene(scheduleChart);
-        fxPanel.setScene(scene);
-        fxPanel.setPreferredSize(new Dimension(500, 500));
     }
 
 }

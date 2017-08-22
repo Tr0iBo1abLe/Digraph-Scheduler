@@ -1,6 +1,10 @@
 package GUI.Frame.view;
 
+import CommonInterface.ISearchState;
 import GUI.Frame.CustomButton;
+import GUI.Interfaces.GUIMainInterface;
+import GUI.Models.SysInfoModel;
+import Solver.AbstractSolver;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -23,7 +27,7 @@ import javafx.scene.paint.Color;
  * 
  * @author Vincent
  */
-public class Controller {
+public class Controller implements GUIMainInterface {
 
 	@FXML
 	private AnchorPane parentPane;
@@ -44,6 +48,7 @@ public class Controller {
 	private Pane graphPane;
 	private Pane solutionPane;
 
+	//TODO - migrate button logics from old GUIMain, add Stop&Restart logic
 	private CustomButton start;
 	private CustomButton pause;
 	private CustomButton stop;
@@ -132,4 +137,48 @@ public class Controller {
 		AnchorPane.setLeftAnchor(switchButton, 25d);
 
 	}
+
+    public void createChartsComponents(){
+	    //TODO - MIGRATE FROM GUIMAIN #createUIComponents
+    }
+
+	@Override
+	public void updateWithState(ISearchState searchState, AbstractSolver Solver) {
+
+	}
+
+	@Override
+	public void notifyOfSolversThreadComplete() {
+
+	}
+
+	@Override
+	public void notifyOfSysInfoThreadUpdate() {
+
+	}
+
+	/**
+	 * When an object implementing interface <code>Runnable</code> is used
+	 * to create a thread, starting the thread causes the object's
+	 * <code>run</code> method to be called in that separately executing
+	 * thread.
+	 * <p>
+	 * The general contract of the method <code>run</code> is that it may
+	 * take any action whatsoever.
+	 *
+	 * @see Thread#run()
+	 */
+	@Override
+	public void run() {
+		//TODO - DELETE THIS WHEN FINISHED AS THIS CLASS IS NOT SUPPOSED TO BE RUNNABLE
+	}
+
+	@Override
+	public void updateSysInfo(SysInfoModel sysInfoModel) {
+
+	}
+
+	private void reloadCharts(){
+	    //TODO - support stop&restart
+    }
 }

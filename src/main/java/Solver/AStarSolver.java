@@ -13,7 +13,6 @@ import java.util.TimerTask;
 public final class AStarSolver extends AbstractSolver {
 
     private final Queue<SearchState> queue;
-    private Timer timer;
 
     public AStarSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);

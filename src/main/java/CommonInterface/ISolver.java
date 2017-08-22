@@ -16,4 +16,5 @@ public interface ISolver {
 
     int getFinalTime();
 
+    Timer getTimer();
 }

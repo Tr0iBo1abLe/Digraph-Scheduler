@@ -6,7 +6,7 @@ import GUI.Events.SysInfoMonitoringThread;
 import GUI.Models.SysInfoModel;
 import Solver.AbstractSolver;
 
-public interface SwingMainInterface extends Runnable, IUpdatableState, ThreadCompleteListener {
+public interface GUIMainInterface extends Runnable, IUpdatableState, ThreadCompleteListener {
 
     @Override
     void updateWithState(ISearchState searchState, AbstractSolver Solver);
@@ -29,7 +29,7 @@ public interface SwingMainInterface extends Runnable, IUpdatableState, ThreadCom
      * @see Thread#run()
      */
     @Override
-    void run();
+    void run(); //TODO - DELETE THIS WHEN FINISHED AS GUIENTRY DOES NOT REQUIRE TO BE RUNNABLE BY ITSELF
 
     void updateSysInfo(SysInfoModel sysInfoModel);
 }

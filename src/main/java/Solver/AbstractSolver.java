@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.Timer;
 
 /**
  * Created by e on 1/08/17.
@@ -28,6 +29,8 @@ abstract public class AbstractSolver implements ISolver {
     protected boolean isUpdatableProgressBar = false; //make progress bar compatible with both algorithms if necessary
     @Getter
     protected int stateCounter = 0; //essentially a loop counter, used by GUI to update progress bar
+    @Getter
+    protected Timer timer;
 
     protected void scheduleVertices(SearchState completeSchedule) {
         final int[] processors = Arrays.stream(completeSchedule.getProcessors()).map(x -> x + 1).toArray();

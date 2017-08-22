@@ -18,8 +18,6 @@ import java.util.stream.IntStream;
 @Data
 public final class DFSSolver extends AbstractSolver {
 
-    private Timer timer;
-
     private int currentUpperBound;
     private SearchState result = new SearchState();
 

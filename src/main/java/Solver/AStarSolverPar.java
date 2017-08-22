@@ -15,8 +15,8 @@ import java.util.stream.IntStream;
 
 @Data
 public final class AStarSolverPar extends AbstractSolver {
+
     private final Queue<SearchState> queue;
-    private Timer timer;
 
     public AStarSolverPar(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
