@@ -55,6 +55,8 @@ public class SmartSolver extends AbstractSolver implements ISolver {
      *  estimate number of search states (i.e. size of A* queue)
      *  if this exceeds available memory BnB will be selected.
      *
+     *  Fail safe: switch to BnB if A* exceeds heap memory.
+     *
      * But there are some cases where BnB is faster even when A* terminates:
      *  1 processor
      *  few edges (sparse graph)
