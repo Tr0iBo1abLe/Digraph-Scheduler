@@ -1,6 +1,7 @@
 import Solver.AStarSolver;
 import Solver.AbstractSolver;
 import Solver.DFSSolver;
+import Solver.SmartSolver;
 import TestCommon.CommonTester;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +42,8 @@ public class TestSolversSequential {
 
     @Parameters(name = "{0}") // tester.toString()
     public static Collection data() {
-        return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class));
+        org.apache.log4j.BasicConfigurator.configure();
+        return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class), new CommonTester(SmartSolver.class));
     }
 
     /**

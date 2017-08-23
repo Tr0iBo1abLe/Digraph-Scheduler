@@ -37,11 +37,11 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
     @Getter
     private int numVertices;
 
-    public static void initialise(Graph<Vertex, EdgeWithCost<Vertex>> graph) {
+    static void initialise(Graph<Vertex, EdgeWithCost<Vertex>> graph) {
         SearchState.graph = graph;
     }
 
-    public SearchState() {
+    SearchState() {
         underestimate = 0;
         numVertices = 0;
         lastVertex = null;
@@ -50,7 +50,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         startTimes = processors.clone();
     }
 
-    public SearchState(SearchState prevState, Vertex vertex, int processor) {
+    SearchState(SearchState prevState, Vertex vertex, int processor) {
         underestimate = prevState.underestimate;
         /* clone() is slightly faster */
         processors = prevState.processors.clone();
