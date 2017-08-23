@@ -81,7 +81,6 @@ public class SmartSolver extends AbstractSolver implements ISolver {
     private void initialiseSolver() {
         try {
             currentSolver = solver.getSolver().getDeclaredConstructor(Graph.class, int.class).newInstance(graph, processorCount);
-            log.debug("initialised: " + this.toString());
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
         }
@@ -103,10 +102,8 @@ public class SmartSolver extends AbstractSolver implements ISolver {
 
     @Override
     public String toString() {
-        return new StringBuilder()
-                .append("Smart Solver: ")
-                .append(currentSolver.getClass().getName())
-                .toString();
+        return "Smart Solver: " +
+                currentSolver.getClass().getName();
     }
 
 }
