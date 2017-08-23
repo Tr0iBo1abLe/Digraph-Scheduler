@@ -20,8 +20,8 @@ import java.util.stream.IntStream;
 @Data
 public final class DFSSolver extends AbstractSolver {
 
-    private int currentUpperBound;
-    private SearchState result;
+    private int currUpperBound;
+    private SearchState currBestState;
 
     public DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
@@ -30,35 +30,35 @@ public final class DFSSolver extends AbstractSolver {
     @Override
     public void doSolve() {
         SearchState.initialise(graph);
-        // Upper bound is initially all the nodes scheduled to one processor (when edge cost can be ignored)
+        // Upper bound is initially topological sort i.e. all the nodes scheduled to one processor (when edge cost can be ignored)
         doTopologicalSortSolveAndSetInitialUpperBound();
         if (processorCount != 1) { // when processorCount = 1, topologicalSort is the solution.
             SearchState s = new SearchState();
             solving(s);
         }
-        scheduleVertices(result);
+        scheduleVertices(currBestState);
     }
 
-    private void solving(SearchState s) {
-        s.getLegalVertices().forEach(v -> IntStream.range(0, processorCount).forEach(i -> {
-                    SearchState next = new SearchState(s, v, i);
-                    if (next.getUnderestimate() >= currentUpperBound) {
+    private void solving(SearchState currState) {
+        currState.getLegalVertices().forEach(vertex -> IntStream.range(0, processorCount).forEach(processor -> {
+                    SearchState nextState = new SearchState(currState, vertex, processor);
+                    if (nextState.getUnderestimate() >= currUpperBound) {
                         return;
                     }
-                    if (next.getNumVertices() == graph.getVertices().size()) {
-                        updateLog(next);
+                    if (nextState.getNumVertices() == graph.getVertices().size()) {
+                        updateLog(nextState);
                         return;
                     }
-                    solving(next);
+                    solving(nextState);
                 }
         ));
     }
 
     private void updateLog(SearchState s) {
         int underestimate = s.getUnderestimate();
-        if (underestimate < currentUpperBound) {
-            currentUpperBound = underestimate;
-            result = s;
+        if (underestimate < currUpperBound) {
+            currUpperBound = underestimate;
+            currBestState = s;
         }
     }
 
@@ -107,9 +107,9 @@ public final class DFSSolver extends AbstractSolver {
         final SearchState[] searchState = {new SearchState()};
         sortedVertices.forEach(vertex -> searchState[0] = new SearchState(searchState[0], vertex, 0));
 
-        // Set initial upper bound and result state
-        currentUpperBound = searchState[0].getUnderestimate();
-        result = searchState[0];
+        // Set initial upper bound and currBestState state
+        currUpperBound = searchState[0].getUnderestimate();
+        currBestState = searchState[0];
     }
 
 }
