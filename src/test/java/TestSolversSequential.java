@@ -168,6 +168,7 @@ public class TestSolversSequential {
      * https://www.math.unl.edu/~mbrittenham2/classwk/203f07/quiz/203words7.pdf
      * Note they don't use edge costs (the numbers they have represent a task priority)
      * Therefore the answer they give is incorrect, it can be done in 2 less time units for our rules.
+     * (These have been confirmed using our nice GUI)
      */
     @Test
     public void test14NodesUoN2Core(){
@@ -179,17 +180,6 @@ public class TestSolversSequential {
     @Test
     public void test14NodeUoN3Core(){
         solver = tester.doTest(3, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_203words7dvi_0edgecost.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
-        assertEquals(57, solver.getFinalTime());
-    }
-
-    /*
-     * Ensures the optimal solution with unlimited cores doesn't beat the 3 core optimal solution
-     * Putting more cores will cause DFS to take forever.
-     */
-    @Test
-    public void test14NodeUoN4Core(){
-        solver = tester.doTest(4, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_203words7dvi_0edgecost.dot"));
         log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(57, solver.getFinalTime());
     }
