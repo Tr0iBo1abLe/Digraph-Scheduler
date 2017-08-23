@@ -132,4 +132,14 @@ public class TestSolversSequential {
         assertEquals(227, solver.getFinalTime());
     }
 
+    /*
+     * Edge cases to break our optimisations
+     */
+    @Test
+    public void testExcludeProcessorsEdgesWithZeroCost(){
+        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_4Nodes_ZeroEdgeCosts.dot"));
+        assertEquals(2, solver.getFinalTime());
+    }
+
+
 }
