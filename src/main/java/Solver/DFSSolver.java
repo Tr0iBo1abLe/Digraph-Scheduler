@@ -18,16 +18,14 @@ import java.util.stream.IntStream;
  * Doesn't use much memory since the current best state is cached while the stack is cleared on each iteration.
  *
  * Created by mason on 31/07/17.
-<<<<<<< HEAD
- * @Author mason shi
-=======
  * @author Mason Shi, Edward Huang, Will Molloy
->>>>>>> 87fd235feb842cb4436bffd9c3ec51390a1f5223
  */
 public final class DFSSolver extends AbstractSolver {
 
     private int currUpperBound;
     private SearchState currBestState;
+
+    private SearchState intermediateState;
 
     public DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
@@ -44,9 +42,7 @@ public final class DFSSolver extends AbstractSolver {
             timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
                                           @Override
-                                          public void run() {
-                                              updater.update(currBestState, solver);
-                                          }
+                                          public void run() { updater.update(intermediateState, solver);}
                                       },
                     100, 100);
         }
@@ -71,6 +67,7 @@ public final class DFSSolver extends AbstractSolver {
     private void solving(SearchState currState) {
         currState.getLegalVertices().forEach(vertex -> IntStream.range(0, processorCount).forEach(processor -> {
                     SearchState nextState = new SearchState(currState, vertex, processor);
+                    intermediateState = nextState;
                     if (nextState.getUnderestimate() >= currUpperBound) {
                         return;
                     }

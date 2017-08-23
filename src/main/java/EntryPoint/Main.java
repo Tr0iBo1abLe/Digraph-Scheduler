@@ -130,7 +130,7 @@ public final class Main {
 
         if (gui) {
             Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(inputFile);
-            ISolver solver = new Solver.AStarSolver(graph, procN);
+            ISolver solver = new Solver.DFSSolver(graph, procN);
             GUIMain.init(graph, solver);
             SwingUtilities.invokeLater(new GUIMain());
         } else {
