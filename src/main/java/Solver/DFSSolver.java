@@ -72,7 +72,6 @@ public final class DFSSolver extends AbstractSolver {
         Map<Vertex, java.util.List<EdgeWithCost<Vertex>>> inwardEdges = new HashMap<>();
         graph.getInwardEdgeMap().keySet().forEach(vertex -> inwardEdges.put(vertex, graph.getInwardEdgeMap().get(vertex).toJavaList()));
 
-        graph.getOutwardEdgeMap().keySet().forEach(vertex -> graph.getOutwardEdgeMap().get(vertex).toJavaList());
         // list that will contain sorted vertices
         java.util.List<Vertex> sortedVertices = new ArrayList<>();
         // set of nodes with no incoming edge (dependency satisfied)
