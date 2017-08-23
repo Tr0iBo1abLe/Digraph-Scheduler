@@ -141,5 +141,10 @@ public class TestSolversSequential {
         assertEquals(2, solver.getFinalTime());
     }
 
+    @Test
+    public void testExcludeProcessors6NodeDiamondWithBranch(){
+        solver = tester.doTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_6nodes_diamond_lowcosts.dot"));
+        assertEquals(4, solver.getFinalTime());
+    }
 
 }
