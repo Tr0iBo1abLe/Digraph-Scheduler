@@ -25,7 +25,7 @@ public final class DFSSolver extends AbstractSolver {
     private int currUpperBound;
     private SearchState currBestState;
 
-    private SearchState intermediateState;
+    private SearchState intermediateState; // represent a partial schedule which is going to be used by GUI updater until Solver finishes.
 
     public DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
@@ -59,8 +59,8 @@ public final class DFSSolver extends AbstractSolver {
         scheduleVertices(currBestState);
 
         if (updater != null && timer != null) {
-            updater.update(currBestState, this);
             timer.cancel();
+            updater.update(currBestState, this);
         }
     }
 
