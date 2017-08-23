@@ -1,6 +1,7 @@
 package EntryPoint;
 
 import CommonInterface.ISolver;
+import Exporter.ExportableObserver;
 import Exporter.GraphExporter;
 import GUI.SwingMain;
 import Graph.EdgeWithCost;
@@ -46,14 +47,13 @@ public final class Main {
                 break;
                 // TODO, Make this a factory
         }
+        ExportableObserver exportableObserver = new ExportableObserver(os);
+        graph.addObserver(exportableObserver);
         solver.doSolve();
-
-        final GraphExporter<Vertex, EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;
-        vertexEdgeWithCostGraphExporter = new GraphExporter<Vertex, EdgeWithCost<Vertex>>();
-        vertexEdgeWithCostGraphExporter.doExport(graph, new BufferedWriter(new OutputStreamWriter(os)));
     }
 
     public static void main(String[] args) {
+        org.apache.log4j.BasicConfigurator.configure();
         Namespace ns = null;
         ArgumentParser argumentParser = ArgumentParsers.newArgumentParser("Scheduler")
                 .defaultHelp(true)

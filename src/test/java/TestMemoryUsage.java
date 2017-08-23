@@ -43,6 +43,7 @@ public class TestMemoryUsage {
 
     @Parameters(name = "{0}") // tester.toString()
     public static Collection data() {
+        org.apache.log4j.BasicConfigurator.configure();
         return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class));
     }
 

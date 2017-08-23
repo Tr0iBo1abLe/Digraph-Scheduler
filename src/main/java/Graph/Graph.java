@@ -3,6 +3,7 @@ package Graph;
 import Graph.Exceptions.GraphException;
 import Graph.Interfaces.IGraph;
 import Parser.Interfaces.IVertexCtor;
+import Solver.SearchState;
 import lombok.*;
 import lombok.experimental.NonFinal;
 
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
  * @param <E> The Edge type
  */
 @Value
-public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> {
+public class Graph<V extends Vertex, E extends Edge<V>> extends Observable implements IGraph<V, E> {
     @NonFinal @Setter
     private String name = null;
     private Set<V> vertices;
@@ -295,6 +296,20 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
         }
     }
 
-
+    @Synchronized
+    public void scheduleVertices(SearchState completeSchedule) {
+        final int[] processors = Arrays.stream(completeSchedule.getProcessors()).map(x -> x + 1).toArray();
+        final int[] startTimes = completeSchedule.getStartTimes();
+        getVertices().forEach(vertex -> {
+            int id = vertex.getAssignedId();
+            try {
+                scheduleVertex(vertex, processors[id], startTimes[id]);
+            } catch (GraphException e) {
+                e.printStackTrace();
+            }
+        });
+        setChanged();
+        notifyObservers();
+    }
 
 }

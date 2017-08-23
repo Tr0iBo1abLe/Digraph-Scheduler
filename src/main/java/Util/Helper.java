@@ -59,4 +59,8 @@ public class Helper {
         return os.toString();
     }
 
+    public long getRemainingMemory() {
+        return Runtime.getRuntime().freeMemory();
+    }
+
 }
