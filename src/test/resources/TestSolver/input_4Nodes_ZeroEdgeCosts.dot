@@ -1,0 +1,8 @@
+digraph example {
+    a [Weight=1];
+    b [Weight=1];
+    c [Weight=1];
+    d [Weight=1];
+    a -> b [Weight=1];
+    a -> d [Weight=1];
+}

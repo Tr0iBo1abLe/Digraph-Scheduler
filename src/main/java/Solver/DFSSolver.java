@@ -17,7 +17,6 @@ import java.util.stream.IntStream;
  * Created by mason on 31/07/17.
  * @author Mason Shi, Edward Huang, Will Molloy
  */
-@Data
 public final class DFSSolver extends AbstractSolver {
 
     private int currUpperBound;
@@ -66,18 +65,20 @@ public final class DFSSolver extends AbstractSolver {
      * Solves the scheduling problem with one processing core
      */
     private void doTopologicalSortSolveAndSetInitialUpperBound() {
-        // copy edges, this method will alter the graph (a copy of it)
+        // parallelStream() is slower due to overhead and these graphs are expected to be <20 nodes.
+        // copy edges, this method will alter the graph (a copy of it).
         Map<Vertex, java.util.List<EdgeWithCost<Vertex>>> outwardEdges = new HashMap<>();
         graph.getOutwardEdgeMap().keySet().forEach(vertex -> outwardEdges.put(vertex, graph.getOutwardEdgeMap().get(vertex).toJavaList()));
         Map<Vertex, java.util.List<EdgeWithCost<Vertex>>> inwardEdges = new HashMap<>();
         graph.getInwardEdgeMap().keySet().forEach(vertex -> inwardEdges.put(vertex, graph.getInwardEdgeMap().get(vertex).toJavaList()));
 
+        graph.getOutwardEdgeMap().keySet().forEach(vertex -> graph.getOutwardEdgeMap().get(vertex).toJavaList());
         // list that will contain sorted vertices
         java.util.List<Vertex> sortedVertices = new ArrayList<>();
         // set of nodes with no incoming edge (dependency satisfied)
-        Queue<Vertex> legalVertices = new LinkedList<>(graph.getVertices().parallelStream().filter(vertex -> inwardEdges.get(vertex).isEmpty()).collect(Collectors.toSet()));
+        Queue<Vertex> legalVertices = new LinkedList<>(graph.getVertices().stream().filter(vertex -> inwardEdges.get(vertex).isEmpty()).collect(Collectors.toSet()));
 
-        // exhaust vertices until all have been added to sorted list
+        // exhaust vertices until all have been added to sorted list`
         while(!legalVertices.isEmpty()){
             Vertex currVertex = legalVertices.remove();
 
@@ -87,20 +88,19 @@ public final class DFSSolver extends AbstractSolver {
             // Iterate and exhaust all edges, from: currentVertex to: vertexTo
             Queue<EdgeWithCost<Vertex>> edgesFromCurrVertex = new LinkedList<>(outwardEdges.get(currVertex));
             while(!edgesFromCurrVertex.isEmpty()){
-                // Remove the edge from the graph (both outward and inward edge maps)
                 EdgeWithCost edge = edgesFromCurrVertex.remove();
-                outwardEdges.put(currVertex, edgesFromCurrVertex.parallelStream().collect(Collectors.toList()));
                 Vertex vertexTo = edge.getTo();
-                inwardEdges.put(vertexTo, inwardEdges.get(vertexTo).parallelStream().filter(e -> !e.getFrom().equals(currVertex)).collect(Collectors.toList()));
+
+                // Remove the edge from the graph (both from outward and inward edge maps)
+                outwardEdges.put(currVertex, new ArrayList<>(edgesFromCurrVertex));
+                // This is re adding all edges excluding the current one i.e. updating the value for vertexTo
+                inwardEdges.put(vertexTo, inwardEdges.get(vertexTo).stream().filter(e -> !e.equals(edge)).collect(Collectors.toList()));
 
                 // check vertexTo has no other inwardEdges (i.e. none excluding this one)
                 if (inwardEdges.get(vertexTo).isEmpty()){
                     legalVertices.add(vertexTo);
                 }
             }
-        }
-        if (!sortedVertices.containsAll(graph.getVertices())){
-            throw new IllegalStateException("TopologicalSort doesn't contain all vertices.");
         }
 
         // Schedule the vertices all on the first core.
