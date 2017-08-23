@@ -4,11 +4,11 @@ digraph example {
     c [Weight=1];
     d [Weight=1];
     e [Weight=1];
-    f [Weight=1];
-    a -> b [Weight=0];
     a -> c [Weight=0];
-    b -> d [Weight=0];
-    c -> d [Weight=0];
-    b -> e [Weight=999];
-    e -> f [Weight=999];
+    a -> d [Weight=0];
+    b -> e [Weight=3];
+    c -> e [Weight=1];
+    d -> e [Weight=1];
+    b -> c [Weight=1];
+    b -> d [Weight=2];
 }

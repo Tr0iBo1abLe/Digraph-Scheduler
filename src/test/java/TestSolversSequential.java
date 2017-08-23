@@ -1,8 +1,11 @@
+import Exporter.GraphExporter;
+import Graph.Vertex;
 import Solver.AStarSolver;
 import Solver.AbstractSolver;
 import Solver.DFSSolver;
 import Solver.SmartSolver;
 import TestCommon.CommonTester;
+import lombok.extern.log4j.Log4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -30,6 +33,7 @@ import static junit.framework.TestCase.assertEquals;
  * Created by will on 7/31/17.
  * @author Will Molloy
  */
+@Log4j
 @RunWith(Parameterized.class)
 public class TestSolversSequential {
 
@@ -137,14 +141,38 @@ public class TestSolversSequential {
      */
     @Test
     public void testExcludeProcessorsEdgesWithZeroCost(){
-        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_4Nodes_ZeroEdgeCosts.dot"));
-        assertEquals(2, solver.getFinalTime());
+        solver = tester.doTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_4Nodes_ZeroEdgeCosts.dot"));
+        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
+        assertEquals(3, solver.getFinalTime());
     }
 
     @Test
     public void testExcludeProcessors6NodeDiamondWithBranch(){
-        solver = tester.doTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_6nodes_diamond_lowcosts.dot"));
+        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_6nodes_diamond_lowcosts.dot"));
+        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(4, solver.getFinalTime());
     }
+
+    @Test
+    public void testExcludeStartTimes3NodesCShouldBeCore2(){
+        solver = tester.doTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_3Nodes_test_startTimes.dot"));
+        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
+        assertEquals(2, solver.getFinalTime());
+    }
+
+    /*
+     * Online examples
+     */
+
+    /**
+     * https://www.math.unl.edu/~mbrittenham2/classwk/203f07/quiz/203words7.pdf
+     */
+    @Test
+    public void test14NodesWords7dvi2Core(){
+        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_3CoreOptimal.dot"));
+        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
+        assertEquals(74, solver.getFinalTime());
+    }
+
 
 }

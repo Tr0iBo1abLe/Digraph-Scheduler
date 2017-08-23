@@ -88,11 +88,12 @@ public final class DFSSolver extends AbstractSolver {
             // Iterate and exhaust all edges, from: currentVertex to: vertexTo
             Queue<EdgeWithCost<Vertex>> edgesFromCurrVertex = new LinkedList<>(outwardEdges.get(currVertex));
             while(!edgesFromCurrVertex.isEmpty()){
-                // Remove the edge from the graph (both from outward and inward edge maps)
                 EdgeWithCost edge = edgesFromCurrVertex.remove();
-                outwardEdges.put(currVertex, new ArrayList<>(edgesFromCurrVertex));
                 Vertex vertexTo = edge.getTo();
-                // This is re adding all edges excluding the current one
+
+                // Remove the edge from the graph (both from outward and inward edge maps)
+                outwardEdges.put(currVertex, new ArrayList<>(edgesFromCurrVertex));
+                // This is re adding all edges excluding the current one i.e. updating the value for vertexTo
                 inwardEdges.put(vertexTo, inwardEdges.get(vertexTo).stream().filter(e -> !e.equals(edge)).collect(Collectors.toList()));
 
                 // check vertexTo has no other inwardEdges (i.e. none excluding this one)
@@ -102,7 +103,7 @@ public final class DFSSolver extends AbstractSolver {
             }
         }
         if (!sortedVertices.containsAll(graph.getVertices())){
-            throw new IllegalStateException("TopologicalSort doesn't contain all vertices.");
+            throw new IllegalStateException("Topological sort doesn't contain all vertices in the graph.");
         }
 
         // Schedule the vertices all on the first core.
