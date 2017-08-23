@@ -2,7 +2,6 @@ package TestCommon;
 
 import Graph.Graph;
 import Solver.AbstractSolver;
-import Solver.SmartSolver;
 import Util.Helper;
 
 import java.io.File;
@@ -22,24 +21,26 @@ public class CommonTester {
 
     /**
      * Configures the CommonTester object to the solver class it will be feeding input to.
+     *
      * @param solverClass, a concrete implementation of AbstractSolver.
      */
-    public CommonTester(Class<? extends AbstractSolver> solverClass){
+    public CommonTester(Class<? extends AbstractSolver> solverClass) {
         this.solverClass = solverClass;
     }
 
     /**
      * Ensure this Class is initialised with a valid solver.
      */
-    private CommonTester(){
+    private CommonTester() {
     }
 
     /**
      * Initialises the solver with the given processor count and DOT file and then calls doSolve().
+     *
      * @param processorCount, number of cores available to the output schedule
-     * @param inputDOTFile, the input DOT file
+     * @param inputDOTFile,   the input DOT file
      */
-    public AbstractSolver doTest(int processorCount, File inputDOTFile){
+    public AbstractSolver doTest(int processorCount, File inputDOTFile) {
         Graph graph = Helper.fileToGraph(inputDOTFile);
 
         try {
@@ -54,7 +55,7 @@ public class CommonTester {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return solverClass.getName();
     }
 }

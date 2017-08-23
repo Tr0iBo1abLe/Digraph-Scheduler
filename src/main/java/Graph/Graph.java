@@ -3,7 +3,10 @@ package Graph;
 import Graph.Exceptions.GraphException;
 import Graph.Interfaces.IGraph;
 import Parser.Interfaces.IVertexCtor;
-import lombok.*;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.Synchronized;
+import lombok.Value;
 import lombok.experimental.NonFinal;
 
 import java.util.*;
@@ -11,23 +14,24 @@ import java.util.stream.Collectors;
 
 /**
  * A graph, finalise() must be called before formal query can be done
+ *
  * @param <V> The Vertex type
  * @param <E> The Edge type
  */
 @Value
 public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> {
-    @NonFinal @Setter
-    private String name = null;
     private Set<V> vertices;
     private Set<E> forwardEdges;
     private List<Object> order;
     private Map<Integer, V> verticesMap;
-
     /* FJ provides efficient immutable List */
     private HashMap<V, fj.data.List<E>> inwardEdgeMap;
     private HashMap<V, fj.data.List<E>> outwardEdgeMap;
     private HashMap<V, fj.data.List<V>> parentVertexMap;
     private HashMap<V, fj.data.List<V>> childrenVertexMap;
+    @NonFinal
+    @Setter
+    private String name = null;
 
     /**
      * Construct a new empty graph
@@ -46,6 +50,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
 
     /**
      * Add a vertex to the graph
+     *
      * @param v the vertex to add
      */
     @Override
@@ -58,6 +63,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
 
     /**
      * Add an edge to the graph, the vertex being referenced must already be in the graph
+     *
      * @param e the edge to add
      * @throws GraphException when any vertex does not exist in the graph
      * @see ensureVertex
@@ -94,6 +100,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
 
     /**
      * Get the children of a vertex
+     *
      * @param v the vertex to get
      * @return a List of vertices
      */
@@ -104,6 +111,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
 
     /**
      * Get the parent of a vertex
+     *
      * @param v the vertex to get
      * @return a List of vertices
      */
@@ -114,6 +122,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
 
     /**
      * Get a vertex by its assigned ID
+     *
      * @param index the assigned ID
      * @return the vertex. null if doesn't exist
      */
@@ -124,6 +133,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
 
     /**
      * Get a vertex by its String ID
+     *
      * @param id the name of the vertex
      * @return the vertex. null if doesn't exist
      */
@@ -138,6 +148,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
 
     /**
      * Get the edges pointing out from a vertex
+     *
      * @param v the vertex
      * @return a list of edges
      */
@@ -148,6 +159,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
 
     /**
      * Get the edges pointing in to a vertex
+     *
      * @param v the vertex
      * @return a list of edges
      */
@@ -158,6 +170,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
 
     /**
      * Method to get outward vertices
+     *
      * @param es
      * @return list for outward vertices
      */
@@ -167,6 +180,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
 
     /**
      * Method to get inward vertices
+     *
      * @param es
      * @return list for inward vertices
      */
@@ -177,15 +191,18 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
     /**
      * Method to get inward edges for a vertex
      * O(N)
+     *
      * @param v vertex to get
      * @return list for inward vertices
      */
     private Set<E> getInwardEdges(@NonNull final V v) {
         return forwardEdges.stream().filter(e -> e.getTo().equals(v)).collect(Collectors.toSet());
     }
+
     /**
      * Method to get outwardward edges for a vertex
      * O(N)
+     *
      * @param v vertex to get
      * @return list for inward vertices
      */
@@ -283,7 +300,7 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
      * Exhaustively and recursively compute the bottom level for all the vertices.
      *
      * @param vertex the vertex to compute
-     * @param level the current level
+     * @param level  the current level
      */
     private void calculateBottomLevels(@NonNull final V vertex,
                                        final int level) {
@@ -294,7 +311,6 @@ public class Graph<V extends Vertex, E extends Edge<V>> implements IGraph<V, E> 
                     calculateBottomLevels(parentVertex, level + vertex.getCost()));
         }
     }
-
 
 
 }

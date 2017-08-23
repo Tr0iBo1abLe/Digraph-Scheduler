@@ -26,12 +26,10 @@ public final class Main {
         //Ensure this class is not instantiated
     }
 
-    private enum Algo{AS, BNB}
-
     private static void callSolver(File file, int procN, int parN, Algo algo, OutputStream os) {
         Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(file);
         ISolver solver = null;
-        switch(algo) {
+        switch (algo) {
             case AS:
                 if (parN != 1) {
                     solver = new AStarSolverPar(graph, procN);
@@ -44,7 +42,7 @@ public final class Main {
                     solver = new DFSSolver(graph, procN);
                 }
                 break;
-                // TODO, Make this a factory
+            // TODO, Make this a factory
         }
         solver.doSolve();
 
@@ -109,7 +107,7 @@ public final class Main {
         fileName = (String) ns.getList("infile").get(0);
         String outfile = ns.getString("outfile");
         String algoStr = ns.getString("algorithm");
-        if(algoStr.matches("as")) algo = Algo.AS;
+        if (algoStr.matches("as")) algo = Algo.AS;
         else algo = Algo.BNB;
         if (outfile == null) {
             os = new BufferedOutputStream(System.out);
@@ -135,5 +133,7 @@ public final class Main {
             callSolver(inputFile, procN, parN, algo, os);
         }
     }
+
+    private enum Algo {AS, BNB}
 }
 

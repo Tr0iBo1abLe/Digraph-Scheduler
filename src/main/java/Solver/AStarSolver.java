@@ -8,6 +8,7 @@ import Graph.Vertex;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.IntStream;
 
 public final class AStarSolver extends AbstractSolver {
 
@@ -37,37 +38,26 @@ public final class AStarSolver extends AbstractSolver {
         }
 
         queue.add(new SearchState());
-
         while (true) {
-            SearchState currentBestSchedule = queue.remove();
+            SearchState currBestState = queue.remove();
 
-            if (currentBestSchedule.getNumVertices() == graph.getVertices().size()) {
+            if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
-                scheduleVertices(currentBestSchedule);
+                scheduleVertices(currBestState);
                 if (updater != null && timer != null) {
-                    updater.update(currentBestSchedule);
+                    updater.update(currBestState);
                     timer.cancel();
                 }
                 return;
             }
 
-            for (Vertex vertex : currentBestSchedule.getLegalVertices()) {
-                for (int processorID = 0; processorID < processorCount; processorID++) {
-                    SearchState nextSearchState = new SearchState(currentBestSchedule, vertex, processorID);
-                    if (!queue.contains(nextSearchState)) {
-                        queue.add(nextSearchState);
-                    }
+            currBestState.getLegalVertices().forEach(vertex -> IntStream.range(0, processorCount).forEach(processor -> {
+                SearchState nextSearchState = new SearchState(currBestState, vertex, processor);
+                if (!queue.contains(nextSearchState)) {
+                    queue.add(nextSearchState);
                 }
-            }
+            }));
 
         }
     }
-
-    /*
-    OPEN ← emptyState
-    while OPEN 6 = ∅ do s ← PopHead ( OPEN )
-    if s is complete solution then return s as optimal solution
-    Expand state s into children and compute f ( s child )
-     for each OPEN ← new states
-     */
 }

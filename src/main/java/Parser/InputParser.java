@@ -34,6 +34,7 @@ public class InputParser<V extends Vertex, E extends Edge<V>> {
     private boolean inAttr = false;
     private LINE_STATE lineState = LINE_STATE.HEADER;
     private char nextSymbol;
+
     public InputParser(@NonNull IVertexCtor<V> vertexCtor,
                        @NonNull IEdgeCtor<V, E> edgeCtor) {
         this.vertexCtor = vertexCtor;

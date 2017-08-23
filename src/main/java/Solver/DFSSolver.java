@@ -3,7 +3,6 @@ package Solver;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
-import lombok.Data;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,8 +12,9 @@ import java.util.stream.IntStream;
 /**
  * DFS Solver, uses branch and bound technique to prune search states in the stack.
  * Doesn't use much memory since the current best state is cached while the stack is cleared on each iteration.
- *
+ * <p>
  * Created by mason on 31/07/17.
+ *
  * @author Mason Shi, Edward Huang, Will Molloy
  */
 public final class DFSSolver extends AbstractSolver {
@@ -40,17 +40,16 @@ public final class DFSSolver extends AbstractSolver {
 
     private void solving(SearchState currState) {
         currState.getLegalVertices().forEach(vertex -> IntStream.range(0, processorCount).forEach(processor -> {
-                    SearchState nextState = new SearchState(currState, vertex, processor);
-                    if (nextState.getUnderestimate() >= currUpperBound) {
-                        return;
-                    }
-                    if (nextState.getNumVertices() == graph.getVertices().size()) {
-                        updateLog(nextState);
-                        return;
-                    }
-                    solving(nextState);
-                }
-        ));
+            SearchState nextState = new SearchState(currState, vertex, processor);
+            if (nextState.getUnderestimate() >= currUpperBound) {
+                return;
+            }
+            if (nextState.getNumVertices() == graph.getVertices().size()) {
+                updateLog(nextState);
+                return;
+            }
+            solving(nextState);
+        }));
     }
 
     private void updateLog(SearchState s) {
@@ -78,7 +77,7 @@ public final class DFSSolver extends AbstractSolver {
         Queue<Vertex> legalVertices = new LinkedList<>(graph.getVertices().stream().filter(vertex -> inwardEdges.get(vertex).isEmpty()).collect(Collectors.toSet()));
 
         // exhaust vertices until all have been added to sorted list`
-        while(!legalVertices.isEmpty()){
+        while (!legalVertices.isEmpty()) {
             Vertex currVertex = legalVertices.remove();
 
             // add vertex to tail of sorted list
@@ -86,7 +85,7 @@ public final class DFSSolver extends AbstractSolver {
 
             // Iterate and exhaust all edges, from: currentVertex to: vertexTo
             Queue<EdgeWithCost<Vertex>> edgesFromCurrVertex = new LinkedList<>(outwardEdges.get(currVertex));
-            while(!edgesFromCurrVertex.isEmpty()){
+            while (!edgesFromCurrVertex.isEmpty()) {
                 EdgeWithCost edge = edgesFromCurrVertex.remove();
                 Vertex vertexTo = edge.getTo();
 
@@ -96,7 +95,7 @@ public final class DFSSolver extends AbstractSolver {
                 inwardEdges.put(vertexTo, inwardEdges.get(vertexTo).stream().filter(e -> !e.equals(edge)).collect(Collectors.toList()));
 
                 // check vertexTo has no other inwardEdges (i.e. none excluding this one)
-                if (inwardEdges.get(vertexTo).isEmpty()){
+                if (inwardEdges.get(vertexTo).isEmpty()) {
                     legalVertices.add(vertexTo);
                 }
             }
