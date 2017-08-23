@@ -65,6 +65,7 @@ public final class AStarSolver extends AbstractSolver {
                     }
                 }
             }
+
         }
     }
 
