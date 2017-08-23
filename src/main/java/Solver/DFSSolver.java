@@ -41,7 +41,7 @@ public final class DFSSolver extends AbstractSolver {
     private void solving(SearchState currState) {
         currState.getLegalVertices().forEach(vertex -> IntStream.range(0, processorCount).forEach(processor -> {
                     SearchState nextState = new SearchState(currState, vertex, processor);
-                    if (currBestState != null && nextState.getUnderestimate() >= currUpperBound) {
+                    if (nextState.getUnderestimate() >= currUpperBound) {
                         return;
                     }
                     if (nextState.getNumVertices() == graph.getVertices().size()) {
@@ -55,7 +55,7 @@ public final class DFSSolver extends AbstractSolver {
 
     private void updateLog(SearchState s) {
         int underestimate = s.getUnderestimate();
-        if (underestimate <= currUpperBound) {
+        if (underestimate < currUpperBound) {
             currUpperBound = underestimate;
             currBestState = s;
         }
