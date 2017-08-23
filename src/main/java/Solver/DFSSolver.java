@@ -102,9 +102,6 @@ public final class DFSSolver extends AbstractSolver {
                 }
             }
         }
-        if (!sortedVertices.containsAll(graph.getVertices())){
-            throw new IllegalStateException("Topological sort doesn't contain all vertices in the graph.");
-        }
 
         // Schedule the vertices all on the first core.
         final SearchState[] searchState = {new SearchState()};
