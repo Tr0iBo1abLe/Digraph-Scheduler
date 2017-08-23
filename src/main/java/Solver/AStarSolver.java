@@ -17,33 +17,11 @@ public final class AStarSolver extends AbstractSolver {
 
     private final Queue<SearchState> queue;
     private Timer guiTimer;
-    private Timer memoryCheckTimer;
-    private volatile boolean interrupted = false;
 
     public AStarSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
         queue = new FastPriorityQueue<>();
-        memoryCheckTimer = new Timer();
-        memoryCheckTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                long remMem = Helper.getRemainingMemory();
-                log.debug("Checking remaining memory: Remaining -> " + remMem);
-                if(remMem <= 1000000L) { // The memory value should be fine tuned a bit more
-                    memoryCheckTimer.cancel();
-                    cancel();
-                    if(guiTimer != null) guiTimer.cancel();
-                    log.debug("Calling DFSSolver");
-                    interrupted = true;
-                    DFSSolver nextSolver = new DFSSolver(getGraph(), getProcessorCount(), queue.peek());
-                    queue.clear();
-                    nextSolver.setUpdater(getUpdater());
-                    System.gc();
-                    nextSolver.continueSolve();
-                    cancel();
-                }
-            }
-        }, 1000, 1000);
+
     }
 
     @Override
@@ -65,8 +43,22 @@ public final class AStarSolver extends AbstractSolver {
 
         queue.add(new SearchState());
 
-        for(;!interrupted;) {
+        for(;;) {
             SearchState currentBestSchedule = queue.remove();
+
+            long remMem = Helper.getRemainingMemory();
+            log.debug("Checking remaining memory: Remaining -> " + remMem);
+            if(remMem <= 600_000_000L) { // The memory value should be fine tuned a bit more
+                /*      ^GB ^MB ^kB    */
+                log.debug("Calling DFSSolver");
+                if(guiTimer != null) guiTimer.cancel();
+
+                DFSSolver nextSolver = new DFSSolver(getGraph(), getProcessorCount(), currentBestSchedule);
+                queue.clear();
+                nextSolver.setUpdater(getUpdater());
+                System.gc();
+                currentBestSchedule = nextSolver.continueSolve();
+            }
 
             if (currentBestSchedule.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution

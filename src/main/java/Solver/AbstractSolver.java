@@ -28,8 +28,18 @@ abstract public class AbstractSolver implements ISolver {
 
     @Synchronized
     protected void scheduleVertices(SearchState completeSchedule) {
+        final int[] processors = Arrays.stream(completeSchedule.getProcessors()).map(x -> x + 1).toArray();
+        final int[] startTimes = completeSchedule.getStartTimes();
         finalTime = completeSchedule.getUnderestimate();
-        graph.scheduleVertices(completeSchedule);
+
+        graph.getVertices().forEach(vertex -> {
+            int id = vertex.getAssignedId();
+            try {
+                graph.scheduleVertex(vertex, processors[id], startTimes[id]);
+            } catch (GraphException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public void associateUI(IUpdatableState ui) {

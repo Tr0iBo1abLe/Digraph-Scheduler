@@ -38,10 +38,10 @@ public final class DFSSolver extends AbstractSolver {
     /**
      * Used when transferring state from a AStarSolver
      */
-    public void continueSolve() {
+    public SearchState continueSolve() {
         currUpperBound = Integer.MAX_VALUE;
         solving(currBestState);
-        scheduleVertices(currBestState);
+        return currBestState;
     }
 
     @Override

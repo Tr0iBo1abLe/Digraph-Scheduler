@@ -47,9 +47,11 @@ public final class Main {
                 break;
                 // TODO, Make this a factory
         }
-        ExportableObserver exportableObserver = new ExportableObserver(os);
-        graph.addObserver(exportableObserver);
         solver.doSolve();
+
+        final GraphExporter<Vertex, EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;
+        vertexEdgeWithCostGraphExporter = new GraphExporter<Vertex, EdgeWithCost<Vertex>>();
+        vertexEdgeWithCostGraphExporter.doExport(graph, new BufferedWriter(new OutputStreamWriter(os)));
     }
 
     public static void main(String[] args) {

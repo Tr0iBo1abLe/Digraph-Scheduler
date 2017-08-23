@@ -47,19 +47,19 @@ public class TestMemoryUsage {
         return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class));
     }
 
-    @Ignore
+    @Test
     public void memoryTest96Nodes1Core(){
         solver = tester.doTest(1, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_96nodes_0edges.dot"));
         assertEquals(288, solver.getFinalTime());
     }
 
-    @Ignore
+    @Test
     public void memoryTest96Nodes96Core(){
         solver = tester.doTest(96, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_96nodes_0edges.dot"));
         assertEquals(3, solver.getFinalTime());
     }
 
-    @Ignore
+    @Test
     public void memoryTest48Nodes(){
         solver = tester.doTest(48, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_48nodes_0edges.dot"));
         assertEquals(3, solver.getFinalTime());
@@ -77,7 +77,7 @@ public class TestMemoryUsage {
         assertEquals(3, solver.getFinalTime());
     }
 
-    @Ignore
+    @Test
     public void memoryTest16Nodes8Cores(){
         solver = tester.doTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_16nodes_0edges.dot"));
         assertEquals(6, solver.getFinalTime());
