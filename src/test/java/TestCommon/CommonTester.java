@@ -2,6 +2,7 @@ package TestCommon;
 
 import Graph.Graph;
 import Solver.AbstractSolver;
+import Solver.SmartSolver;
 import Util.Helper;
 
 import java.io.File;
@@ -17,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 public class CommonTester {
 
     private Class<? extends AbstractSolver> solverClass;
+    private AbstractSolver solver;
 
     /**
      * Configures the CommonTester object to the solver class it will be feeding input to.
@@ -40,7 +42,6 @@ public class CommonTester {
     public AbstractSolver doTest(int processorCount, File inputDOTFile){
         Graph graph = Helper.fileToGraph(inputDOTFile);
 
-        AbstractSolver solver = null;
         try {
             solver = solverClass.getDeclaredConstructor(Graph.class, int.class).newInstance(graph, processorCount);
             solver.doSolve();
