@@ -190,7 +190,7 @@ public class TestSolversSequential {
      * Added edge costs (I thought that's what they were at first)
      * This test breaks the 'exclude "startTimes"' in SearchState class.
      *
-     * The expected finalTime is 96 (NOT CONFIRMED), "exclude startTimes" gives 98
+     * The expected finalTime is 96, "exclude startTimes" gives 98
      * This is because with "exclude startTimes" the priority queue is adding a state that is treated as equal (incorrectly)
      * to the state(s) that are required to produce the optimal schedule. Therefore the pre state to the optimal state is
      * not considered.
@@ -204,7 +204,11 @@ public class TestSolversSequential {
 
     /**
      * Attempt to break exclude "startTimes" vs. excluding nothing rather than excluding "processors" vs excluding both.
-     * Excluding processors gives a mirrored schedule (or the same) as excluding nothing, while exclude startTimes gives an altered version.
+     * I'm sure excluding startTimes is incorrect (queue size of 40k vs. 700k) but it would be ideal to have an actual test case to prove this!
+     *
+     * Excluding processors gives a mirrored schedule as excluding nothing, while exclude startTimes gives an altered version.
+     * Excluding processors gives a queue size of base_case/processor_count, where base_case is excluding nothing from SearchState.equals()
+     * so clearly it just only ignoring mirror schedules.
      */
     @Test
     public void test14NodesUoN2CoreWithEdgeCostV2(){

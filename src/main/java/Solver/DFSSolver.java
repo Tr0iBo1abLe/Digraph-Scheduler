@@ -3,7 +3,6 @@ package Solver;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
-import lombok.Data;
 import lombok.extern.log4j.Log4j;
 
 import java.util.*;
@@ -29,7 +28,7 @@ public final class DFSSolver extends AbstractSolver {
         log.debug("Solver inited");
     }
 
-    public DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState existingState) {
+    DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState existingState) {
         super(graph, processorCount);
         log.debug("Solver inited with an existing state");
         currBestState = existingState;
@@ -38,10 +37,12 @@ public final class DFSSolver extends AbstractSolver {
     /**
      * Used when transferring state from a AStarSolver
      */
-    public SearchState continueSolve() {
-        currUpperBound = Integer.MAX_VALUE; // TODO currBestState + topo sort of remaining vertices
+    void continueSolve() {
+        // The upper bound is now the currBestState + that of scheduling the remaining vertices to the same processor.
+        // TODO What if there is an edge pointing to these vertices from another core..??
+        currUpperBound = currBestState.getUnderestimate() +
+                currBestState.getUnAssignedVertices().stream().mapToInt(vertex -> vertex.getCost()).sum();
         solving(currBestState);
-        return currBestState;
     }
 
     @Override

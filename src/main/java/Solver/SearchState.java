@@ -16,6 +16,7 @@ import lombok.experimental.Wither;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -144,6 +145,15 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         });
         return set;
     }
+
+    /**
+     * Get the set of Vertices that haven't got an assigned processor (or startTime)
+     * @return the set of un assigned vertices.
+     */
+    Set<Vertex> getUnAssignedVertices() {
+        return graph.getVertices().stream().filter(vertex -> processors[vertex.getAssignedId()] < 0).collect(Collectors.toSet());
+    }
+
 
     /**
      * Needed for Comparable interface

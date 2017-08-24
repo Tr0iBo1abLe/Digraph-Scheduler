@@ -43,17 +43,11 @@ public final class AStarSolver extends AbstractSolver {
             long remMem = Helper.getRemainingMemory();
             log.debug("Checking remaining memory: Remaining -> " + remMem);
             log.debug("Queue Size " + queue.size() + ", State size " + currBestState.getNumVertices());
-            if(remMem <= 600_000_000L) { // The memory value should be fine tuned a bit more
+          //  if(remMem <= 600_000_000L) { // The memory value should be fine tuned a bit more
                 /*      ^GB ^MB ^kB    */
                 log.debug("Calling DFSSolver");
-                if(guiTimer != null) guiTimer.cancel();
-
-                DFSSolver nextSolver = new DFSSolver(getGraph(), getProcessorCount(), currBestState);
-                queue.clear();
-                nextSolver.setUpdater(getUpdater());
-                System.gc();
-                currBestState = nextSolver.continueSolve();
-            }
+                continueSolveWithBnB(currBestState);
+         //   }
 
             if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
@@ -74,5 +68,15 @@ public final class AStarSolver extends AbstractSolver {
                 }
             }
         }
+    }
+
+    private void continueSolveWithBnB(SearchState currBestState) {
+        if(guiTimer != null) guiTimer.cancel();
+
+        DFSSolver nextSolver = new DFSSolver(getGraph(), getProcessorCount(), currBestState);
+        queue.clear();
+        nextSolver.setUpdater(getUpdater());
+        System.gc();
+        nextSolver.continueSolve();
     }
 }
