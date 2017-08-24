@@ -43,9 +43,11 @@ abstract public class AbstractSolver implements ISolver {
     }
 
     /**
-     * When initialising another algorithm.
+     * Constructor for passing states between algorithms.
      */
-    AbstractSolver() {
+    AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState existingState) {
+        this(graph, processorCount);
+        currBestState = existingState;
     }
 
     /**
