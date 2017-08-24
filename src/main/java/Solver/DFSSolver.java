@@ -3,6 +3,7 @@ package Solver;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
+import javafx.application.Platform;
 import lombok.Data;
 import lombok.Getter;
 
@@ -42,7 +43,7 @@ public final class DFSSolver extends AbstractSolver {
             timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
                                           @Override
-                                          public void run() { updater.update(intermediateState, solver);}
+                                          public void run() { Platform.runLater(() -> {updater.update(intermediateState, solver);});}
                                       },
                     100, 100);
         }

@@ -2,6 +2,7 @@ package GUI.Events;
 
 import CommonInterface.ISolver;
 import Exporter.GraphExporter;
+import GUI.Frame.view.Controller;
 import GUI.GraphViewer;
 import GUI.Interfaces.ThreadCompleteListener;
 import GUI.GUIMain;
@@ -19,26 +20,21 @@ public class SolversThread extends Thread {
     @Getter
     private GUIMain GUIMain; //Make sure to add listeners
     @Getter
+    private Controller controller; //Make sure to add listeners
+    @Getter
     private ISolver solver;
-    @Getter
-    private GraphViewer graphViewer;
-    @Getter
-    private GraphExporter<Vertex, Edge<Vertex>> graphExporter;
 
-    public SolversThread(GUIMain GUIMain, ISolver iSolver, GraphViewer graphViewer, GraphExporter<Vertex, Edge<Vertex>> graphExporter){
-        super();
-        this.GUIMain = GUIMain;
-        this.solver = iSolver;
-        this.graphViewer = graphViewer;
-        this.graphExporter = graphExporter;
-    }
 
     public SolversThread(GUIMain GUIMain, ISolver iSolver){
         super();
         this.GUIMain = GUIMain;
         this.solver = iSolver;
-        this.graphViewer = null;
-        this.graphExporter = null;
+    }
+
+    public SolversThread(Controller controller, ISolver iSolver){
+        super();
+        this.controller = controller;
+        this.solver = iSolver;
     }
 
     /**
@@ -85,7 +81,7 @@ public class SolversThread extends Thread {
     }
 
     public void doRun(){
-        solver.associateUI(GUIMain);
+        solver.associateUI(controller); //TODO - CHANGE TO CONTROLLER
         solver.doSolve();
     }
 

@@ -5,6 +5,7 @@ import Datastructure.FastPriorityBlockingQueue;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
+import javafx.application.Platform;
 import lombok.Data;
 import lombok.Getter;
 
@@ -36,7 +37,7 @@ public final class AStarSolverPar extends AbstractSolver {
             timer.scheduleAtFixedRate(new TimerTask() {
                                           @Override
                                           public void run() {
-                                              updater.update(queue.peek(), solver);
+                                              Platform.runLater(()->updater.update(queue.peek(), solver));
                                           }
                                       },
                     100, 100);

@@ -13,6 +13,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import lombok.Getter;
 
 /**
  * This class is pane to show the status of cpu usage, memory usage, time
@@ -40,20 +41,16 @@ public class DataVisualization extends GridPane {
 		cpu = builder.decimals(1).maxValue(100).unit("%").build();
 		memory = builder.decimals(1).maxValue(100).unit("%").build();
 		progress = builder.decimals(1).maxValue(100).unit("%").build();
-		id = new Label("50");
-		time = new Label("100");
+		id = new Label("");
+		time = new Label("");
 
 		VBox cpuPart = getGaugeVBox("CPU USAGE", Color.rgb(100, 100, 200), cpu);
 		VBox memoryPart = getGaugeVBox("RAM USAGE", Color.rgb(100, 200, 200), memory);
 		VBox progressPart = getGaugeVBox("PROGRESS", Color.rgb(200, 100, 200), progress);
 		VBox idPart = getLabelVBox("Last task ID : ", Color.rgb(150, 200, 50), id);
-		VBox timePart = getLabelVBox("Time Remaining : ", Color.rgb(50, 200, 150), time);
+		VBox timePart = getLabelVBox("Finishing time : ", Color.rgb(50, 200, 150), time);
 
 		progress.setBarColor(Color.rgb(200, 100, 200));
-
-		setCpu(30);
-		setRam(100);
-		setProgress(40);
 
 		setPadding(new Insets(20));
 		setHgap(10);
@@ -155,7 +152,7 @@ public class DataVisualization extends GridPane {
 	 * 
 	 * @param
 	 */
-	public void setTimeRemaining(String time) {
+	public void setFinishingTime(String time) {
 		this.time.setText(time);
 	}
 

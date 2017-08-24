@@ -6,6 +6,8 @@ import Exporter.GraphExporter;
 import GUI.Events.SolversThread;
 import GUI.Events.SysInfoMonitoringThread;
 import GUI.Frame.DataVisualization;
+import GUI.Frame.GUIEntry;
+import GUI.Frame.view.Controller;
 import GUI.Interfaces.GUIMainInterface;
 import GUI.Util.ColorManager;
 import GUI.Models.GMouseManager;
@@ -18,9 +20,11 @@ import Util.Helper;
 import com.alee.laf.WebLookAndFeel;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.JFXPanel;
+import javafx.embed.swing.SwingNode;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -223,20 +227,34 @@ public class GUIMain implements GUIMainInterface {
         fxPanel.setPreferredSize(new Dimension(500, 500));
     }
 
-//    public static void init(org.graphstream.graph.Graph graph, ISolver solveri) {
-//        visualGraph = graph;
-//        visualGraph.addAttribute("ui.stylesheet", "url('./src/main/java/GUI/Frame/view/Graph.css')");
-//        solver = solveri;
-//        initRest();
-//    }
-
     //TODO - MIGRATE TO CONTROLLER
     public static void init(Graph<? extends Vertex, ? extends EdgeWithCost> graph, ISolver solveri) {
         _graph = graph;
         visualGraph = Helper.convertToGsGraph(graph);
         visualGraph.addAttribute("ui.stylesheet", "url('./src/main/java/GUI/Frame/view/Graph.css')");
         solver = solveri;
+
+
+        Controller.graph = graph;
+        Controller.visualGraph = Helper.convertToGsGraph(graph);
+        Controller.visualGraph.addAttribute("ui.stylesheet", "url('target/classes/GUI/Frame/view/Graph.css')");
+        Controller.solver = solveri;
         ColorManager.generateColor(solveri.getProcessorCount());
+//        System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+//        Controller.viewer = new GraphViewer(Controller.visualGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+//        Controller.viewer.initializeLabels(Controller.visualGraph);
+//        Controller.viewer.enableAutoLayout();
+//        Controller.viewPanel = Controller.viewer.addDefaultView(false);
+//        Controller.viewPanel.addMouseListener(new GMouseManager(Controller.viewPanel, Controller.visualGraph, Controller.viewer));
+//        Controller.viewPanel.addMouseWheelListener(new GMouseManager(Controller.viewPanel, Controller.visualGraph, Controller.viewer));
+
+//        SwingUtilities.invokeLater(() -> {
+//            System.out.println("test run");
+//            Controller.swingNode = new SwingNode();
+//            Controller.swingNode.setContent(Controller.viewPanel);
+//        });
+
+
         initRest();
     }
 
@@ -247,33 +265,33 @@ public class GUIMain implements GUIMainInterface {
         viewer = new GraphViewer(visualGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         viewer.initializeLabels(visualGraph); //make sure this method get called immediately after the call to constructor
         viewer.enableAutoLayout();
-//        viewerPipe = viewer.newViewerPipe();
         viewPanel = viewer.addDefaultView(false);
         viewPanel.addMouseListener(new GMouseManager(viewPanel, visualGraph, viewer));
         viewPanel.addMouseWheelListener(new GMouseManager(viewPanel, visualGraph, viewer));
-//        visualGraph.addAttribute("ui.stylesheet", STYLE_RESORUCE);
+
         rootFrame = new JFrame();
         inited = true;
     }
 
     @Override
     public void run() {
-        if (!inited) throw new RuntimeException(getClass() + " has to be initialise'd before running");
-        //estimate of the maximum number of states
-        progressBar1.setMaximum((int) (Math.pow((double) visualGraph.getNodeCount(),
-                (double) solver.getProcessorCount()) / Math.pow(2d, (double) (solver.getProcessorCount() + 1))
-                / (double) visualGraph.getNodeCount()));
-        rootFrame.setContentPane(panel1);
-        rootFrame.pack();
-        rootFrame.setPreferredSize(new Dimension(1000, 1000));
-        rootFrame.setMinimumSize(new Dimension(1000, 1000));
-        rootFrame.setVisible(true);
-
-        Platform.runLater(sysInfolPieChart);
 
         //TODO - SET NEW ENTRY POINT WHEN ALL FINISH - This call is blocking, move features to Controller, keep this as a connection point.
         //TODO - pass essential params to Controller.
-//        Application.launch(GUIEntry.class);
+        Application.launch(GUIEntry.class);
+
+//        if (!inited) throw new RuntimeException(getClass() + " has to be initialise'd before running");
+//        //estimate of the maximum number of states
+//        progressBar1.setMaximum((int) (Math.pow((double) visualGraph.getNodeCount(),
+//                (double) solver.getProcessorCount()) / Math.pow(2d, (double) (solver.getProcessorCount() + 1))
+//                / (double) visualGraph.getNodeCount()));
+//        rootFrame.setContentPane(panel1);
+//        rootFrame.pack();
+//        rootFrame.setPreferredSize(new Dimension(1000, 1000));
+//        rootFrame.setMinimumSize(new Dimension(1000, 1000));
+//        rootFrame.setVisible(true);
+//
+//        Platform.runLater(sysInfolPieChart);
     }
 
     @Override

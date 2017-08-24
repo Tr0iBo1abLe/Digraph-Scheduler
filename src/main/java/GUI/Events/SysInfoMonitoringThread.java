@@ -3,6 +3,7 @@ package GUI.Events;
 
 import GUI.Interfaces.ThreadCompleteListener;
 import GUI.Models.SysInfoModel;
+import javafx.application.Platform;
 
 import java.util.Set;
 import java.util.Timer;
@@ -78,11 +79,14 @@ public class SysInfoMonitoringThread extends Thread{
         timer.scheduleAtFixedRate(new TimerTask() {
                                       @Override
                                       public void run() {
-                                          try{
-                                              sysInfoModel.update();
-                                          }finally {
-                                              notifyListeners();
-                                          }
+                                          Platform.runLater(() ->
+                                          {
+                                              try {
+                                                  sysInfoModel.update();
+                                              } finally {
+                                                  notifyListeners();
+                                              }
+                                          });
                                       }
                                   },
                 100, 100);

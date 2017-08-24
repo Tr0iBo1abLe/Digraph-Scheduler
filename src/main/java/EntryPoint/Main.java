@@ -22,8 +22,6 @@ import java.util.Arrays;
 
 public final class Main {
 
-    public static File inputFile; //used by GUI
-
     private Main() {
         //Ensure this class is not instantiated
     }
@@ -123,7 +121,7 @@ public final class Main {
             }
         }
 
-        inputFile = new File(fileName);
+        File inputFile = new File(fileName);
         if (!inputFile.exists() || !inputFile.canRead()) {
             System.err.println("Can't open file");
         }
