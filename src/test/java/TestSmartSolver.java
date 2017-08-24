@@ -27,7 +27,7 @@ public class TestSmartSolver {
     private CommonTester tester = new CommonTester(SmartSolver.class);
 
     static {
-        org.apache.log4j.BasicConfigurator.configure();
+        //org.apache.log4j.BasicConfigurator.configure();
     }
 
     private AbstractSolver getSolverType(){

@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 /**
  * Attempting to see how many nodes AStarSolver can handle.
  * We will require branch and bound to cut states out of the priority queue in order to preserve memory.
- * TODO a smart solver that estimates memory usage and picks the solver to use; i.e. when BnB is better than A*
  *
  * The use of memory is the number of search states within the A* queue; therefore the number of nodes is not
  * the only factor contributing to this. ProcessorCount and Edges matter too.
@@ -77,6 +76,12 @@ public class TestMemoryUsage {
     public void memoryTest16Nodes16Cores(){
         solver = tester.doTest(16, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_16nodes_0edges.dot"));
         assertEquals(3, solver.getFinalTime());
+    }
+
+    @Test
+    public void memoryTest8Nodes4Cores(){
+        solver = tester.doTest(4, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_8nodes_0edges.dot"));
+        assertEquals(6, solver.getFinalTime());
     }
 
     @Test
