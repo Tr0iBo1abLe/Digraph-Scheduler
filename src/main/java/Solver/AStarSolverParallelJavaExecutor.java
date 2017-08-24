@@ -116,7 +116,6 @@ public final class AStarSolverParallelJavaExecutor extends AbstractSolver {
         return fiberSet;
     }
 
-
     private void continueSolveWithBnB() {
         if (guiTimer != null) guiTimer.cancel();
         log.debug("Calling DFSSolver");
