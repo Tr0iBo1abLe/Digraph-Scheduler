@@ -43,7 +43,7 @@ public final class AStarSolver extends AbstractSolver {
             SearchState currBestState = queue.remove();
 
             long remMem = Helper.getRemainingMemory();
-            log.debug("Checking remaining memory: Remaining -> " + remMem);
+        //    log.debug("Checking remaining memory: Remaining -> " + remMem);
             log.debug("Queue Size " + queue.size() + ", State size " + currBestState.getNumVertices());
             if (remMem <= 600_000_000L) { // The memory value should be fine tuned a bit more
                 /*      ^GB ^MB ^kB    */

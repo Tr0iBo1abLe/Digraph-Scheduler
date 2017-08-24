@@ -17,7 +17,6 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Test the SmartSolver picks the best solver to use.
- * TODO time the tests and make sure SmartSolver is indeed picking the faster one.
  *
  * Created by will on 8/21/17.
  * @author Will Molloy
@@ -47,17 +46,6 @@ public class TestSmartSolver {
         solver = tester.doTest(6, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_straightline_4nodes.dot"));
         assertEquals(12, solver.getFinalTime());
         assertTrue(getSolverType() instanceof AStarSolver); // DFS may be faster here..?
-    }
-
-    /**
-     * This test ensures multiple cores are being used when they are required for the optimal schedule as there are no
-     * dependencies between nodes.
-     */
-    @Test
-    public void test8Nodes0Edges() {
-        solver = tester.doTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_8nodes_0edges.dot"));
-        assertEquals(3, solver.getFinalTime());
-        assertTrue(getSolverType() instanceof DFSSolver);
     }
 
     /**

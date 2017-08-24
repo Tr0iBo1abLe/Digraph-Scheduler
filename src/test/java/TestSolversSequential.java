@@ -47,7 +47,7 @@ public class TestSolversSequential {
     @Parameters(name = "{0}") // tester.toString()
     public static Collection data() {
         org.apache.log4j.BasicConfigurator.configure();
-        return Arrays.asList(new CommonTester(AStarSolver.class));
+        return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class));
     }
 
     /**
@@ -58,16 +58,6 @@ public class TestSolversSequential {
     public void testStraightLine() {
         solver = tester.doTest(6, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_straightline_4nodes.dot"));
         assertEquals(12, solver.getFinalTime());
-    }
-
-    /**
-     * This test ensures multiple cores are being used when they are required for the optimal schedule as there are no
-     * dependencies between nodes.
-     */
-    @Test
-    public void test8Nodes0Edges() {
-        solver = tester.doTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_8nodes_0edges.dot"));
-        assertEquals(3, solver.getFinalTime());
     }
 
     /**
@@ -177,7 +167,6 @@ public class TestSolversSequential {
         assertEquals(72, solver.getFinalTime());
     }
 
-    @Test
     public void test14NodeUoN3Core(){
         solver = tester.doTest(3, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_203words7dvi_0edgecost.dot"));
         log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
