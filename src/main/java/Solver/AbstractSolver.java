@@ -28,20 +28,24 @@ abstract public class AbstractSolver implements ISolver {
     @Getter
     private int finalTime;
 
-    public AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
+    AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         this.graph = graph;
         this.processorCount = processorCount;
         SearchState.initialise(graph);
         currBestState = new SearchState();
     }
 
-    public AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState existingState) {
+    AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState existingState) {
         this.graph = graph;
         this.processorCount = processorCount;
         SearchState.initialise(graph);
         currBestState = existingState;
     }
 
+    /**
+     * Template method. Calls the concrete implementation of doSolve() depending on the required algorithm.
+     * Then schedules the vertices.
+     */
     public final void doSolveAndCompleteSchedule() {
         doSolve();
         scheduleVertices(currBestState);
@@ -72,11 +76,11 @@ abstract public class AbstractSolver implements ISolver {
     protected static class GUIUpdater {
         IUpdatableState ui;
 
-        protected GUIUpdater(IUpdatableState ui) {
+        GUIUpdater(IUpdatableState ui) {
             this.ui = ui;
         }
 
-        protected void update(ISearchState searchState) {
+        void update(ISearchState searchState) {
             ui.updateWithState(searchState);
         }
     }
