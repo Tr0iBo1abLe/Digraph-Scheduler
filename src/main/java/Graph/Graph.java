@@ -311,21 +311,4 @@ public class Graph<V extends Vertex, E extends Edge<V>> extends Observable imple
                     calculateBottomLevels(parentVertex, level + vertex.getCost()));
         }
     }
-
-    @Synchronized
-    public void scheduleVertices(SearchState completeSchedule) {
-        final int[] processors = Arrays.stream(completeSchedule.getProcessors()).map(x -> x + 1).toArray();
-        final int[] startTimes = completeSchedule.getStartTimes();
-        getVertices().forEach(vertex -> {
-            int id = vertex.getAssignedId();
-            try {
-                scheduleVertex(vertex, processors[id], startTimes[id]);
-            } catch (GraphException e) {
-                e.printStackTrace();
-            }
-        });
-        setChanged();
-        notifyObservers();
-    }
-
 }

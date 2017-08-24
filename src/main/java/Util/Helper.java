@@ -28,7 +28,7 @@ public class Helper {
             Vertex v = convertee.getVertex(e);
             Node n = newGraph.addNode(v.getId());
             n.addAttribute("Weight", v.getCost());
-            n.addAttribute("label", v.getId());
+            n.addAttribute("id", v.getId());
         });
         convertee.getForwardEdges().forEach(e -> {
             Vertex from, to;

@@ -3,8 +3,11 @@ package Solver;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
+import javafx.application.Platform;
 import lombok.extern.log4j.Log4j;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -22,6 +25,8 @@ import java.util.stream.IntStream;
 public final class DFSSolver extends AbstractSolver {
 
     private int currUpperBound;
+
+    private SearchState intermediateState; // represent a partial schedule which is going to be used by GUI updater until Solver finishes.
 
     public DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
@@ -41,31 +46,61 @@ public final class DFSSolver extends AbstractSolver {
         // The upper bound is now the currBestState + that of scheduling the remaining vertices to the same processor.
         // If there is an edge pointing to these vertices we can assume the 'same' processor is the optimal one
         currUpperBound = currBestState.getUnderestimate() + currBestState.getUnAssignedVertices().stream().mapToInt(vertex -> vertex.getCost()).sum();
+        setupGuiTimer(); //ensure a gui timer if required
         solving(currBestState);
     }
 
+    /**
+     * This method ensures a gui timer (see #Timer timer in #AbstractSolver) gets initialized if there exists GUI components.
+     * No matter the DFS solver starts up on it own or is called by AS to continue on existing tasks
+     */
+    private void setupGuiTimer(){
+        if (updater != null) {
+            /* We have an updater and a UI to update */
+            isUpdatableProgressBar = true;
+            AbstractSolver solver = this; //provide a reference to GUI classes
+            timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                                          @Override
+                                          public void run() { Platform.runLater(() -> {updater.update(intermediateState, solver);});}
+                                      },
+                    100, 100);
+        }
+    }
+
     @Override
-    void doSolve() {
+    public void doSolve() {
+        setupGuiTimer(); //ensure a gui timer if required
         // Upper bound is initially topological sort i.e. all the nodes scheduled to one processor (when edge cost can be ignored)
         doTopologicalSortSolveAndSetInitialUpperBound();
         if (processorCount > 1) { // when processorCount = 1, topologicalSort is the solution.
             SearchState searchState = new SearchState();
             solving(searchState);
         }
+        if (updater != null && timer != null) {
+            timer.cancel();
+            updater.update(currBestState, this);
+        }
     }
 
     private void solving(SearchState currState) {
         currState.getLegalVertices().forEach(vertex -> IntStream.range(0, processorCount).forEach(processor -> {
-            SearchState nextState = new SearchState(currState, vertex, processor);
-            if (nextState.getUnderestimate() >= currUpperBound) {
-                return;
-            }
-            if (nextState.getNumVertices() == graph.getVertices().size()) {
-                updateLog(nextState);
-                return;
-            }
-            solving(nextState);
-        }));
+                    SearchState nextState = new SearchState(currState, vertex, processor);
+                    intermediateState = nextState;
+                    if (nextState.getUnderestimate() >= currUpperBound) {
+                        return;
+                    }
+                    if (nextState.getNumVertices() == graph.getVertices().size()) {
+                        updateLog(nextState);
+                        return;
+                    }
+                    //increase the state counter for GUI, process only when there is a GUI to update
+                    if (isUpdatableProgressBar){ //true if there is a GUI progress bar needs to be updated
+                        stateCounter++;
+                    }
+                    solving(nextState);
+                }
+        ));
     }
 
     private void updateLog(SearchState s) {
