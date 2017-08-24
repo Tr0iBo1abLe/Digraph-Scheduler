@@ -8,9 +8,7 @@ import Graph.Vertex;
 import Util.Helper;
 import lombok.extern.log4j.Log4j;
 
-import java.util.Queue;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 @Log4j
 public final class AStarSolver extends AbstractSolver {
@@ -29,6 +27,7 @@ public final class AStarSolver extends AbstractSolver {
         /* This method is blocking, we need a way to notify the GUI */
         SearchState.initialise(graph);
 
+
         if (updater != null) {
             /* We have an updater and a UI to update */
             guiTimer = new Timer();
@@ -46,8 +45,10 @@ public final class AStarSolver extends AbstractSolver {
         for(;;) {
             SearchState currentBestSchedule = queue.remove();
 
+
             long remMem = Helper.getRemainingMemory();
             log.debug("Checking remaining memory: Remaining -> " + remMem);
+            log.debug("Queue Size " + queue.size() + ", State size " + currentBestSchedule.getNumVertices());
             if(remMem <= 600_000_000L) { // The memory value should be fine tuned a bit more
                 /*      ^GB ^MB ^kB    */
                 log.debug("Calling DFSSolver");

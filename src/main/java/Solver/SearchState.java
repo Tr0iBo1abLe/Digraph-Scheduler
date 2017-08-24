@@ -26,7 +26,7 @@ import java.util.stream.IntStream;
  */
 
 @Value
-@EqualsAndHashCode(exclude = {"startTimes"}) // exclude partial schedules where nodes only differ by their processor TODO this needs testing!
+@EqualsAndHashCode(exclude = {"processors"}) // exclude partial schedules where nodes only differ by their processor TODO this needs testing!
 public class SearchState implements Comparable<SearchState>, ISearchState {
     @NonFinal private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
     private final int[] processors;
