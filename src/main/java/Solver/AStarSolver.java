@@ -46,8 +46,15 @@ public final class AStarSolver extends AbstractSolver {
         }
 
         queue.add(currBestState);
-        while (Helper.getRemainingMemory() > 600_000_000L) { // GB, MB, kB
+        do {
             currBestState = queue.remove();
+
+            currBestState.getLegalVertices().forEach(vertex -> IntStream.range(0, processorCount).forEach(processor -> {
+                SearchState nextSearchState = new SearchState(currBestState, vertex, processor);
+                if (!queue.contains(nextSearchState)) {
+                    queue.add(nextSearchState);
+                }
+            }));
 
             if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
@@ -57,14 +64,7 @@ public final class AStarSolver extends AbstractSolver {
                 }
                 return;
             }
-
-            currBestState.getLegalVertices().forEach(vertex -> IntStream.range(0, processorCount).forEach(processor -> {
-                SearchState nextSearchState = new SearchState(currBestState, vertex, processor);
-                if (!queue.contains(nextSearchState)) {
-                    queue.add(nextSearchState);
-                }
-            }));
-        }
+        } while (Helper.getRemainingMemory() > 600_000_000L); // GB, MB, kB
         continueSolveWithBnB();
     }
 
