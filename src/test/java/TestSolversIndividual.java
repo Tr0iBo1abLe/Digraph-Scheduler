@@ -1,8 +1,5 @@
 import Exporter.GraphExporter;
-import Solver.AStarSolver;
-import Solver.AStarSolverPar;
-import Solver.AbstractSolver;
-import Solver.DFSSolver;
+import Solver.*;
 import TestCommon.CommonTester;
 import lombok.extern.log4j.Log4j;
 import org.junit.Test;
@@ -41,7 +38,7 @@ public class TestSolversIndividual {
     @Parameters(name = "{0}") // tester.toString()
     public static Collection data() {
         org.apache.log4j.BasicConfigurator.configure();
-        return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class), new CommonTester(AStarSolverPar.class));
+        return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class), new CommonTester(AStarSolverPar.class) /* TODO, Add test for new parallels. Note that some class takes actually processor counts */);
     }
 
     /**
