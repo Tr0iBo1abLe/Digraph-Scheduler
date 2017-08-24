@@ -41,9 +41,9 @@ public final class AStarSolverPar extends AbstractSolver {
             currBestState = queue.remove();
             if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
-                timer.cancel();
                 if (updater != null && timer != null) {
                     Platform.runLater(() -> updater.update(currBestState, this)); // required by FX framework
+                    timer.cancel();
                 }
                 return;
             }

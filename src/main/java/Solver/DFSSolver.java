@@ -78,8 +78,8 @@ public final class DFSSolver extends AbstractSolver {
             solving(searchState);
         }
         if (updater != null && timer != null) {
-            timer.cancel();
             Platform.runLater(() -> updater.update(currBestState, this)); // required by FX framework
+            timer.cancel();
         }
     }
 
