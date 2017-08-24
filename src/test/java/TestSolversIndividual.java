@@ -29,12 +29,12 @@ import static junit.framework.TestCase.assertEquals;
  */
 @Log4j
 @RunWith(Parameterized.class)
-public class TestSolversSeqAndPar {
+public class TestSolversIndividual {
 
     private AbstractSolver solver;
     private CommonTester tester;
 
-    public TestSolversSeqAndPar(CommonTester tester) {
+    public TestSolversIndividual(CommonTester tester) {
         this.tester = tester;
     }
 
