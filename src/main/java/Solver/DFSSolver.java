@@ -62,7 +62,7 @@ public final class DFSSolver extends AbstractSolver {
             timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
                                           @Override
-                                          public void run() { Platform.runLater(() -> {updater.update(intermediateState, solver);});}
+                                          public void run() { Platform.runLater(() -> {updater.update(intermediateState, solver);});} // required by FX framework
                                       },
                     100, 100);
         }
@@ -79,7 +79,7 @@ public final class DFSSolver extends AbstractSolver {
         }
         if (updater != null && timer != null) {
             timer.cancel();
-            Platform.runLater(() -> updater.update(currBestState, this));
+            Platform.runLater(() -> updater.update(currBestState, this)); // required by FX framework
         }
     }
 
