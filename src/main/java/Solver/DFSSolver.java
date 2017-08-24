@@ -28,8 +28,8 @@ public final class DFSSolver extends AbstractSolver {
         log.debug("Solver inited");
     }
 
-    DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState existingState) {
-        super(graph, processorCount, existingState);
+    DFSSolver(SearchState existingState) {
+        super();
         log.debug("Solver inited with an existing state");
         currBestState = existingState;
     }
