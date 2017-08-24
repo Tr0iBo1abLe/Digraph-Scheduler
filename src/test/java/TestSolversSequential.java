@@ -1,4 +1,5 @@
 import Exporter.GraphExporter;
+import Graph.Vertex;
 import Solver.AStarSolver;
 import Solver.AbstractSolver;
 import Solver.DFSSolver;
@@ -10,11 +11,16 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
-import static TestCommon.TestConfig.*;
+import static TestCommon.TestConfig.TEST_FILE_PATH;
+import static TestCommon.TestConfig.TEST_MILESTONE_1_INPUT_PATH;
+import static TestCommon.TestConfig.TEST_SOLVER_PATH;
 import static junit.framework.TestCase.assertEquals;
 
 /**
@@ -25,7 +31,6 @@ import static junit.framework.TestCase.assertEquals;
  * TODO edge cases for actual output
  * <p>
  * Created by will on 7/31/17.
- *
  * @author Will Molloy
  */
 @Log4j
@@ -35,14 +40,14 @@ public class TestSolversSequential {
     private AbstractSolver solver;
     private CommonTester tester;
 
-    public TestSolversSequential(CommonTester tester) {
+    public TestSolversSequential(CommonTester tester){
         this.tester = tester;
     }
 
     @Parameters(name = "{0}") // tester.toString()
     public static Collection data() {
         org.apache.log4j.BasicConfigurator.configure();
-        return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class), new CommonTester(SmartSolver.class));
+        return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class));
     }
 
     /**
@@ -53,16 +58,6 @@ public class TestSolversSequential {
     public void testStraightLine() {
         solver = tester.doTest(6, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_straightline_4nodes.dot"));
         assertEquals(12, solver.getFinalTime());
-    }
-
-    /**
-     * This test ensures multiple cores are being used when they are required for the optimal schedule as there are no
-     * dependencies between nodes.
-     */
-    @Test
-    public void test8Nodes0Edges() {
-        solver = tester.doTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_8nodes_0edges.dot"));
-        assertEquals(3, solver.getFinalTime());
     }
 
     /**
@@ -135,21 +130,21 @@ public class TestSolversSequential {
      * Edge cases to break our optimisations - they currently do not. Online example does however.
      */
     @Test
-    public void testExcludeProcessorsEdgesWithZeroCost() {
+    public void testExcludeProcessorsEdgesWithZeroCost(){
         solver = tester.doTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_4Nodes_ZeroEdgeCosts.dot"));
         log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(3, solver.getFinalTime());
     }
 
     @Test
-    public void testExcludeProcessors6NodeDiamondWithBranch() {
+    public void testExcludeProcessors6NodeDiamondWithBranch(){
         solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_6nodes_diamond_lowcosts.dot"));
         log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(4, solver.getFinalTime());
     }
 
     @Test
-    public void testExcludeStartTimes3NodesCShouldBeCore2() {
+    public void testExcludeStartTimes3NodesCShouldBeCore2(){
         solver = tester.doTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_3Nodes_test_startTimes.dot"));
         log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(2, solver.getFinalTime());
@@ -166,14 +161,13 @@ public class TestSolversSequential {
      * (These have been confirmed using our nice GUI)
      */
     @Test
-    public void test14NodesUoN2Core() {
+    public void test14NodesUoN2Core(){
         solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_203words7dvi_0edgecost.dot"));
         log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(72, solver.getFinalTime());
     }
 
-    @Test
-    public void test14NodeUoN3Core() {
+    public void test14NodeUoN3Core(){
         solver = tester.doTest(3, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_203words7dvi_0edgecost.dot"));
         log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(57, solver.getFinalTime());
@@ -184,18 +178,34 @@ public class TestSolversSequential {
      * Note: not all the edges were added; I made a mistake adding them and accidentally found a testcase that breaks our solution!!
      * Added edge costs (I thought that's what they were at first)
      * This test breaks the 'exclude "startTimes"' in SearchState class.
-     * <p>
-     * The expected finalTime is 96 (NOT CONFIRMED), "exclude startTimes" gives 98
+     *
+     * The expected finalTime is 96, "exclude startTimes" gives 98
      * This is because with "exclude startTimes" the priority queue is adding a state that is treated as equal (incorrectly)
      * to the state(s) that are required to produce the optimal schedule. Therefore the pre state to the optimal state is
      * not considered.
      */
     @Test
-    public void test14NodesUoN2CoreWithEdgeCost() {
+    public void test14NodesUoN2CoreWithEdgeCost(){
         solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_3CoreOptimal.dot"));
         log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(96, solver.getFinalTime());
     }
+
+    /**
+     * Attempt to break exclude "startTimes" vs. excluding nothing rather than excluding "processors" vs excluding both.
+     * I'm sure excluding startTimes is incorrect (queue size of 40k vs. 700k) but it would be ideal to have an actual test case to prove this!
+     *
+     * Excluding processors gives a mirrored schedule as excluding nothing, while exclude startTimes gives an altered version.
+     * Excluding processors gives a queue size of base_case/processor_count, where base_case is excluding nothing from SearchState.equals()
+     * so clearly it only ignoring mirror schedules while exclude startTimes is ignoring possible optimal states!
+     */
+    @Test
+    public void test14NodesUoN2CoreWithEdgeCostV2(){
+        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_3CoreOptimal-1.dot"));
+        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
+        assertEquals(96, solver.getFinalTime());
+    }
+
 
 
 }

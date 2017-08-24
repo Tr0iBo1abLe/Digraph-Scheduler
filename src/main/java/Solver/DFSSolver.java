@@ -3,6 +3,7 @@ package Solver;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
+import lombok.extern.log4j.Log4j;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,8 +16,9 @@ import java.util.stream.IntStream;
  * <p>
  * Created by mason on 31/07/17.
  *
- * @author Mason Shi, Edward Huang, Will Molloy
+ * @author Mason Shi, Dovahkiin Huang, Will Molloy
  */
+@Log4j
 public final class DFSSolver extends AbstractSolver {
 
     private int currUpperBound;
@@ -24,6 +26,24 @@ public final class DFSSolver extends AbstractSolver {
 
     public DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
+        log.debug("Solver inited");
+    }
+
+    DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState existingState) {
+        super(graph, processorCount);
+        log.debug("Solver inited with an existing state");
+        currBestState = existingState;
+    }
+
+    /**
+     * Used when transferring state from a AStarSolver
+     */
+    SearchState continueSolve() {
+        // The upper bound is now the currBestState + that of scheduling the remaining vertices to the same processor.
+        // If there is an edge pointing to these vertices we can assume the 'same' processor is the optimal one
+        currUpperBound = currBestState.getUnderestimate() + currBestState.getUnAssignedVertices().stream().mapToInt(vertex -> vertex.getCost()).sum();
+        solving(currBestState);
+        return currBestState;
     }
 
     @Override
@@ -31,9 +51,9 @@ public final class DFSSolver extends AbstractSolver {
         SearchState.initialise(graph);
         // Upper bound is initially topological sort i.e. all the nodes scheduled to one processor (when edge cost can be ignored)
         doTopologicalSortSolveAndSetInitialUpperBound();
-        if (processorCount != 1) { // when processorCount = 1, topologicalSort is the solution.
-            SearchState s = new SearchState();
-            solving(s);
+        if (processorCount > 1) { // when processorCount = 1, topologicalSort is the solution.
+            SearchState searchState = new SearchState();
+            solving(searchState);
         }
         scheduleVertices(currBestState);
     }
@@ -66,10 +86,12 @@ public final class DFSSolver extends AbstractSolver {
     private void doTopologicalSortSolveAndSetInitialUpperBound() {
         // parallelStream() is slower due to overhead and these graphs are expected to be <20 nodes.
         // copy edges, this method will alter the graph (a copy of it).
+
+        // Convert FJ List to a java list for mutability
         Map<Vertex, java.util.List<EdgeWithCost<Vertex>>> outwardEdges = new HashMap<>();
-        graph.getOutwardEdgeMap().keySet().forEach(vertex -> outwardEdges.put(vertex, graph.getOutwardEdgeMap().get(vertex).toJavaList()));
+        graph.getOutwardEdgeMap().forEach((vertex, edgeWithCostsList) -> outwardEdges.put(vertex, edgeWithCostsList.toJavaList()));
         Map<Vertex, java.util.List<EdgeWithCost<Vertex>>> inwardEdges = new HashMap<>();
-        graph.getInwardEdgeMap().keySet().forEach(vertex -> inwardEdges.put(vertex, graph.getInwardEdgeMap().get(vertex).toJavaList()));
+        graph.getInwardEdgeMap().forEach((vertex, edgeWithCostsList) -> inwardEdges.put(vertex, edgeWithCostsList.toJavaList()));
 
         // list that will contain sorted vertices
         java.util.List<Vertex> sortedVertices = new ArrayList<>();
