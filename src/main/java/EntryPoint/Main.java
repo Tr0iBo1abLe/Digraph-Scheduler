@@ -26,7 +26,7 @@ public final class Main {
 
     private static void callSolver(File file, int procN, int parN, OutputStream os) {
         Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(file);
-        ISolver solver = new SolverFactory(graph, procN).createSolver();
+        ISolver solver = new SolverFactory(graph, procN).createSolver(); // TODO parallel in factory
         solver.doSolveAndCompleteSchedule();
 
         final GraphExporter<Vertex, EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;

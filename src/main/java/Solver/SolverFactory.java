@@ -25,7 +25,7 @@ public class SolverFactory {
     private Graph<Vertex, EdgeWithCost<Vertex>> graph;
     private int processorCount;
 
-    public SolverFactory(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount){
+    public SolverFactory(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount){ // TODO parallel in factory
         this.graph = graph;
         this.processorCount = processorCount;
     }
