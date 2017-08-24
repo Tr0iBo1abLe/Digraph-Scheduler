@@ -1,18 +1,15 @@
 package Solver;
 
-import CommonInterface.ISearchState;
 import Datastructure.FastPriorityBlockingQueue;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
-import lombok.Data;
 
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.stream.IntStream;
 
-@Data
 public final class AStarSolverPar extends AbstractSolver {
     private final Queue<SearchState> queue;
     private Timer timer;
@@ -24,9 +21,6 @@ public final class AStarSolverPar extends AbstractSolver {
 
     @Override
     public void doSolve() {
-        SearchState.initialise(graph);
-
-
         if (updater != null) {
             /* We have an updater and a UI to update */
             timer = new Timer();
@@ -39,39 +33,23 @@ public final class AStarSolverPar extends AbstractSolver {
                     100, 100);
         }
 
-        queue.add(new SearchState());
-
+        queue.add(currBestState);
         while (true) {
-            SearchState s = queue.remove();
-            if (s.getNumVertices() == graph.getVertices().size()) {
+            currBestState = queue.remove();
+            if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
                 if (updater != null && timer != null) {
-                    updater.update(s);
+                    updater.update(currBestState);
                     timer.cancel();
                 }
                 return;
             }
-            s.getLegalVertices().parallelStream().forEach(v -> IntStream.range(0, processorCount).parallel().forEach(i -> {
-                        SearchState next = new SearchState(s, v, i);
-                        if (!queue.contains(next)) {
-                            queue.add(next);
-                        }
-                    }
-            ));
-            /* Expansion */
+            currBestState.getLegalVertices().parallelStream().forEach(vertex -> IntStream.range(0, processorCount).parallel().forEach(processor -> {
+                SearchState next = new SearchState(currBestState, vertex, processor);
+                if (!queue.contains(next)) {
+                    queue.add(next);
+                }
+            }));
         }
     }
-
-    //@Override
-    public ISearchState pollState() {
-        return queue.peek();
-    }
-
-    /*
-    OPEN ← emptyState
-    while OPEN 6 = ∅ do s ← PopHead ( OPEN )
-    if s is complete solution then return s as optimal solution
-    Expand state s into children and compute f ( s child )
-     for each OPEN ← new states
-     */
 }

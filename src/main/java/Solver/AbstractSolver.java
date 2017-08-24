@@ -24,28 +24,29 @@ abstract public class AbstractSolver implements ISolver {
     @Getter
     @Setter
     protected GUIUpdater updater;
+    protected SearchState currBestState;
     @Getter
     private int finalTime;
-    protected SearchState currBestState;
 
-    public AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount){
+    public AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         this.graph = graph;
         this.processorCount = processorCount;
         SearchState.initialise(graph);
         currBestState = new SearchState();
     }
 
-    public AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState existingState){
+    public AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState existingState) {
         this.graph = graph;
         this.processorCount = processorCount;
         SearchState.initialise(graph);
         currBestState = existingState;
     }
 
-    public final void doSolveAndCompleteSchedule(){
+    public final void doSolveAndCompleteSchedule() {
         doSolve();
         scheduleVertices(currBestState);
     }
+
     abstract void doSolve();
 
     @Synchronized

@@ -1,5 +1,6 @@
 import Exporter.GraphExporter;
 import Solver.AStarSolver;
+import Solver.AStarSolverPar;
 import Solver.AbstractSolver;
 import Solver.DFSSolver;
 import TestCommon.CommonTester;
@@ -17,11 +18,10 @@ import static TestCommon.TestConfig.*;
 import static junit.framework.TestCase.assertEquals;
 
 /**
- * Unit tests for the sequential solvers (A*, BnB).
+ * Unit tests for the solvers (A*, BnB).
  * <p>
  * Note: only the final times are confirmed for the milestone1 tests, the actual output isn't.
  * Determining what the expected output is can be time consuming so this will only be tested on smaller graphs.
- * TODO edge cases for actual output
  * <p>
  * Created by will on 7/31/17.
  *
@@ -29,19 +29,19 @@ import static junit.framework.TestCase.assertEquals;
  */
 @Log4j
 @RunWith(Parameterized.class)
-public class TestSolversSequential {
+public class TestSolversSeqAndPar {
 
     private AbstractSolver solver;
     private CommonTester tester;
 
-    public TestSolversSequential(CommonTester tester) {
+    public TestSolversSeqAndPar(CommonTester tester) {
         this.tester = tester;
     }
 
     @Parameters(name = "{0}") // tester.toString()
     public static Collection data() {
         org.apache.log4j.BasicConfigurator.configure();
-        return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class));
+        return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class), new CommonTester(AStarSolverPar.class));
     }
 
     /**
