@@ -41,9 +41,9 @@ public final class AStarSolverPar extends AbstractSolver {
             currBestState = queue.remove();
             if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
+                timer.cancel();
                 if (updater != null && timer != null) {
-                    updater.update(currBestState, this);
-                    timer.cancel();
+                    Platform.runLater(() -> updater.update(currBestState, this));
                 }
                 return;
             }

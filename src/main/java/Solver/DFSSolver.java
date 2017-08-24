@@ -79,7 +79,7 @@ public final class DFSSolver extends AbstractSolver {
         }
         if (updater != null && timer != null) {
             timer.cancel();
-            updater.update(currBestState, this);
+            Platform.runLater(() -> updater.update(currBestState, this));
         }
     }
 

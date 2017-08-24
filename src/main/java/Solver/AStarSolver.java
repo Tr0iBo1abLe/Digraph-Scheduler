@@ -52,9 +52,9 @@ public final class AStarSolver extends AbstractSolver {
 
             if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
+                timer.cancel();
                 if (updater != null && timer != null) {
-                    updater.update(currBestState, this);
-                    timer.cancel();
+                    Platform.runLater(() -> updater.update(currBestState, this));
                 }
                 return;
             }
