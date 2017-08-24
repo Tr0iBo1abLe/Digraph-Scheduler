@@ -33,7 +33,7 @@ public final class Main {
         } else {
             solver = new SmartSolver(graph, procN);
         }
-        solver.doSolve();
+        solver.doSolveAndCompleteSchedule();
 
         final GraphExporter<Vertex, EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;
         vertexEdgeWithCostGraphExporter = new GraphExporter<Vertex, EdgeWithCost<Vertex>>();

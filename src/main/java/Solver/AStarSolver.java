@@ -24,17 +24,14 @@ public final class AStarSolver extends AbstractSolver {
 
     private final Queue<SearchState> queue;
     private Timer guiTimer;
-    private SearchState currBestState;
 
     public AStarSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
         queue = new FastPriorityQueue<>();
-        SearchState.initialise(graph);
-        currBestState = new SearchState();
     }
 
     @Override
-    public void doSolve() {
+    void doSolve() {
         /* This method is blocking, we need a way to notify the GUI */
         if (updater != null) {
             /* We have an updater and a UI to update */
@@ -54,7 +51,6 @@ public final class AStarSolver extends AbstractSolver {
 
             if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
-                scheduleVertices(currBestState);
                 if (updater != null && guiTimer != null) {
                     updater.update(currBestState);
                     guiTimer.cancel();
@@ -82,6 +78,6 @@ public final class AStarSolver extends AbstractSolver {
         dfsSolver.setUpdater(getUpdater());
         System.gc();
 
-        dfsSolver.completeSolveAndScheduleVertices();
+        dfsSolver.completeSolve();
     }
 }

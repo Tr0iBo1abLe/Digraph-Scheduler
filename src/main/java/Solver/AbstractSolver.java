@@ -26,9 +26,30 @@ abstract public class AbstractSolver implements ISolver {
     protected GUIUpdater updater;
     @Getter
     private int finalTime;
+    protected SearchState currBestState;
+
+    public AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount){
+        this.graph = graph;
+        this.processorCount = processorCount;
+        SearchState.initialise(graph);
+        currBestState = new SearchState();
+    }
+
+    public AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState existingState){
+        this.graph = graph;
+        this.processorCount = processorCount;
+        SearchState.initialise(graph);
+        currBestState = existingState;
+    }
+
+    public final void doSolveAndCompleteSchedule(){
+        doSolve();
+        scheduleVertices(currBestState);
+    }
+    abstract void doSolve();
 
     @Synchronized
-    protected void scheduleVertices(SearchState completeSchedule) {
+    private void scheduleVertices(SearchState completeSchedule) {
         final int[] processors = Arrays.stream(completeSchedule.getProcessors()).map(x -> x + 1).toArray();
         final int[] startTimes = completeSchedule.getStartTimes();
         finalTime = completeSchedule.getUnderestimate();
@@ -58,6 +79,4 @@ abstract public class AbstractSolver implements ISolver {
             ui.updateWithState(searchState);
         }
     }
-
-    public abstract void doSolve();
 }

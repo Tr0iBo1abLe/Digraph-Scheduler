@@ -258,7 +258,7 @@ public class SwingMain implements Runnable, IUpdatableState {
         @Override
         protected Void doInBackground() throws Exception {
             solver.associateUI(SwingMain.this);
-            solver.doSolve();
+            solver.doSolveAndCompleteSchedule();
             return null;
         }
 

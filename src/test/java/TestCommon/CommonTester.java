@@ -45,7 +45,7 @@ public class CommonTester {
 
         try {
             solver = solverClass.getDeclaredConstructor(Graph.class, int.class).newInstance(graph, processorCount);
-            solver.doSolve();
+            solver.doSolveAndCompleteSchedule();
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
         }

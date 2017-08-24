@@ -49,7 +49,6 @@ public final class AStarSolverPar extends AbstractSolver {
                     updater.update(s);
                     timer.cancel();
                 }
-                scheduleVertices(s);
                 return;
             }
             s.getLegalVertices().parallelStream().forEach(v -> IntStream.range(0, processorCount).parallel().forEach(i -> {
