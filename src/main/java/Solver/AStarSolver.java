@@ -1,6 +1,5 @@
 package Solver;
 
-import CommonInterface.ISolver;
 import Datastructure.FastPriorityQueue;
 import Graph.EdgeWithCost;
 import Graph.Graph;
@@ -19,15 +18,12 @@ public final class AStarSolver extends AbstractSolver {
     public AStarSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
         queue = new FastPriorityQueue<>();
-
     }
 
     @Override
     public void doSolve() {
         /* This method is blocking, we need a way to notify the GUI */
         SearchState.initialise(graph);
-
-
         if (updater != null) {
             /* We have an updater and a UI to update */
             guiTimer = new Timer();
@@ -41,39 +37,37 @@ public final class AStarSolver extends AbstractSolver {
         }
 
         queue.add(new SearchState());
-
         for(;;) {
-            SearchState currentBestSchedule = queue.remove();
-
+            SearchState currBestState = queue.remove();
 
             long remMem = Helper.getRemainingMemory();
             log.debug("Checking remaining memory: Remaining -> " + remMem);
-            log.debug("Queue Size " + queue.size() + ", State size " + currentBestSchedule.getNumVertices());
+            log.debug("Queue Size " + queue.size() + ", State size " + currBestState.getNumVertices());
             if(remMem <= 600_000_000L) { // The memory value should be fine tuned a bit more
                 /*      ^GB ^MB ^kB    */
                 log.debug("Calling DFSSolver");
                 if(guiTimer != null) guiTimer.cancel();
 
-                DFSSolver nextSolver = new DFSSolver(getGraph(), getProcessorCount(), currentBestSchedule);
+                DFSSolver nextSolver = new DFSSolver(getGraph(), getProcessorCount(), currBestState);
                 queue.clear();
                 nextSolver.setUpdater(getUpdater());
                 System.gc();
-                currentBestSchedule = nextSolver.continueSolve();
+                currBestState = nextSolver.continueSolve();
             }
 
-            if (currentBestSchedule.getNumVertices() == graph.getVertices().size()) {
+            if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
-                scheduleVertices(currentBestSchedule);
+                scheduleVertices(currBestState);
                 if (updater != null && guiTimer != null) {
-                    updater.update(currentBestSchedule);
+                    updater.update(currBestState);
                     guiTimer.cancel();
                 }
                 return;
             }
 
-            for (Vertex vertex : currentBestSchedule.getLegalVertices()) {
+            for (Vertex vertex : currBestState.getLegalVertices()) {
                 for (int processorID = 0; processorID < processorCount; processorID++) {
-                    SearchState nextSearchState = new SearchState(currentBestSchedule, vertex, processorID);
+                    SearchState nextSearchState = new SearchState(currBestState, vertex, processorID);
                     if (!queue.contains(nextSearchState)) {
                         queue.add(nextSearchState);
                     }
@@ -81,12 +75,4 @@ public final class AStarSolver extends AbstractSolver {
             }
         }
     }
-
-    /*
-    OPEN ← emptyState
-    while OPEN 6 = ∅ do s ← PopHead ( OPEN )
-    if s is complete solution then return s as optimal solution
-    Expand state s into children and compute f ( s child )
-     for each OPEN ← new states
-     */
 }
