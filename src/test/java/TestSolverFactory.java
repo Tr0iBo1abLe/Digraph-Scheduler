@@ -37,7 +37,7 @@ public class TestSolverFactory {
      */
     @Test
     public void testStraightLine() {
-        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_straightline_4nodes.dot")), 8).createSolver();
+        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_straightline_4nodes.dot")), 8, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
         assertEquals(12, solver.getFinalTime());
         assertTrue(solver instanceof AStarSolver);
@@ -48,7 +48,7 @@ public class TestSolverFactory {
      */
     @Test
     public void testMilestone1Nodes7Processors2() {
-        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_7_OutTree.dot")), 2).createSolver();
+        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_7_OutTree.dot")), 2, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
         assertEquals(28, solver.getFinalTime());
         assertTrue(solver instanceof AStarSolver);
@@ -56,7 +56,7 @@ public class TestSolverFactory {
 
     @Test
     public void testMilestone1Nodes8Processors2() {
-        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_8_Random.dot")), 2).createSolver();
+        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_8_Random.dot")), 2, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
         assertEquals(581, solver.getFinalTime());
         assertTrue(solver instanceof AStarSolver);
@@ -64,7 +64,7 @@ public class TestSolverFactory {
 
     @Test
     public void testMilestone1Nodes9Processors2() {
-        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_9_SeriesParallel.dot")), 2).createSolver();
+        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_9_SeriesParallel.dot")), 2, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
         assertEquals(55, solver.getFinalTime());
         assertTrue(solver instanceof AStarSolver);
@@ -72,7 +72,7 @@ public class TestSolverFactory {
 
     @Test
     public void testMilestone1Nodes10Processors2() {
-        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot")), 2).createSolver();
+        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot")), 2, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
         assertEquals(50, solver.getFinalTime());
         assertTrue(solver instanceof AStarSolver);
@@ -80,7 +80,7 @@ public class TestSolverFactory {
 
     @Test
     public void testMilestone1Nodes11Processors2() {
-        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_11_OutTree.dot")), 2).createSolver();
+        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_11_OutTree.dot")), 2, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
         assertEquals(350, solver.getFinalTime());
         assertTrue(solver instanceof AStarSolver);
@@ -91,7 +91,7 @@ public class TestSolverFactory {
      */
     @Test
     public void testMilestone1Nodes7Processors4() {
-        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_7_OutTree.dot")), 4).createSolver();
+        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_7_OutTree.dot")), 4, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
         assertEquals(22, solver.getFinalTime());
         assertTrue(solver instanceof AStarSolver);
@@ -99,7 +99,7 @@ public class TestSolverFactory {
 
     @Test
     public void testMilestone1Nodes8Processors4() {
-        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_8_Random.dot")), 4).createSolver();
+        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_8_Random.dot")), 4, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
         assertEquals(581, solver.getFinalTime());
         assertTrue(solver instanceof AStarSolver);
@@ -107,7 +107,7 @@ public class TestSolverFactory {
 
     @Test
     public void testMilestone1Nodes9Processors4() {
-        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_9_SeriesParallel.dot")), 4).createSolver();
+        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_9_SeriesParallel.dot")), 4, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
         assertEquals(55, solver.getFinalTime());
         assertTrue(solver instanceof AStarSolver);
@@ -115,7 +115,7 @@ public class TestSolverFactory {
 
     @Test
     public void testMilestone1Nodes10Processors4() {
-        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot")), 4).createSolver();
+        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot")), 4, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
         assertEquals(50, solver.getFinalTime());
         assertTrue(solver instanceof AStarSolver);
@@ -123,7 +123,7 @@ public class TestSolverFactory {
 
     @Test
     public void testMilestone1Nodes11Processors4() {
-        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_11_OutTree.dot")), 4).createSolver();
+        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_11_OutTree.dot")), 4, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
         assertEquals(227, solver.getFinalTime());
         assertTrue(solver instanceof AStarSolver);
@@ -134,7 +134,7 @@ public class TestSolverFactory {
      */
     @Test
     public void memoryTest96Nodes1Core() {
-        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_96nodes_0edges.dot")), 1).createSolver();
+        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_96nodes_0edges.dot")), 1, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
         Assert.assertEquals(288, solver.getFinalTime());
         assertTrue(solver instanceof DFSSolver); // one core
@@ -142,7 +142,7 @@ public class TestSolverFactory {
 
     @Test
     public void memoryTest96Nodes96Core() {
-        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_96nodes_0edges.dot")), 96).createSolver();
+        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_96nodes_0edges.dot")), 96, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
         Assert.assertEquals(3, solver.getFinalTime());
         assertTrue(solver instanceof DFSSolver); // no edges

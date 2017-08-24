@@ -6,6 +6,7 @@ import Graph.Graph;
 import Graph.Vertex;
 import fj.data.List;
 import lombok.Getter;
+import lombok.Value;
 import lombok.extern.log4j.Log4j;
 
 import java.lang.reflect.InvocationTargetException;
@@ -18,17 +19,12 @@ import java.lang.reflect.InvocationTargetException;
  * @author Will Molloy
  */
 @Log4j
+@Value
 public class SolverFactory {
-
-    private Solver solver;
     @Getter
     private Graph<Vertex, EdgeWithCost<Vertex>> graph;
     private int processorCount;
-
-    public SolverFactory(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount){ // TODO parallel in factory
-        this.graph = graph;
-        this.processorCount = processorCount;
-    }
+    private int parallelCount;
 
     /**
      * Picks the solver to use based on the program arguments.
@@ -47,45 +43,26 @@ public class SolverFactory {
      * .. any more?
      */
     public ISolver createSolver() {
+        ISolver solver;
         // Getting data about the input
         int numEdges = (int) graph.getInwardEdgeMap().values().parallelStream().filter(List::isNotEmpty).count();
 
-        // "AI is just a bunch of if/then statements"
-        // These decisions are in priority order
-        if (processorCount == 1) { // BnB since upper bound is that of using one core
-            solver = Solver.BnB;
-        } else if (numEdges < 1) { // No edges, experimenting with this
-            solver = Solver.BnB;
-        } else {
-            solver = Solver.AStar;
+        if(parallelCount > 1) {
+            solver = new AStarSolverParallelJavaExecutor(graph, processorCount, parallelCount);
         }
-        log.debug("Initialising: " + solver.getSolver().getClass().getName());
-        return initialiseSolver();
+        else {
+            // "AI is just a bunch of if/then statements"
+            // These decisions are in priority order
+            if (processorCount == 1) { // BnB since upper bound is that of using one core
+                solver = new DFSSolver(graph, processorCount);
+            } else if (numEdges < 1) { // No edges, experimenting with this
+                solver = new DFSSolver(graph, processorCount);
+            } else {
+                solver = new AStarSolver(graph, processorCount);
+            }
+            log.debug("Initialising: " + solver.getClass().getName());
+        }
+        return solver;
     }
-
-    private AbstractSolver initialiseSolver() {
-        try {
-            return solver.getSolver().getDeclaredConstructor(Graph.class, int.class).newInstance(graph, processorCount);
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    /**
-     * List of available Solvers. (Parallel is to be added..)
-     */
-    private enum Solver {
-        AStar(AStarSolver.class), BnB(DFSSolver.class); // link type to actual class; avoids switch-case
-        private Class<? extends AbstractSolver> solver;
-
-        Solver(Class<? extends AbstractSolver> solver) {
-            this.solver = solver;
-        }
-
-        public Class<? extends AbstractSolver> getSolver() {
-            return solver;
-        }
-    }
-
+    // Reflection is kind of unnecessary here
 }
