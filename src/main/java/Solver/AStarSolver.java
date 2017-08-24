@@ -10,22 +10,32 @@ import lombok.extern.log4j.Log4j;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.IntStream;
 
+/**
+ * A*, uses BFS and a priority queue to ensure the first schedule found is optimal.
+ * Uses a lot of memory and will switch to the DFS Solver by passing over the current best state if the queue gets too big.
+ * <p>
+ *
+ * @author Dovahkiin Huang, Will Molloy
+ */
 @Log4j
 public final class AStarSolver extends AbstractSolver {
 
     private final Queue<SearchState> queue;
     private Timer guiTimer;
+    private SearchState currBestState;
 
     public AStarSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
         queue = new FastPriorityQueue<>();
+        SearchState.initialise(graph);
+        currBestState = new SearchState();
     }
 
     @Override
     public void doSolve() {
         /* This method is blocking, we need a way to notify the GUI */
-        SearchState.initialise(graph);
         if (updater != null) {
             /* We have an updater and a UI to update */
             guiTimer = new Timer();
@@ -38,17 +48,9 @@ public final class AStarSolver extends AbstractSolver {
                     100, 100);
         }
 
-        queue.add(new SearchState());
-        for (; ; ) {
-            SearchState currBestState = queue.remove();
-
-            long remMem = Helper.getRemainingMemory();
-        //    log.debug("Checking remaining memory: Remaining -> " + remMem);
-       //     log.debug("Queue Size " + queue.size() + ", State size " + currBestState.getNumVertices());
-            if (remMem <= 600_000_000L) { // The memory value should be fine tuned a bit more
-                /*      ^GB ^MB ^kB    */
-                currBestState = continueSolveWithBnB(currBestState);
-            }
+        queue.add(currBestState);
+        while (Helper.getRemainingMemory() > 600_000_000L) { // GB, MB, kB
+            currBestState = queue.remove();
 
             if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
@@ -60,24 +62,26 @@ public final class AStarSolver extends AbstractSolver {
                 return;
             }
 
-            for (Vertex vertex : currBestState.getLegalVertices()) {
-                for (int processorID = 0; processorID < processorCount; processorID++) {
-                    SearchState nextSearchState = new SearchState(currBestState, vertex, processorID);
-                    if (!queue.contains(nextSearchState)) {
-                        queue.add(nextSearchState);
-                    }
+            currBestState.getLegalVertices().forEach(vertex -> IntStream.range(0, processorCount).forEach(processor -> {
+                SearchState nextSearchState = new SearchState(currBestState, vertex, processor);
+                if (!queue.contains(nextSearchState)) {
+                    queue.add(nextSearchState);
                 }
-            }
+            }));
         }
+        continueSolveWithBnB();
     }
 
-    private SearchState continueSolveWithBnB(SearchState currBestState) {
+    private void continueSolveWithBnB() {
         if (guiTimer != null) guiTimer.cancel();
         log.debug("Calling DFSSolver");
-        DFSSolver nextSolver = new DFSSolver(getGraph(), getProcessorCount(), currBestState);
+
+        // transfer the current optimal state and clear the rest.
+        DFSSolver dfsSolver = new DFSSolver(getGraph(), getProcessorCount(), currBestState);
         queue.clear();
-        nextSolver.setUpdater(getUpdater());
+        dfsSolver.setUpdater(getUpdater());
         System.gc();
-        return nextSolver.continueSolve();
+
+        dfsSolver.completeSolveAndScheduleVertices();
     }
 }

@@ -58,4 +58,6 @@ abstract public class AbstractSolver implements ISolver {
             ui.updateWithState(searchState);
         }
     }
+
+    public abstract void doSolve();
 }

@@ -24,6 +24,7 @@ public class SmartSolver extends AbstractSolver implements ISolver {
     @Getter
     private AbstractSolver currentSolver;
     private boolean parallel;
+
     public SmartSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
         this.parallel = false; // ?? use par argument here otherwise class has to be duplicated.

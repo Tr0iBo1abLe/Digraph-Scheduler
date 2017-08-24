@@ -26,6 +26,7 @@ public final class DFSSolver extends AbstractSolver {
 
     public DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
+        SearchState.initialise(graph);
         log.debug("Solver inited");
     }
 
@@ -38,17 +39,16 @@ public final class DFSSolver extends AbstractSolver {
     /**
      * Used when transferring state from a AStarSolver
      */
-    SearchState continueSolve() {
+    void completeSolveAndScheduleVertices() {
         // The upper bound is now the currBestState + that of scheduling the remaining vertices to the same processor.
         // If there is an edge pointing to these vertices we can assume the 'same' processor is the optimal one
         currUpperBound = currBestState.getUnderestimate() + currBestState.getUnAssignedVertices().stream().mapToInt(vertex -> vertex.getCost()).sum();
         solving(currBestState);
-        return currBestState;
+        scheduleVertices(currBestState);
     }
 
     @Override
     public void doSolve() {
-        SearchState.initialise(graph);
         // Upper bound is initially topological sort i.e. all the nodes scheduled to one processor (when edge cost can be ignored)
         doTopologicalSortSolveAndSetInitialUpperBound();
         if (processorCount > 1) { // when processorCount = 1, topologicalSort is the solution.
@@ -131,5 +131,4 @@ public final class DFSSolver extends AbstractSolver {
         currUpperBound = searchState[0].getUnderestimate();
         currBestState = searchState[0];
     }
-
 }
