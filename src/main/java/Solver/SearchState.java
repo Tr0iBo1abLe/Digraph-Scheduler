@@ -11,9 +11,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.experimental.NonFinal;
-import lombok.experimental.Wither;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,20 +25,19 @@ import java.util.stream.IntStream;
  */
 
 @Value
-@EqualsAndHashCode(exclude = {"processors"}) // exclude partial schedules where nodes only differ by their processor TODO this needs testing!
+@EqualsAndHashCode(exclude = {"processors"})
+// exclude partial schedules where nodes only differ by their processor TODO this needs testing!
 public class SearchState implements Comparable<SearchState>, ISearchState {
-    @NonFinal private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
+    @NonFinal
+    private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
     private final int[] processors;
     @Getter
     private final int[] startTimes;
-    @NonFinal private int underestimate;
     private Vertex lastVertex;
     @Getter
     private int numVertices;
-
-    static void initialise(Graph<Vertex, EdgeWithCost<Vertex>> graph) {
-        SearchState.graph = graph;
-    }
+    @NonFinal
+    private int underestimate;
 
     SearchState() {
         underestimate = 0;
@@ -120,13 +117,19 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         // Underestimate function
         int nextPriority = time + vertex.getCost() + vertex.getBottomLevel();
 
-        if (underestimate < nextPriority) underestimate = nextPriority;
+        if (underestimate < nextPriority)
+            underestimate = nextPriority;
 
         numVertices = prevState.getNumVertices() + 1;
     }
 
+    static void initialise(Graph<Vertex, EdgeWithCost<Vertex>> graph) {
+        SearchState.graph = graph;
+    }
+
     /**
      * Get the legal vertices of a state, meaning the dependencies have been satisfied for these vertices.
+     *
      * @return the set of legal vertices
      */
     Set<Vertex> getLegalVertices() {
@@ -148,6 +151,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
 
     /**
      * Get the set of Vertices that haven't got an assigned processor (or startTime)
+     *
      * @return the set of un assigned vertices.
      */
     Set<Vertex> getUnAssignedVertices() {
@@ -157,6 +161,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
 
     /**
      * Needed for Comparable interface
+     *
      * @param searchState
      * @return diff in priority
      * @see java.util.PriorityQueue

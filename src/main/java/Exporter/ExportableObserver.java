@@ -1,8 +1,8 @@
 package Exporter;
 
+import Graph.EdgeWithCost;
+import Graph.Graph;
 import Graph.Vertex;
-import Graph.*;
-import lombok.Data;
 import lombok.Value;
 
 import java.io.BufferedWriter;
@@ -21,7 +21,7 @@ public class ExportableObserver implements Observer {
     @Override
     @SuppressWarnings("unchecked")
     public void update(Observable o, Object arg) {
-        if(o instanceof Graph) {
+        if (o instanceof Graph) {
             final GraphExporter<Vertex, EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;
             vertexEdgeWithCostGraphExporter = new GraphExporter<Vertex, EdgeWithCost<Vertex>>();
             vertexEdgeWithCostGraphExporter.doExport((Graph<Vertex, EdgeWithCost<Vertex>>) o, new BufferedWriter(new OutputStreamWriter(os)));

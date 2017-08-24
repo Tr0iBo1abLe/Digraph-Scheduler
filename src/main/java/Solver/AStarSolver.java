@@ -7,7 +7,9 @@ import Graph.Vertex;
 import Util.Helper;
 import lombok.extern.log4j.Log4j;
 
-import java.util.*;
+import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Log4j
 public final class AStarSolver extends AbstractSolver {
@@ -28,26 +30,25 @@ public final class AStarSolver extends AbstractSolver {
             /* We have an updater and a UI to update */
             guiTimer = new Timer();
             guiTimer.scheduleAtFixedRate(new TimerTask() {
-                                          @Override
-                                          public void run() {
-                                              updater.update(queue.peek());
-                                          }
-                                      },
+                                             @Override
+                                             public void run() {
+                                                 updater.update(queue.peek());
+                                             }
+                                         },
                     100, 100);
         }
 
         queue.add(new SearchState());
-        for(;;) {
+        for (; ; ) {
             SearchState currBestState = queue.remove();
 
             long remMem = Helper.getRemainingMemory();
             log.debug("Checking remaining memory: Remaining -> " + remMem);
             log.debug("Queue Size " + queue.size() + ", State size " + currBestState.getNumVertices());
-          //  if(remMem <= 600_000_000L) { // The memory value should be fine tuned a bit more
+            if (remMem <= 600_000_000L) { // The memory value should be fine tuned a bit more
                 /*      ^GB ^MB ^kB    */
-                log.debug("Calling DFSSolver");
-                continueSolveWithBnB(currBestState);
-         //   }
+                currBestState = continueSolveWithBnB(currBestState);
+            }
 
             if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
@@ -70,13 +71,13 @@ public final class AStarSolver extends AbstractSolver {
         }
     }
 
-    private void continueSolveWithBnB(SearchState currBestState) {
-        if(guiTimer != null) guiTimer.cancel();
-
+    private SearchState continueSolveWithBnB(SearchState currBestState) {
+        if (guiTimer != null) guiTimer.cancel();
+        log.debug("Calling DFSSolver");
         DFSSolver nextSolver = new DFSSolver(getGraph(), getProcessorCount(), currBestState);
         queue.clear();
         nextSolver.setUpdater(getUpdater());
         System.gc();
-        nextSolver.continueSolve();
+        return nextSolver.continueSolve();
     }
 }

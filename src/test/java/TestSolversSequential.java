@@ -208,7 +208,7 @@ public class TestSolversSequential {
      *
      * Excluding processors gives a mirrored schedule as excluding nothing, while exclude startTimes gives an altered version.
      * Excluding processors gives a queue size of base_case/processor_count, where base_case is excluding nothing from SearchState.equals()
-     * so clearly it just only ignoring mirror schedules.
+     * so clearly it only ignoring mirror schedules while exclude startTimes is ignoring possible optimal states!
      */
     @Test
     public void test14NodesUoN2CoreWithEdgeCostV2(){

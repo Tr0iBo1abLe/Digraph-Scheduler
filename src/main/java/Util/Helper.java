@@ -12,7 +12,9 @@ import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSinkDOT;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.stream.IntStream;
 
 @UtilityClass
@@ -61,7 +63,7 @@ public class Helper {
 
     public long getRemainingMemory() {
         long allocatedMemory =
-                (Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory());
+                (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
         long presumableFreeMemory = Runtime.getRuntime().maxMemory() - allocatedMemory;
         return presumableFreeMemory;
     }
