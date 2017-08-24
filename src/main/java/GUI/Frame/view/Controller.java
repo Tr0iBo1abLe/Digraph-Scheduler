@@ -6,7 +6,6 @@ import Exporter.GraphExporter;
 import GUI.Events.SolversThread;
 import GUI.Events.SysInfoMonitoringThread;
 import GUI.Frame.CustomButton;
-import GUI.GUIMain;
 import GUI.GraphViewer;
 import GUI.Interfaces.GUIMainInterface;
 import GUI.Models.GMouseManager;
@@ -14,10 +13,7 @@ import GUI.Models.SysInfoModel;
 import GUI.ScheduleChart;
 import GUI.Util.ColorManager;
 import Graph.Graph;
-import Graph.Vertex;
-import Graph.EdgeWithCost;
 import Solver.AbstractSolver;
-import Util.Helper;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingNode;
@@ -29,31 +25,32 @@ import javafx.geometry.Insets;
 import com.jfoenix.controls.JFXToggleButton;
 
 import GUI.Frame.DataVisualization;
-import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import org.graphstream.ui.spriteManager.Sprite;
+import lombok.Synchronized;
 import org.graphstream.ui.swingViewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
- * Controller is used to get the components in fxml file as java instants and
+ * Controller is used to get the components in fxml file as java instances and
  * set event handler for those components.
- * 
+ * This is the top level controller of all JavaFX GUI components.
+ * It takes charge of listening to every possible events that are fired from different sources.
+ * However, it is NOT the only event handler for GS component. See #GMouseManager and #GraphViewer.
+ * =====================================================================================================================================
+ * THIS IS A UTIL CLASS AND IS USED BY JFX FRAMEWORK IN ITS ON APPLICATION THREAD. DO NOT EVER TRY TO INSTANTIATE IT IN THE MAIN THREAD.
+ * =====================================================================================================================================
  * @author Vincent Chen, Mason Shi
  */
 public class Controller implements GUIMainInterface {
@@ -118,9 +115,13 @@ public class Controller implements GUIMainInterface {
 
         initChart();
 
+        initSysInfoMonitor();
+	}
+
+	private void initSysInfoMonitor(){
         sysInfoMonitoringThread = new SysInfoMonitoringThread(SysInfoModel.getInstance());
         sysInfoMonitoringThread.addListener(Controller.this);
-	}
+    }
 
 	private void initGraph(){
         System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
@@ -130,15 +131,15 @@ public class Controller implements GUIMainInterface {
         viewPanel = viewer.addDefaultView(false);
         viewPanel.addMouseListener(new GMouseManager(viewPanel, visualGraph, viewer));
         viewPanel.addMouseWheelListener(new GMouseManager(viewPanel, visualGraph, viewer));
+        viewPanel.setPreferredSize(new Dimension(738, 481));
         swingNode = new SwingNode();
-
-//        swingNode.setContent(new JButton("Click me!"));
-//        StackPane stackPane = new StackPane();
-//        stackPane.getChildren().add(swingNode);
-//
-//        stackPane.setPrefHeight(481);
-//        stackPane.setPrefWidth(738);
-//        stackPane.setBackground(new Background(new BackgroundFill(Color.rgb(0, 128, 255), CornerRadii.EMPTY, Insets.EMPTY)));
+        SwingUtilities.invokeLater(() -> {
+            swingNode.setContent(viewPanel);
+        });
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().add(swingNode);
+        stackPane.setPrefHeight(481);
+        stackPane.setPrefWidth(738);
         graphPane.getChildren().add(swingNode);
     }
 
@@ -235,8 +236,8 @@ public class Controller implements GUIMainInterface {
 		mainPane.setBackground(
 				new Background(new BackgroundFill(Color.rgb(40, 45, 50), CornerRadii.EMPTY, Insets.EMPTY)));
 		graphPane = new Pane();
-//		graphPane.setBackground(
-//				new Background(new BackgroundFill(Color.rgb(255, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
+		graphPane.setBackground(
+				new Background(new BackgroundFill(Color.rgb(255, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
 		solutionPane = new Pane();
 		solutionPane.setBackground(
 				new Background(new BackgroundFill(Color.rgb(0, 255, 0), CornerRadii.EMPTY, Insets.EMPTY)));
@@ -281,7 +282,7 @@ public class Controller implements GUIMainInterface {
 
 	}
 
-
+    @Synchronized
 	@Override
 	public void updateWithState(ISearchState searchState, AbstractSolver abstractSolver) {
         if (searchState == null) return;
@@ -335,6 +336,7 @@ public class Controller implements GUIMainInterface {
         });
 	}
 
+	@Synchronized
 	private void updateLabels(int[] startTimes){
         ArrayList<Integer> arrayList = new ArrayList<>();
         for (int i : startTimes){
@@ -375,6 +377,7 @@ public class Controller implements GUIMainInterface {
         }
     }
 
+    @Synchronized
     private void clearCharts(){
         visualGraph.getNodeSet().stream().forEach(n -> {
             n.removeAttribute("ui.class");
@@ -388,20 +391,4 @@ public class Controller implements GUIMainInterface {
         pause.setDisable(true);
         stop.setDisable(true);
     }
-
-	/**
-	 * When an object implementing interface <code>Runnable</code> is used
-	 * to create a thread, starting the thread causes the object's
-	 * <code>run</code> method to be called in that separately executing
-	 * thread.
-	 * <p>
-	 * The general contract of the method <code>run</code> is that it may
-	 * take any action whatsoever.
-	 *
-	 * @see Thread#run()
-	 */
-	@Override
-	public void run() {
-		//TODO - DELETE THIS WHEN FINISHED AS THIS CLASS IS NOT SUPPOSED TO BE RUNNABLE
-	}
 }

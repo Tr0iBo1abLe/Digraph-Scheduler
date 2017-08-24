@@ -10,6 +10,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+/**
+ * A timer, essentially, it keeps firing 'events' to request Controller to go over to SysInfoModel and acquire the latest sys info.
+ * @author Mason Shi
+ */
 public class SysInfoMonitoringThread extends Thread{
 
     //Make sure to add listeners

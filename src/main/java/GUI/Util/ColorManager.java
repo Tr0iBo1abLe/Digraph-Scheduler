@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * A util class provides coloring supports for Gantt Chart and Visual Graph
+ * @author Mason Shi
+ */
 public class ColorManager {
 
     @Getter

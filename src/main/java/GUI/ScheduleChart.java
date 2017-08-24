@@ -18,6 +18,12 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A Chart component represent the visualization of schedule. Codes are partially adapted from stackoverflow. Ref: https://stackoverflow.com/questions/27975898/gantt-chart-from-scratch
+ * @author Edward Huang, Mason Shi
+ * @param <X>
+ * @param <Y>
+ */
 public class ScheduleChart<X, Y> extends XYChart<X, Y> {
 
     @Getter

@@ -13,6 +13,11 @@ import lombok.Getter;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+/**
+ * A user-level thread as a complementary replacement for SwingWorker in order to support Start, Pause feature (See #Controller).
+ * It fires an notification to Controller once Solver safely finishes.
+ * @author Mason Shi
+ */
 public class SolversThread extends Thread {
 
     private final Set<ThreadCompleteListener> listeners = new CopyOnWriteArraySet<>();
@@ -23,13 +28,6 @@ public class SolversThread extends Thread {
     private Controller controller; //Make sure to add listeners
     @Getter
     private ISolver solver;
-
-
-    public SolversThread(GUIMain GUIMain, ISolver iSolver){
-        super();
-        this.GUIMain = GUIMain;
-        this.solver = iSolver;
-    }
 
     public SolversThread(Controller controller, ISolver iSolver){
         super();
@@ -81,7 +79,7 @@ public class SolversThread extends Thread {
     }
 
     public void doRun(){
-        solver.associateUI(controller); //TODO - CHANGE TO CONTROLLER
+        solver.associateUI(controller);
         solver.doSolve();
     }
 

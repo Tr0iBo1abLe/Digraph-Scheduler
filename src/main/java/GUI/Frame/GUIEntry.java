@@ -2,10 +2,8 @@ package GUI.Frame;
 
 import java.io.IOException;
 
-import GUI.Events.GraphLoaderThread;
 import GUI.Frame.view.Controller;
 import javafx.application.Application;
-import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -14,9 +12,10 @@ import javafx.stage.Stage;
 import javax.swing.*;
 
 /**
- * This is an application class to show all information about our program
+ * This is an application class to fire the event dispatch thread which loads all the gui component using Controller specified in FXML
+ * This is the standard entry point of JavaFX framework.
  * 
- * @author Vincent
+ * @author Vincent Chen, slightly modified by Mason Shi
  * @see DataVisualization
  */
 public class GUIEntry extends Application {
@@ -30,29 +29,8 @@ public class GUIEntry extends Application {
 
 		initLayout();
 
-//        createAndSetSwingContent(Controller.swingNode);
-
-//        SwingUtilities.invokeLater(() -> {
-//            System.out.println("test run");
-//            Controller.swingNode.setContent(Controller.viewPanel);
-//        });
-        GraphLoaderThread graphLoaderThread = new GraphLoaderThread();
-        graphLoaderThread.start();
-
-        System.out.println("get here");
-
         Controller.sysInfoMonitoringThread.start();
 	}
-
-    private void createAndSetSwingContent(final SwingNode swingNode) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("test run");
-                swingNode.setContent(Controller.viewPanel);
-            }
-        });
-    }
 
 	/**
 	 * Load Layout.fxml to GUIEntry class and set Style.css to scene for using later
@@ -72,9 +50,5 @@ public class GUIEntry extends Application {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public static void main(String[] args) {
-		launch(args);
 	}
 }

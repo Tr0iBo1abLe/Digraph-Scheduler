@@ -6,6 +6,12 @@ import org.hyperic.sigar.*;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * A model class with respect to MVC pattern.
+ * It monitors the operating system's environment and
+ * stores system info fields and methods. This is required by Controller to obtain system info.
+ * @author Mason Shi
+ */
 public class SysInfoModel {
 
     private final Sigar sigar;

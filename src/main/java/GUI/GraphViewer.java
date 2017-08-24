@@ -13,6 +13,15 @@ import org.graphstream.ui.graphicGraph.stylesheet.StyleConstants.Units;
 
 import java.util.*;
 
+/**
+ * This is one of the event handler for GS graph.
+ * It is managed by Controller (see #Controller), and responsible for:
+ * - initializing the Viewer that generates the GUI component (ViewPanel)
+ * - customizing the default behavior by extending the Viewer class from GS framework
+ * - updating the states of nodes, edges, and sprites whenever requested by Controller
+ * - providing customized coloring using ColorManager (#see ColorManager)
+ * @author Mason Shi
+ */
 public class GraphViewer extends Viewer{
 
     @Getter

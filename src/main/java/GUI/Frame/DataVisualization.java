@@ -16,7 +16,7 @@ import javafx.scene.shape.Rectangle;
 import lombok.Getter;
 
 /**
- * This class is pane to show the status of cpu usage, memory usage, time
+ * This class is a pane to show the status of cpu usage, memory usage, time
  * remaining and other relevant information.
  * 
  * @author Vincent
@@ -148,7 +148,7 @@ public class DataVisualization extends GridPane {
 	}
 
 	/**
-	 * Set the time remaining.
+	 * Set the finishing time so far.
 	 * 
 	 * @param
 	 */

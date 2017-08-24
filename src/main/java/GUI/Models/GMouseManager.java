@@ -18,6 +18,11 @@ import java.awt.event.*;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * A model&control class with respect to MVC pattern.
+ * It simply manages the mouse events fired by the visual graph and supports the graph as being its mouse event handler.
+ * @author Mason Shi
+ */
 public class GMouseManager implements MouseMotionListener, MouseListener, MouseWheelListener{
 
     private View view;
