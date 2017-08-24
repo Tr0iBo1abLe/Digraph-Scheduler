@@ -39,7 +39,7 @@ public final class DFSSolver extends AbstractSolver {
      * Used when transferring state from a AStarSolver
      */
     public SearchState continueSolve() {
-        currUpperBound = Integer.MAX_VALUE;
+        currUpperBound = Integer.MAX_VALUE; // TODO currBestState + topo sort of remaining vertices
         solving(currBestState);
         return currBestState;
     }

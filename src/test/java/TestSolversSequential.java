@@ -47,7 +47,7 @@ public class TestSolversSequential {
     @Parameters(name = "{0}") // tester.toString()
     public static Collection data() {
         org.apache.log4j.BasicConfigurator.configure();
-        return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class), new CommonTester(SmartSolver.class));
+        return Arrays.asList(new CommonTester(AStarSolver.class));
     }
 
     /**
@@ -202,6 +202,16 @@ public class TestSolversSequential {
         assertEquals(96, solver.getFinalTime());
     }
 
+    /**
+     * Attempt to break exclude "startTimes" vs. excluding nothing rather than excluding "processors" vs excluding both.
+     * Excluding processors gives a mirrored schedule (or the same) as excluding nothing, while exclude startTimes gives an altered version.
+     */
+    @Test
+    public void test14NodesUoN2CoreWithEdgeCostV2(){
+        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_3CoreOptimal-1.dot"));
+        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
+        assertEquals(96, solver.getFinalTime());
+    }
 
 
 

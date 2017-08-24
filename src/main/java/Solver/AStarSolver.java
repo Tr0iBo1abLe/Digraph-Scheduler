@@ -47,7 +47,7 @@ public final class AStarSolver extends AbstractSolver {
             SearchState currentBestSchedule = queue.remove();
 
             long remMem = Helper.getRemainingMemory();
-            log.debug("Checking remaining memory: Remaining -> " + remMem);
+           // log.debug("Checking remaining memory: Remaining -> " + remMem);
             if(remMem <= 600_000_000L) { // The memory value should be fine tuned a bit more
                 /*      ^GB ^MB ^kB    */
                 log.debug("Calling DFSSolver");
@@ -74,6 +74,7 @@ public final class AStarSolver extends AbstractSolver {
                 for (int processorID = 0; processorID < processorCount; processorID++) {
                     SearchState nextSearchState = new SearchState(currentBestSchedule, vertex, processorID);
                     if (!queue.contains(nextSearchState)) {
+                        log.debug("Queue size: " + queue.size());
                         queue.add(nextSearchState);
                     }
                 }
