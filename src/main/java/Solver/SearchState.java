@@ -25,8 +25,7 @@ import java.util.stream.IntStream;
  */
 
 @Value
-@EqualsAndHashCode(exclude = {"processors",""})
-// exclude partial schedules where nodes only differ by their processor TODO this needs testing!
+@EqualsAndHashCode(exclude = {"","processors"}) // excludes partial schedules where nodes only differ by their processor
 public class SearchState implements Comparable<SearchState>, ISearchState {
     @NonFinal
     private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
@@ -90,21 +89,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
             return t;
         };
 
-
         int time = 0;
-        /*
-         * Alternative scheduler implementation, performs marginally worse than functional
-         * java variant. For demo purpose only(?)
-        */
-        /*
-        time = IntStream.range(0, processors.length).reduce(0, (acc, n) -> {
-            if (processors[n] == processorId) {
-                int newTime = startTimes[n]  + graph.getVertex(n).getCost();
-                if (newTime > acc) return newTime;
-            }
-            return acc;
-        });
-        */
         /* Fold over the vertices and find the minimal cost given the same processor */
         time = IterableW.wrap(graph.getVertices()).foldLeft(schedulerFoldingFn, time);
         /* Fold over the parent vertices and find the minimal cost if there is a parent on another processor */

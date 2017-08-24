@@ -15,7 +15,7 @@ digraph example {
     l [Weight=10];
     m [Weight=16];
 
-    n [Weight=29];
+    n [Weight=12];
     p [Weight=7];
 
     a -> d [Weight=57];

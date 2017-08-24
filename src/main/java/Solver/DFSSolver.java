@@ -40,7 +40,7 @@ public final class DFSSolver extends AbstractSolver {
      */
     SearchState continueSolve() {
         // The upper bound is now the currBestState + that of scheduling the remaining vertices to the same processor.
-        // TODO What if there is an edge pointing to these vertices from another core..??
+        // If there is an edge point to these vertices we can assume the 'same' processor is the optimal one
         currUpperBound = currBestState.getUnderestimate() + currBestState.getUnAssignedVertices().stream().mapToInt(vertex -> vertex.getCost()).sum();
         solving(currBestState);
         return currBestState;
