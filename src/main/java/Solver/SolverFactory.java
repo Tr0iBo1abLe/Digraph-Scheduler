@@ -18,17 +18,16 @@ import java.lang.reflect.InvocationTargetException;
  * @author Will Molloy
  */
 @Log4j
-public class SmartSolver extends AbstractSolver implements ISolver {
+public class SolverFactory {
 
     private Solver solver;
     @Getter
-    private AbstractSolver currentSolver;
-    private boolean parallel;
+    private Graph<Vertex, EdgeWithCost<Vertex>> graph;
+    private int processorCount;
 
-    public SmartSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
-        super(graph, processorCount);
-        this.parallel = false; // ?? use par argument here otherwise class has to be duplicated.
-        determineSolverToUse();
+    public SolverFactory(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount){
+        this.graph = graph;
+        this.processorCount = processorCount;
     }
 
     /**
@@ -47,10 +46,9 @@ public class SmartSolver extends AbstractSolver implements ISolver {
      * few edges (sparse graph)
      * .. any more?
      */
-    private void determineSolverToUse() {
+    public ISolver createSolver() {
         // Getting data about the input
         int numEdges = (int) graph.getInwardEdgeMap().values().parallelStream().filter(List::isNotEmpty).count();
-        int numVertices = graph.getVertices().size();
 
         // "AI is just a bunch of if/then statements"
         // These decisions are in priority order
@@ -61,37 +59,17 @@ public class SmartSolver extends AbstractSolver implements ISolver {
         } else {
             solver = Solver.AStar;
         }
-
-        initialiseSolver();
+        log.debug("Initialising: " + solver.getSolver().getClass().getName());
+        return initialiseSolver();
     }
 
-    private void initialiseSolver() {
+    private AbstractSolver initialiseSolver() {
         try {
-            currentSolver = solver.getSolver().getDeclaredConstructor(Graph.class, int.class).newInstance(graph, processorCount);
-            log.debug("Initialised: " + this.toString());
+            return solver.getSolver().getDeclaredConstructor(Graph.class, int.class).newInstance(graph, processorCount);
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void doSolve() {
-        currentSolver.doSolve();
-    }
-
-    @Override
-    public int getProcessorCount() {
-        return currentSolver.getProcessorCount();
-    }
-
-    public int getFinalTime() {
-        return currentSolver.getFinalTime();
-    }
-
-    @Override
-    public String toString() {
-        return "SmartSolver." +
-                currentSolver.getClass().getName();
+        return null;
     }
 
     /**

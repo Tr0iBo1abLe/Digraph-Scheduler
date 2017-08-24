@@ -15,12 +15,16 @@ import lombok.Synchronized;
 import java.util.Arrays;
 
 /**
+ * Represents all Solvers holding the program arguments: graph and processorCount.
+ * Contains public method for solving the scheduling problem.
+ *
  * Created by e on 1/08/17.
+ * @author Edward Huang, Will Molloy
  */
 @Data
 abstract public class AbstractSolver implements ISolver {
-    protected final Graph<Vertex, EdgeWithCost<Vertex>> graph;
-    protected final int processorCount;
+    protected Graph<Vertex, EdgeWithCost<Vertex>> graph;
+    protected int processorCount;
     @Getter
     @Setter
     protected GUIUpdater updater;
@@ -28,6 +32,9 @@ abstract public class AbstractSolver implements ISolver {
     @Getter
     private int finalTime;
 
+    /**
+     * This class should only be instantiated by the concrete algorithms.
+     */
     AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         this.graph = graph;
         this.processorCount = processorCount;
@@ -35,29 +42,30 @@ abstract public class AbstractSolver implements ISolver {
         currBestState = new SearchState();
     }
 
+    /**
+     * Constructor for passing states between algorithms.
+     */
     AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState existingState) {
-        this.graph = graph;
-        this.processorCount = processorCount;
-        SearchState.initialise(graph);
+        this(graph, processorCount);
         currBestState = existingState;
     }
 
     /**
-     * Template method. Calls the concrete implementation of doSolve() depending on the required algorithm.
-     * Then schedules the vertices.
+     * Template method.
+     * Calls the concrete implementation of doSolve() depending on the required algorithm, then schedules the tasks.
      */
     public final void doSolveAndCompleteSchedule() {
         doSolve();
-        scheduleVertices(currBestState);
+        scheduleVertices();
     }
 
     abstract void doSolve();
 
     @Synchronized
-    private void scheduleVertices(SearchState completeSchedule) {
-        final int[] processors = Arrays.stream(completeSchedule.getProcessors()).map(x -> x + 1).toArray();
-        final int[] startTimes = completeSchedule.getStartTimes();
-        finalTime = completeSchedule.getUnderestimate();
+    private void scheduleVertices() {
+        final int[] processors = Arrays.stream(currBestState.getProcessors()).map(x -> x + 1).toArray();
+        final int[] startTimes = currBestState.getStartTimes();
+        finalTime = currBestState.getUnderestimate();
 
         graph.getVertices().forEach(vertex -> {
             int id = vertex.getAssignedId();

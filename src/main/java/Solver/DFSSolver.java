@@ -25,7 +25,6 @@ public final class DFSSolver extends AbstractSolver {
 
     public DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
-        SearchState.initialise(graph);
         log.debug("Solver inited");
     }
 
