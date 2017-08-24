@@ -143,6 +143,13 @@
     <build>
         <resources>
             <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>${project.build.directory}</targetPath>
+                <includes>
+                    <include>log4j.properties</include>
+                </includes>
+            </resource>
+            <resource>
                 <filtering>false</filtering>
                 <directory>${basedir}</directory>
                 <includes>
