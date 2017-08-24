@@ -6,8 +6,7 @@ import GUI.SwingMain;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
-import Solver.AStarSolverPar;
-import Solver.SmartSolver;
+import Solver.SolverFactory;
 import Util.Helper;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
@@ -27,13 +26,8 @@ public final class Main {
 
     private static void callSolver(File file, int procN, int parN, OutputStream os) {
         Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(file);
-        ISolver solver;
-        if (parN != 1) {
-            solver = new AStarSolverPar(graph, procN); // TODO Parallel DFS/A* -> SmartSolver
-        } else {
-            solver = new SmartSolver(graph, procN);
-        }
-        solver.doSolve();
+        ISolver solver = new SolverFactory(graph, procN).createSolver(); // TODO parallel in factory
+        solver.doSolveAndCompleteSchedule();
 
         final GraphExporter<Vertex, EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;
         vertexEdgeWithCostGraphExporter = new GraphExporter<Vertex, EdgeWithCost<Vertex>>();
@@ -108,7 +102,7 @@ public final class Main {
 
         if (gui) {
             Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(inputFile);
-            ISolver solver = new Solver.AStarSolver(graph, procN); // TODO DFS with GUI update, then change to SmartSolver
+            ISolver solver = new Solver.AStarSolver(graph, procN); // TODO DFS with GUI update, then change to SolverFactory
             SwingMain.init(graph, solver);
             SwingUtilities.invokeLater(new SwingMain());
         } else {

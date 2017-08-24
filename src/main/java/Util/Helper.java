@@ -64,8 +64,7 @@ public class Helper {
     public long getRemainingMemory() {
         long allocatedMemory =
                 (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
-        long presumableFreeMemory = Runtime.getRuntime().maxMemory() - allocatedMemory;
-        return presumableFreeMemory;
+        return Runtime.getRuntime().maxMemory() - allocatedMemory;
     }
 
 }

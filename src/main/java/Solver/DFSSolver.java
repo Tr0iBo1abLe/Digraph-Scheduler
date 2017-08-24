@@ -22,7 +22,6 @@ import java.util.stream.IntStream;
 public final class DFSSolver extends AbstractSolver {
 
     private int currUpperBound;
-    private SearchState currBestState;
 
     public DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
@@ -30,7 +29,7 @@ public final class DFSSolver extends AbstractSolver {
     }
 
     DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState existingState) {
-        super(graph, processorCount);
+        super(graph, processorCount, existingState);
         log.debug("Solver inited with an existing state");
         currBestState = existingState;
     }
@@ -38,24 +37,21 @@ public final class DFSSolver extends AbstractSolver {
     /**
      * Used when transferring state from a AStarSolver
      */
-    SearchState continueSolve() {
+    void completeSolve() {
         // The upper bound is now the currBestState + that of scheduling the remaining vertices to the same processor.
         // If there is an edge pointing to these vertices we can assume the 'same' processor is the optimal one
         currUpperBound = currBestState.getUnderestimate() + currBestState.getUnAssignedVertices().stream().mapToInt(vertex -> vertex.getCost()).sum();
         solving(currBestState);
-        return currBestState;
     }
 
     @Override
-    public void doSolve() {
-        SearchState.initialise(graph);
+    void doSolve() {
         // Upper bound is initially topological sort i.e. all the nodes scheduled to one processor (when edge cost can be ignored)
         doTopologicalSortSolveAndSetInitialUpperBound();
         if (processorCount > 1) { // when processorCount = 1, topologicalSort is the solution.
             SearchState searchState = new SearchState();
             solving(searchState);
         }
-        scheduleVertices(currBestState);
     }
 
     private void solving(SearchState currState) {
@@ -131,5 +127,4 @@ public final class DFSSolver extends AbstractSolver {
         currUpperBound = searchState[0].getUnderestimate();
         currBestState = searchState[0];
     }
-
 }
