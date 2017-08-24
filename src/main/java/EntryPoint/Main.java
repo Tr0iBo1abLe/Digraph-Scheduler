@@ -6,9 +6,8 @@ import GUI.SwingMain;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
-import Solver.AStarSolver;
 import Solver.AStarSolverPar;
-import Solver.DFSSolver;
+import Solver.SmartSolver;
 import Util.Helper;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
@@ -18,7 +17,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 
 import javax.swing.*;
 import java.io.*;
-import java.util.Arrays;
+import java.util.Collections;
 
 public final class Main {
 
@@ -26,25 +25,13 @@ public final class Main {
         //Ensure this class is not instantiated
     }
 
-    private enum Algo{AS, BNB}
-
-    private static void callSolver(File file, int procN, int parN, Algo algo, OutputStream os) {
+    private static void callSolver(File file, int procN, int parN, OutputStream os) {
         Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(file);
-        ISolver solver = null;
-        switch(algo) {
-            case AS:
-                if (parN != 1) {
-                    solver = new AStarSolverPar(graph, procN);
-                } else {
-                    solver = new AStarSolver(graph, procN);
-                }
-                break;
-            case BNB:
-                if (true) { // Change this when parallel is done
-                    solver = new DFSSolver(graph, procN);
-                }
-                break;
-                // TODO, Make this a factory
+        ISolver solver;
+        if (parN != 1) {
+            solver = new AStarSolverPar(graph, procN); // TODO Parallel DFS/A* -> SmartSolver
+        } else {
+            solver = new SmartSolver(graph, procN);
         }
         solver.doSolve();
 
@@ -54,6 +41,7 @@ public final class Main {
     }
 
     public static void main(String[] args) {
+        org.apache.log4j.BasicConfigurator.configure();
         Namespace ns = null;
         ArgumentParser argumentParser = ArgumentParsers.newArgumentParser("Scheduler")
                 .defaultHelp(true)
@@ -61,11 +49,6 @@ public final class Main {
         argumentParser.addArgument("-g", "--gui")
                 .action(Arguments.storeTrue())
                 .help("Choose whether to use GUI(Not implemented at the moment)");
-        argumentParser.addArgument("-a", "--algorithm")
-                .choices("as", "bnb")
-                .setDefault("as")
-                .required(false)
-                .help("Choose the algorithm to use");
         argumentParser.addArgument("-p", "--processors")
                 .metavar("N")
                 .required(true)
@@ -76,7 +59,7 @@ public final class Main {
                 .metavar("M")
                 .type(Integer.class)
                 .nargs(1)
-                .setDefault(Arrays.asList(new Integer[]{1}))
+                .setDefault(Collections.singletonList(1))
                 .required(false)
                 .help("Use parallel processing");
         argumentParser.addArgument("infile")
@@ -98,19 +81,16 @@ public final class Main {
         }
 
         int procN, parN;
-        String fileName, outfileName;
+        String fileName;
         OutputStream os = null;
         boolean gui;
-        Algo algo;
 
         gui = ns.getBoolean("gui");
         procN = (int) ns.getList("processors").get(0);
         parN = (int) ns.getList("parallel").get(0);
         fileName = (String) ns.getList("infile").get(0);
         String outfile = ns.getString("outfile");
-        String algoStr = ns.getString("algorithm");
-        if(algoStr.matches("as")) algo = Algo.AS;
-        else algo = Algo.BNB;
+
         if (outfile == null) {
             os = new BufferedOutputStream(System.out);
         } else {
@@ -128,11 +108,11 @@ public final class Main {
 
         if (gui) {
             Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(inputFile);
-            ISolver solver = new Solver.AStarSolver(graph, procN);
+            ISolver solver = new Solver.AStarSolver(graph, procN); // TODO DFS with GUI update, then change to SmartSolver
             SwingMain.init(graph, solver);
             SwingUtilities.invokeLater(new SwingMain());
         } else {
-            callSolver(inputFile, procN, parN, algo, os);
+            callSolver(inputFile, procN, parN, os);
         }
     }
 }
