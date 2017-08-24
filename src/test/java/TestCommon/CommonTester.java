@@ -29,12 +29,6 @@ public class CommonTester {
     }
 
     /**
-     * Ensure this Class is initialised with a valid solver.
-     */
-    private CommonTester() {
-    }
-
-    /**
      * Initialises the solver with the given processor count and DOT file and then calls doSolve().
      *
      * @param processorCount, number of cores available to the output schedule
