@@ -16,14 +16,16 @@ import java.util.concurrent.CopyOnWriteArraySet;
 /**
  * A user-level thread as a complementary replacement for SwingWorker in order to support Start, Pause feature (See #Controller).
  * It fires an notification to Controller once Solver safely finishes.
+ * This class is not a part of parallelization it is simply a thread representing the particular connection
+ * between solvers and GUI interfaces (see #Controller, #GraphViewer, and #ScheduleChart).
+ * It is one of the util threads managed by Controller (see #Controller and #Start button).
  * @author Mason Shi
  */
 public class SolversThread extends Thread {
 
     private final Set<ThreadCompleteListener> listeners = new CopyOnWriteArraySet<>();
 
-    @Getter
-    private GUIMain GUIMain; //Make sure to add listeners
+    public static boolean isStoped = false;
     @Getter
     private Controller controller; //Make sure to add listeners
     @Getter
@@ -80,7 +82,7 @@ public class SolversThread extends Thread {
 
     public void doRun(){
         solver.associateUI(controller);
-        solver.doSolve();
+        solver.doSolveAndCompleteSchedule();
     }
 
     public final void addListener(final ThreadCompleteListener listener) {

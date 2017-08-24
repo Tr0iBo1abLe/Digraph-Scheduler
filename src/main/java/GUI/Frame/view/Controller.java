@@ -224,9 +224,11 @@ public class Controller implements GUIMainInterface {
             }
         });
         stop.setOnAction(event -> {
+            solversThread.suspend();
             solver.getTimer().cancel();
-            solversThread.stop();
+            SolversThread.isStoped = true;
             clearCharts();
+            solversThread.stop();
         });
         pause.setDisable(true);
         stop.setDisable(true);
@@ -324,7 +326,9 @@ public class Controller implements GUIMainInterface {
         viewer.updateNodes(); //update the GS viewer
 
         int curSize = abstractSolver.getStateCounter();
-        data.setProgress((double)curSize/((double)curSize + 10000000d)*100d); //update progress bar
+        double temp = ((double)curSize/((double)curSize + 100000000d))*100d;
+        if (temp < 99.9d) //avoid progress bar overflow
+        data.setProgress(temp); //update progress bar
 
         updateLabels(startTimes); //update labels at top right corner
 
@@ -352,14 +356,16 @@ public class Controller implements GUIMainInterface {
 
 	@Override
 	public void notifyOfSolversThreadComplete() {
-        //Update colorNode AND set progress bar to maximum here;
-        viewer.colorNodes(visualGraph);
-        data.setProgress(100d);
-        start.setDisable(true);
-        pause.setDisable(true);
-        stop.setDisable(true);
-        // print output, graph exporter
-        System.out.println(GraphExporter.exportGraphToString(graph));
+	    if (!(SolversThread.isStoped)){ //do the following only when the solver is not terminated by Stop()
+            //Update colorNode AND set progress bar to maximum here;
+            viewer.colorNodes(visualGraph);
+            data.setProgress(100d);
+            start.setDisable(true);
+            pause.setDisable(true);
+            stop.setDisable(true);
+            // print output, graph exporter
+            System.out.println(GraphExporter.exportGraphToString(graph));
+        }
 	}
 
 	@Override

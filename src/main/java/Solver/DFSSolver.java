@@ -4,8 +4,7 @@ import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
 import javafx.application.Platform;
-import lombok.Data;
-import lombok.Getter;
+import lombok.extern.log4j.Log4j;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -17,25 +16,45 @@ import java.util.stream.IntStream;
 /**
  * DFS Solver, uses branch and bound technique to prune search states in the stack.
  * Doesn't use much memory since the current best state is cached while the stack is cleared on each iteration.
- *
+ * <p>
  * Created by mason on 31/07/17.
- * @author Mason Shi, Edward Huang, Will Molloy
+ *
+ * @author Mason Shi, Dovahkiin Huang, Will Molloy
  */
+@Log4j
 public final class DFSSolver extends AbstractSolver {
 
     private int currUpperBound;
-    private SearchState currBestState;
 
     private SearchState intermediateState; // represent a partial schedule which is going to be used by GUI updater until Solver finishes.
 
     public DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
+        log.debug("Solver inited");
     }
 
-    @Override
-    public void doSolve() {
-        SearchState.initialise(graph);
+    DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState existingState) {
+        super(graph, processorCount, existingState);
+        log.debug("Solver inited with an existing state");
+        currBestState = existingState;
+    }
 
+    /**
+     * Used when transferring state from a AStarSolver
+     */
+    void completeSolve() {
+        // The upper bound is now the currBestState + that of scheduling the remaining vertices to the same processor.
+        // If there is an edge pointing to these vertices we can assume the 'same' processor is the optimal one
+        currUpperBound = currBestState.getUnderestimate() + currBestState.getUnAssignedVertices().stream().mapToInt(vertex -> vertex.getCost()).sum();
+        setupGuiTimer(); //ensure a gui timer if required
+        solving(currBestState);
+    }
+
+    /**
+     * This method ensures a gui timer (see #Timer timer in #AbstractSolver) gets initialized if there exists GUI components.
+     * No matter the DFS solver starts up on it own or is called by AS to continue on existing tasks
+     */
+    private void setupGuiTimer(){
         if (updater != null) {
             /* We have an updater and a UI to update */
             isUpdatableProgressBar = true;
@@ -47,18 +66,17 @@ public final class DFSSolver extends AbstractSolver {
                                       },
                     100, 100);
         }
+    }
 
+    @Override
+    public void doSolve() {
+        setupGuiTimer(); //ensure a gui timer if required
         // Upper bound is initially topological sort i.e. all the nodes scheduled to one processor (when edge cost can be ignored)
         doTopologicalSortSolveAndSetInitialUpperBound();
-        if (processorCount != 1) { // when processorCount = 1, topologicalSort is the solution.
-            // ideally initial upperbound would be topological sort length
-            currUpperBound = graph.getVertices().stream().filter(o -> o.getCost() > 0).mapToInt(Vertex::getCost).sum();
-            currUpperBound += graph.getForwardEdges().stream().filter(o -> o.getCost() > 0).mapToInt(EdgeWithCost::getCost).sum();
-            SearchState s = new SearchState();
-            solving(s);
+        if (processorCount > 1) { // when processorCount = 1, topologicalSort is the solution.
+            SearchState searchState = new SearchState();
+            solving(searchState);
         }
-        scheduleVertices(currBestState);
-
         if (updater != null && timer != null) {
             timer.cancel();
             updater.update(currBestState, this);
@@ -99,10 +117,12 @@ public final class DFSSolver extends AbstractSolver {
     private void doTopologicalSortSolveAndSetInitialUpperBound() {
         // parallelStream() is slower due to overhead and these graphs are expected to be <20 nodes.
         // copy edges, this method will alter the graph (a copy of it).
+
+        // Convert FJ List to a java list for mutability
         Map<Vertex, java.util.List<EdgeWithCost<Vertex>>> outwardEdges = new HashMap<>();
-        graph.getOutwardEdgeMap().keySet().forEach(vertex -> outwardEdges.put(vertex, graph.getOutwardEdgeMap().get(vertex).toJavaList()));
+        graph.getOutwardEdgeMap().forEach((vertex, edgeWithCostsList) -> outwardEdges.put(vertex, edgeWithCostsList.toJavaList()));
         Map<Vertex, java.util.List<EdgeWithCost<Vertex>>> inwardEdges = new HashMap<>();
-        graph.getInwardEdgeMap().keySet().forEach(vertex -> inwardEdges.put(vertex, graph.getInwardEdgeMap().get(vertex).toJavaList()));
+        graph.getInwardEdgeMap().forEach((vertex, edgeWithCostsList) -> inwardEdges.put(vertex, edgeWithCostsList.toJavaList()));
 
         // list that will contain sorted vertices
         java.util.List<Vertex> sortedVertices = new ArrayList<>();
@@ -110,7 +130,7 @@ public final class DFSSolver extends AbstractSolver {
         Queue<Vertex> legalVertices = new LinkedList<>(graph.getVertices().stream().filter(vertex -> inwardEdges.get(vertex).isEmpty()).collect(Collectors.toSet()));
 
         // exhaust vertices until all have been added to sorted list`
-        while(!legalVertices.isEmpty()){
+        while (!legalVertices.isEmpty()) {
             Vertex currVertex = legalVertices.remove();
 
             // add vertex to tail of sorted list
@@ -118,7 +138,7 @@ public final class DFSSolver extends AbstractSolver {
 
             // Iterate and exhaust all edges, from: currentVertex to: vertexTo
             Queue<EdgeWithCost<Vertex>> edgesFromCurrVertex = new LinkedList<>(outwardEdges.get(currVertex));
-            while(!edgesFromCurrVertex.isEmpty()){
+            while (!edgesFromCurrVertex.isEmpty()) {
                 EdgeWithCost edge = edgesFromCurrVertex.remove();
                 Vertex vertexTo = edge.getTo();
 
@@ -128,7 +148,7 @@ public final class DFSSolver extends AbstractSolver {
                 inwardEdges.put(vertexTo, inwardEdges.get(vertexTo).stream().filter(e -> !e.equals(edge)).collect(Collectors.toList()));
 
                 // check vertexTo has no other inwardEdges (i.e. none excluding this one)
-                if (inwardEdges.get(vertexTo).isEmpty()){
+                if (inwardEdges.get(vertexTo).isEmpty()) {
                     legalVertices.add(vertexTo);
                 }
             }
@@ -142,5 +162,4 @@ public final class DFSSolver extends AbstractSolver {
         currUpperBound = searchState[0].getUnderestimate();
         currBestState = searchState[0];
     }
-
 }

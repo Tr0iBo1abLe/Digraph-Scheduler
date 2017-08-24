@@ -12,11 +12,11 @@ digraph example {
     j [Weight=20];
 
     k [Weight=15];
-    l [Weight=11];
+    l [Weight=10];
     m [Weight=16];
 
     n [Weight=12];
-    p [Weight=38];
+    p [Weight=7];
 
     a -> d [Weight=57];
     b -> d [Weight=45];
