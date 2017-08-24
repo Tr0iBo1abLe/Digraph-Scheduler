@@ -46,15 +46,8 @@ public final class AStarSolver extends AbstractSolver {
         }
 
         queue.add(currBestState);
-        do {
+        while (Helper.getRemainingMemory() > 600_000_000L) { // GB, MB, kB
             currBestState = queue.remove();
-
-            currBestState.getLegalVertices().forEach(vertex -> IntStream.range(0, processorCount).forEach(processor -> {
-                SearchState nextSearchState = new SearchState(currBestState, vertex, processor);
-                if (!queue.contains(nextSearchState)) {
-                    queue.add(nextSearchState);
-                }
-            }));
 
             if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
@@ -64,7 +57,14 @@ public final class AStarSolver extends AbstractSolver {
                 }
                 return;
             }
-        } while (Helper.getRemainingMemory() > 600_000_000L); // GB, MB, kB
+
+            currBestState.getLegalVertices().forEach(vertex -> IntStream.range(0, processorCount).forEach(processor -> {
+                SearchState nextSearchState = new SearchState(currBestState, vertex, processor);
+                if (!queue.contains(nextSearchState)) {
+                    queue.add(nextSearchState);
+                }
+            }));
+        }
         continueSolveWithBnB();
     }
 
@@ -73,7 +73,7 @@ public final class AStarSolver extends AbstractSolver {
         log.debug("Calling DFSSolver");
 
         // transfer the current optimal state and clear the rest.
-        DFSSolver dfsSolver = new DFSSolver(currBestState);
+        DFSSolver dfsSolver = new DFSSolver(getGraph(), getProcessorCount(), currBestState);
         queue.clear();
         dfsSolver.setUpdater(getUpdater());
         System.gc();
