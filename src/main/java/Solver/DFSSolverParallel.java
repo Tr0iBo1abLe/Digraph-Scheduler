@@ -37,21 +37,22 @@ public final class DFSSolverParallel extends AbstractSolver {
         log.debug("Solver inited");
     }
 
-    DFSSolverParallel(int parallelCount, SearchState existingState) {
-        super();
-        log.debug("Solver inited with an existing state");
+    DFSSolverParallel(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, int parallelCount, SearchState existingState) {
+        super(graph, processorCount);
         currBestState = existingState;
         this.parallelCount = parallelCount;
+        log.debug("Solver inited with an existing state");
     }
 
     /**
      * Used when transferring state from a AStarSolver
      */
-    void completeSolve() {
+    SearchState completeSolve() {
         // The upper bound is now the currBestState + that of scheduling the remaining vertices to the same processor.
         // If there is an edge pointing to these vertices we can assume the 'same' processor is the optimal one
         currUpperBound = currBestState.getUnderestimate();
         solving(currBestState);
+        return currBestState;
     }
 
     @Override

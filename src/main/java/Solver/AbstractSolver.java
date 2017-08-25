@@ -39,9 +39,6 @@ abstract public class AbstractSolver implements ISolver {
     @Getter
     protected Timer timer; //the guiTimer
 
-    public AbstractSolver() {
-    }
-
     /**
      * This class should only be instantiated by the concrete algorithms.
      */

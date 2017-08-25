@@ -33,8 +33,8 @@ public final class DFSSolver extends AbstractSolver {
         log.debug("Solver inited");
     }
 
-    DFSSolver(SearchState existingState) {
-        super();
+    DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState existingState) {
+        super(graph, processorCount);
         log.debug("Solver inited with an existing state");
         currBestState = existingState;
     }
@@ -42,12 +42,15 @@ public final class DFSSolver extends AbstractSolver {
     /**
      * Used when transferring state from a AStarSolver
      */
-    void completeSolve() {
+    SearchState completeSolve() {
         // The upper bound is now the currBestState + that of scheduling the remaining vertices to the same processor.
         // If there is an edge pointing to these vertices we can assume the 'same' processor is the optimal one
-        currUpperBound = currBestState.getUnderestimate();
+        // +1 for case where Optimal is actually this, we need to initialise that state.
+        // Preferable to do this rather than call updateLog() many times.
+        currUpperBound = currBestState.getUnderestimate() + currBestState.getTotalCostOfUnassignedVertices()+1;
         setupGuiTimer(); //ensure a gui timer if required
         solving(currBestState);
+        return currBestState;
     }
 
     /**

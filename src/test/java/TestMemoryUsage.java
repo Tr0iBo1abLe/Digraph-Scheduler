@@ -81,6 +81,7 @@ public class TestMemoryUsage {
         assertEquals(3, solver.getFinalTime());
     }
 
+    @Test
     public void memoryTest14Node7Core() {
         solver = tester.doTest(7, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14nodes_0edges.dot"));
         assertEquals(6, solver.getFinalTime());

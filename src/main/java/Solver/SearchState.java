@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.experimental.NonFinal;
+import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -26,6 +27,7 @@ import java.util.stream.IntStream;
  *
  * @author Dovahkiin Huang, Will Molloy
  */
+@Log4j
 @Value
 public class SearchState implements Comparable<SearchState>, ISearchState {
     @NonFinal
@@ -146,6 +148,16 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
     }
 
     /**
+     * Get the total cost of Vertices that haven't got an assigned processor (or startTime)
+     * i.e. cost if they were all assigned to the same processor (topologically sorted).
+     *
+     * @return the set of un assigned vertices.
+     */
+    int getTotalCostOfUnassignedVertices() {
+        return graph.getVertices().stream().filter(vertex -> processors[vertex.getAssignedId()] < 0).mapToInt(vertex -> vertex.getCost()).sum();
+    }
+
+    /**
      * Needed for Comparable interface
      *
      * @param searchState
@@ -176,14 +188,14 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
      * Stats:
      * Canvas 11node 2core example:
      * Ignore nothing: 851,119 final states (pure brute force)
-     * Ignore processor and startTimes: 2229 final states (UNSTABLE fails on other inputs)
+     * Ignore processor and startTimes: 2229 final states (UNSTABLE fails on other inputs) (produces valid schedule but not optimal)
      * Ignore processor: 416,688 final states (STABLE)
      * Ignore startTimes: 164,832 final states (STABLE)
      * Custom, ignore both initially then ignore startTimes (since <= 2 cores): 81,091 final states (Not sure if stable)
      *
      * Canvas 11node 4core example:
      * Ignore nothing: 69,504 final states (pure brute force)
-     * Ignore processor and startTimes: 286 final states (UNSTABLE fails on other inputs)
+     * Ignore processor and startTimes: 286 final states (UNSTABLE fails on other inputs) (produces valid schedule but not optimal)
      * Ignore processor: 5043 final states (STABLE)
      * Ignore startTimes: 71,915 final states (STABLE)
      * Custom, ignore both initially then ignore processor (since > 2 cores): 3705 final states (Not sure if stable)
@@ -209,6 +221,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         // we can ignore both "processors" and "startTimes" at the beginning;
         // TODO ??need to consider legalVertices not just numVertices ??
         if (numVertices <= processorCount){
+            log.debug("equals: Ignore both");
             return builder.isEquals();
         }
         if (processorCount > 2){
