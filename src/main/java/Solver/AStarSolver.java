@@ -67,6 +67,7 @@ public final class AStarSolver extends AbstractSolver {
                     Platform.runLater(() -> updater.update(currBestState, this)); // required by FX framework
                     timer.cancel();
                 }
+                log.info("Final queue size: " + queue.size());
                 return;
             }
 

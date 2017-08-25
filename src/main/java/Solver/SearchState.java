@@ -6,6 +6,7 @@ import Graph.Graph;
 import Graph.Vertex;
 import fj.F;
 import fj.data.IterableW;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Value;
@@ -21,6 +22,7 @@ import java.util.stream.IntStream;
 /**
  * Represents a partial schedule.
  * Include that current scheduled processor and their start time.
+ * Includes A* cost function and pruning.
  *
  * @author Dovahkiin Huang, Will Molloy
  */
@@ -160,26 +162,35 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
      * A* pruning is done here:
      *
      * Equals is different depending on the input.
-     * The idea is to ignore mirrored states however this can be done differently:
+     * The idea is to ignore redundant states however this has many factors and may not produce optimal schedules.
      *
      * Ignoring "processors" causes only the initial states to not be mirrored and its effect is better with a larger
      * core count, while ignoring "startTimes" has an initial greater number of states it will ignore similar states
-     * later on (for a smaller core count).
+     * later on due to it having more of an effect when more vertices are scheduled (since it ignores startTimes).
+     * However it also depends on number of edges and other things, TODO maybe the pruning should change strategy later in the search.
      *
-     * I've come to the conclusion that (generally) with >2 processors for scheduling ignore "processors" is better.
-     * Ignoring startTimes yields (approximately): numInitialLegalVertices * processorCount initial states.
-     * While ignore processors yields: numInitialLegalVertices initial states.
-     * While ignoring both yields: numInitialLegalVertices / processorCount initial states.
-     * However it also depends on number of edges and other things.
+     * I've come to the conclusion that (generally) with >2 processors for scheduling ignore "processors" is better;
+     * since the initial number of states depends on the processorCount and reducing initial states has a big effect.
+     * Currently testing ignoring both initially to reduce initial states even further.
      *
-     * Ignoring both is wrong later into the search because vertices that can be scheduled with startTime 0 can no longer
-     * be due to other nodes taking up those places.
-     * Therefore ignoring both can only be done during the initial iteration, where all vertices that CAN have a startTime of 0
-     * have these states created and are put into the queue.
+     * Stats:
+     * Canvas 11node 2core example:
+     * Ignore nothing: 851,119 final states (pure brute force)
+     * Ignore processor and startTimes: 2229 final states (UNSTABLE fails on other inputs)
+     * Ignore processor: 416,688 final states (STABLE)
+     * Ignore startTimes: 164,832 final states (STABLE)
+     * Custom, ignore both initially then ignore startTimes (since <= 2 cores): 81,091 final states (Not sure if stable)
      *
-     * A possible problem is many vertices that have no edges (many initial legal vertices) + few vertices with edges
-     * (few dependent vertices) where numInitialLegalVertices > processorCount so not all are considered with startTime of 0
-     * leading to the final schedule to maybe not be optimal. TODO So i'm still experimenting/testing.
+     * Canvas 11node 4core example:
+     * Ignore nothing: 69,504 final states (pure brute force)
+     * Ignore processor and startTimes: 286 final states (UNSTABLE fails on other inputs)
+     * Ignore processor: 5043 final states (STABLE)
+     * Ignore startTimes: 71,915 final states (STABLE)
+     * Custom, ignore both initially then ignore processor (since > 2 cores): 3705 final states (Not sure if stable)
+     *
+     * A possible problem with ignoring both at the start is many vertices that have no edges (many initial legal vertices)
+     * + few vertices with edges (few dependent vertices) i.e. numInitialLegalVertices > processorCount with some edges; not all are
+     * considered with startTime of 0 leading to the final schedule to maybe not be optimal. TODO still experimenting/testing.
      */
     @Override
     public boolean equals(Object obj){
