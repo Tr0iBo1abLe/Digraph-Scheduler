@@ -24,7 +24,7 @@ import java.util.Timer;
  */
 @Data
 abstract public class AbstractSolver implements ISolver {
-    protected int parallelProcessorCount;
+    @Getter
     protected Graph<Vertex, EdgeWithCost<Vertex>> graph;
     protected int processorCount;
     @Getter
@@ -46,17 +46,6 @@ abstract public class AbstractSolver implements ISolver {
     AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         this.graph = graph;
         this.processorCount = processorCount;
-        SearchState.initialise(graph, processorCount);
-        currBestState = new SearchState();
-    }
-
-    /**
-     * This class should only be instantiated by the concrete algorithms.
-     */
-    AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, int parallelProcessorCount) {
-        this.graph = graph;
-        this.processorCount = processorCount;
-        this.parallelProcessorCount = parallelProcessorCount;
         SearchState.initialise(graph, processorCount);
         currBestState = new SearchState();
     }
