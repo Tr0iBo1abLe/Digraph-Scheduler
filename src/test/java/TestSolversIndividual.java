@@ -39,12 +39,13 @@ public class TestSolversIndividual {
     public static Collection data() {
         org.apache.log4j.BasicConfigurator.configure();
         return Arrays.asList(
-                new CommonTester(AStarSolver.class),
-                new CommonTester(AStarSolverParallelJavaExecutor.class) ,
-                new CommonTester(AStarSolverFiber.class),
+                new CommonTester(AStarSolver.class)
+//                ,new CommonTester(AStarSolverParallelJavaExecutor.class)
+//                ,new CommonTester(AStarSolverFiber.class)
 
-                new CommonTester(DFSSolverParallel.class),
-                new CommonTester(DFSSolver.class));
+                ,new CommonTester(DFSSolverParallel.class)
+//                ,new CommonTester(DFSSolver.class))
+        );
     }
 
     /**

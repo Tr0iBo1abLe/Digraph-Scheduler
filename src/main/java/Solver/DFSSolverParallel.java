@@ -49,20 +49,21 @@ public final class DFSSolverParallel extends AbstractSolver {
      * Used when transferring state from a AStarSolver
      */
     SearchState completeSolve() {
-        // The upper bound is now the currBestState + that of scheduling the remaining vertices to the same processor.
-        // If there is an edge pointing to these vertices we can assume the 'same' processor is the optimal one
-        currUpperBound = currBestState.getUnderestimate();
-        solving(currBestState);
+        currUpperBound = Integer.MAX_VALUE;
+        makeAndExecuteThreads();
         return currBestState;
     }
 
     @Override
     void doSolve() {
-        executorService = new ThreadPoolExecutor(parallelCount, parallelCount, 99999999L, TimeUnit.DAYS, new LinkedBlockingQueue<>());
         currUpperBound = Integer.MAX_VALUE;
-        SearchState searchState = new SearchState();
+        makeAndExecuteThreads();
+    }
+
+    private void makeAndExecuteThreads(){
+        executorService = new ThreadPoolExecutor(parallelCount, parallelCount, 99999999L, TimeUnit.DAYS, new LinkedBlockingQueue<>());
         callables = Collections.newSetFromMap(new ConcurrentHashMap<>());
-        callables.addAll(makeCallables(searchState));
+        callables.addAll(makeCallables(currBestState));
         log.info("Callables count " + callables.size());
         try {
             executorService.invokeAll(callables);

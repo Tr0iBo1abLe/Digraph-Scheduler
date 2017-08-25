@@ -40,7 +40,7 @@ public class TestRelease {
      * Run on 8 processor.
      * Expected = ??? Current lowest 400. TODO check what actual optimal is and that solver produces valid schedule.
      */
-    @Ignore
+    @Test
     public void test20Nodes() {
         solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_RELEASE + "Nodes_20.dot")), 8, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
