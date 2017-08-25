@@ -28,13 +28,13 @@ public final class DFSSolver extends AbstractSolver {
 
     private SearchState intermediateState; // represent a partial schedule which is going to be used by GUI updater until Solver finishes.
 
-    public DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
+    DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
         log.debug("Solver inited");
     }
 
-    DFSSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState existingState) {
-        super(graph, processorCount, existingState);
+    DFSSolver(SearchState existingState) {
+        super();
         log.debug("Solver inited with an existing state");
         currBestState = existingState;
     }
@@ -45,7 +45,7 @@ public final class DFSSolver extends AbstractSolver {
     void completeSolve() {
         // The upper bound is now the currBestState + that of scheduling the remaining vertices to the same processor.
         // If there is an edge pointing to these vertices we can assume the 'same' processor is the optimal one
-        currUpperBound = currBestState.getUnderestimate() + currBestState.getUnAssignedVertices().stream().mapToInt(vertex -> vertex.getCost()).sum();
+        currUpperBound = currBestState.getUnderestimate();
         setupGuiTimer(); //ensure a gui timer if required
         solving(currBestState);
     }

@@ -6,7 +6,6 @@ import Graph.Graph;
 import Graph.Vertex;
 import fj.F;
 import fj.data.IterableW;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Value;
@@ -97,18 +96,18 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
             return t;
         };
 
-        int time = 0;
+        int startTime = 0;
         /* Fold over the vertices and find the minimal cost given the same processor */
-        time = IterableW.wrap(graph.getVertices()).foldLeft(schedulerFoldingFn, time);
+        startTime = IterableW.wrap(graph.getVertices()).foldLeft(schedulerFoldingFn, startTime);
         /* Fold over the parent vertices and find the minimal cost if there is a parent on another processor */
-        time = graph.getInwardsEdges(vertex).foldLeft(dependencyFoldingFn, time);
+        startTime = graph.getInwardsEdges(vertex).foldLeft(dependencyFoldingFn, startTime);
 
         // Store the result we obtained
         processors[vertex.getAssignedId()] = processor;
-        startTimes[vertex.getAssignedId()] = time;
+        startTimes[vertex.getAssignedId()] = startTime;
 
         // Underestimate function
-        int nextPriority = staticCostFunction(time, vertex);
+        int nextPriority = staticCostFunction(startTime, vertex);
 
         if (underestimate < nextPriority)
             underestimate = nextPriority;
@@ -116,8 +115,11 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         numVertices = prevState.getNumVertices() + 1;
     }
 
-    private int staticCostFunction(int time, Vertex vertex) {
-        return time + vertex.getCost() + vertex.getBottomLevel();
+    /**
+     * Initial cost set for a state; used as a static priority for picking the next state in the search.
+     */
+    private int staticCostFunction(int startTime, Vertex vertex) {
+        return startTime + vertex.getCost() + vertex.getBottomLevel();
     }
 
     /**
@@ -141,16 +143,6 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         });
         return set;
     }
-
-    /**
-     * Get the set of Vertices that haven't got an assigned processor (or startTime)
-     *
-     * @return the set of un assigned vertices.
-     */
-    Set<Vertex> getUnAssignedVertices() {
-        return graph.getVertices().stream().filter(vertex -> processors[vertex.getAssignedId()] < 0).collect(Collectors.toSet());
-    }
-
 
     /**
      * Needed for Comparable interface
