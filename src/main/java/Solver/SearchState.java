@@ -29,7 +29,7 @@ import java.util.stream.IntStream;
  */
 @Log4j
 @Value
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"",""})
 public class SearchState implements Comparable<SearchState>, ISearchState {
     @NonFinal
     private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
