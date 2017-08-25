@@ -196,8 +196,9 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
                 .append(underestimate, rhs.underestimate);
 
         // cut initial size down; leading to a much smaller tree, this significantly changes solve time but can be unstable
-        // we can ignore both "processors" and "startTimes" at the beginning; but need to consider all legalVertices at the start?
-        if (numVertices < processorCount){
+        // we can ignore both "processors" and "startTimes" at the beginning;
+        // TODO ??need to consider legalVertices not just numVertices ??
+        if (numVertices <= processorCount){
             return builder.isEquals();
         }
         if (processorCount > 2){
@@ -215,7 +216,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
                 .append(lastVertex)
                 .append(numVertices)
                 .append(underestimate);
-        if (numVertices < processorCount){
+        if (numVertices <= processorCount){
             return builder.toHashCode();
         }
         if (processorCount > 2){
