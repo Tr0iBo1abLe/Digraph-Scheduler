@@ -30,7 +30,7 @@ public final class AStarSolverPar extends AbstractSolver {
             timer.scheduleAtFixedRate(new TimerTask() {
                                           @Override
                                           public void run() {
-                                              Platform.runLater(()->updater.update(queue.peek(), solver));
+                                              Platform.runLater(()->updater.update(queue.peek(), solver)); // required by FX framework
                                           }
                                       },
                     100, 100);
@@ -42,7 +42,7 @@ public final class AStarSolverPar extends AbstractSolver {
             if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
                 if (updater != null && timer != null) {
-                    updater.update(currBestState, this);
+                    Platform.runLater(() -> updater.update(currBestState, this)); // required by FX framework
                     timer.cancel();
                 }
                 return;
