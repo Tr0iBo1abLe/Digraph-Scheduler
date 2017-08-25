@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
  * Test pruning, valid schedules etc. For final release.
  */
 @Log4j
+@Ignore
 public class TestRelease {
 
     static {
