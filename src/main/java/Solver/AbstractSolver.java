@@ -24,6 +24,7 @@ import java.util.Timer;
  */
 @Data
 abstract public class AbstractSolver implements ISolver {
+    @Getter
     protected Graph<Vertex, EdgeWithCost<Vertex>> graph;
     protected int processorCount;
     @Getter
