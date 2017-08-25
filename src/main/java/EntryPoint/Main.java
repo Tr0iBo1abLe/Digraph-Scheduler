@@ -102,7 +102,7 @@ public final class Main {
 
         if (gui) {
             Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(inputFile);
-            ISolver solver = new SolverFactory(graph, procN).createSolver(); // TODO parallel in factory
+            ISolver solver = new SolverFactory(graph, procN, parN).createSolver(); // TODO parallel in factory
             GUIMain.init(graph, solver);
             new GUIMain().run();
         } else {

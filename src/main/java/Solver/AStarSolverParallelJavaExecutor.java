@@ -49,7 +49,7 @@ public final class AStarSolverParallelJavaExecutor extends AbstractSolver {
             guiTimer.scheduleAtFixedRate(new TimerTask() {
                                              @Override
                                              public void run() {
-                                                 updater.update(queue.peek());
+                                                 updater.update(queue.peek(), AStarSolverParallelJavaExecutor.this);
                                              }
                                          },
                     100, 100);
@@ -64,7 +64,7 @@ public final class AStarSolverParallelJavaExecutor extends AbstractSolver {
             if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
                 if (updater != null && guiTimer != null) {
-                    updater.update(currBestState);
+                    updater.update(currBestState, AStarSolverParallelJavaExecutor.this);
                     guiTimer.cancel();
                 }
                 return;
