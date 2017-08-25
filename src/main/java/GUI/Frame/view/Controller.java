@@ -14,6 +14,7 @@ import GUI.ScheduleChart;
 import GUI.Util.ColorManager;
 import Graph.Graph;
 import Solver.AbstractSolver;
+import Solver.SearchState;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingNode;
@@ -38,8 +39,10 @@ import org.graphstream.ui.view.Viewer;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 /**
@@ -330,7 +333,7 @@ public class Controller implements GUIMainInterface {
         if (temp < 99.9d) //avoid progress bar overflow
         data.setProgress(temp); //update progress bar
 
-        updateLabels(startTimes); //update labels at top right corner
+        updateLabels(startTimes, searchState); //update labels at top right corner
 
         Platform.runLater(() -> {
             scheduleChart.getData().clear();
@@ -341,17 +344,9 @@ public class Controller implements GUIMainInterface {
 	}
 
 	@Synchronized
-	private void updateLabels(int[] startTimes){
-        ArrayList<Integer> arrayList = new ArrayList<>();
-        for (int i : startTimes){
-            arrayList.add(i);
-        }
-        arrayList.stream().filter(integer -> integer != -1).max(Comparator.comparing(integer ->
-            integer + graph.getVertex(arrayList.indexOf(integer)).getCost()))
-                .ifPresent(integer -> {
-                    data.setTaskId(arrayList.indexOf(integer) + "");
-                    data.setFinishingTime(integer + graph.getVertex(arrayList.indexOf(integer)).getCost() + "");
-                });
+	private void updateLabels(int[] startTimes, ISearchState searchState){
+        data.setTaskId(searchState.getLastVertex().getId());
+        data.setFinishingTime(startTimes[searchState.getLastVertex().getAssignedId()] + searchState.getLastVertex().getCost() + "");
     }
 
 	@Override
