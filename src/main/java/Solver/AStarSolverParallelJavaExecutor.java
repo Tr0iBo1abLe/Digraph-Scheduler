@@ -12,6 +12,7 @@ import Util.Helper;
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.SuspendExecution;
 import co.paralleluniverse.fibers.TrueThreadLocal;
+import javafx.application.Platform;
 import lombok.extern.log4j.Log4j;
 
 import java.util.*;
@@ -31,7 +32,7 @@ import java.util.stream.Stream;
 public final class AStarSolverParallelJavaExecutor extends AbstractSolver {
 
     private final Queue<SearchState> queue;
-    private Timer guiTimer;
+    private Timer guiTimer = timer;
     private final int parallelProcN;
 
     public AStarSolverParallelJavaExecutor(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
@@ -55,7 +56,7 @@ public final class AStarSolverParallelJavaExecutor extends AbstractSolver {
             guiTimer.scheduleAtFixedRate(new TimerTask() {
                                              @Override
                                              public void run() {
-                                                 updater.update(queue.peek(), AStarSolverParallelJavaExecutor.this);
+                                                 Platform.runLater(() -> updater.update(queue.peek(), AStarSolverParallelJavaExecutor.this));
                                              }
                                          },
                     100, 100);
@@ -70,7 +71,7 @@ public final class AStarSolverParallelJavaExecutor extends AbstractSolver {
             if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
                 if (updater != null && guiTimer != null) {
-                    updater.update(currBestState, AStarSolverParallelJavaExecutor.this);
+                    Platform.runLater(() -> updater.update(currBestState, AStarSolverParallelJavaExecutor.this));
                     guiTimer.cancel();
                 }
                 return;

@@ -48,6 +48,10 @@ public final class DFSSolver extends AbstractSolver {
         currUpperBound = currBestState.getUnderestimate() + currBestState.getUnAssignedVertices().stream().mapToInt(vertex -> vertex.getCost()).sum();
         setupGuiTimer(); //ensure a gui timer if required
         solving(currBestState);
+        if (updater != null && timer != null) {
+            Platform.runLater(() -> updater.update(currBestState, this)); // required by FX framework
+            timer.cancel();
+        }
     }
 
     /**

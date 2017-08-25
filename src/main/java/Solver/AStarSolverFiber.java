@@ -8,6 +8,7 @@ import Graph.Vertex;
 import Util.Helper;
 import co.paralleluniverse.common.util.SystemProperties;
 import co.paralleluniverse.fibers.*;
+import javafx.application.Platform;
 import lombok.extern.log4j.Log4j;
 
 import java.util.*;
@@ -26,7 +27,7 @@ import java.util.stream.IntStream;
 public final class AStarSolverFiber extends AbstractSolver {
 
     private final Queue<SearchState> queue;
-    private Timer guiTimer;
+    private Timer guiTimer = timer;
 
     public AStarSolverFiber(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
@@ -44,7 +45,7 @@ public final class AStarSolverFiber extends AbstractSolver {
             guiTimer.scheduleAtFixedRate(new TimerTask() {
                                              @Override
                                              public void run() {
-                                                 updater.update(queue.peek(), AStarSolverFiber.this);
+                                                 Platform.runLater(() -> updater.update(queue.peek(), AStarSolverFiber.this));
                                              }
                                          },
                     100, 100);
@@ -57,7 +58,7 @@ public final class AStarSolverFiber extends AbstractSolver {
             if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
                 if (updater != null && guiTimer != null) {
-                    updater.update(currBestState, AStarSolverFiber.this);
+                    Platform.runLater(() -> updater.update(currBestState, AStarSolverFiber.this));
                     guiTimer.cancel();
                 }
                 return;
