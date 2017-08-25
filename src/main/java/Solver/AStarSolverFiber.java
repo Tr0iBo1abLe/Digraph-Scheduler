@@ -44,7 +44,7 @@ public final class AStarSolverFiber extends AbstractSolver {
             guiTimer.scheduleAtFixedRate(new TimerTask() {
                                              @Override
                                              public void run() {
-                                                 updater.update(queue.peek());
+                                                 updater.update(queue.peek(), AStarSolverFiber.this);
                                              }
                                          },
                     100, 100);
@@ -57,7 +57,7 @@ public final class AStarSolverFiber extends AbstractSolver {
             if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
                 if (updater != null && guiTimer != null) {
-                    updater.update(currBestState);
+                    updater.update(currBestState, AStarSolverFiber.this);
                     guiTimer.cancel();
                 }
                 return;
