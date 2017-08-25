@@ -78,7 +78,7 @@ public final class Main {
         OutputStream os = null;
         boolean gui;
 
-        gui = ns.getBoolean("gui");
+        gui = ns.getBoolean("v");
         procN = (int) ns.getList("processors").get(0);
         parN = (int) ns.getList("parallel").get(0);
         fileName = (String) ns.getList("infile").get(0);

@@ -67,32 +67,13 @@ public final class DFSSolverParallel extends AbstractSolver {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    @Synchronized
-    private Set<Callable<Void>> makeCallables(Set<SearchState> searchStates) {
-        log.info("Making callables");
-        Set<Callable<Void>> callables = new LinkedHashSet<>();
-        searchStates.forEach(searchState -> {
-            Set<Vertex> legalVertices = searchState.getLegalVertices();
-            legalVertices.forEach(vertex -> {
-                callables.add(() -> {
-                            atomicInteger.incrementAndGet();
-                            solving(searchState);
-                            atomicInteger.decrementAndGet();
-                            return null;
-
-                    });
-                });
-            });
-
-        log.info("Callable state -> " + callables.toString());
-        return callables;
+        //executorService.shutdown();
+        while(executorService.getActiveCount() != 0);
     }
 
     @Synchronized
     private Set<Callable<Void>> makeCallables(SearchState searchState) {
-        log.info("Making callables");
+        //log.info("Making callables");
         Set<Vertex> legalVertices = searchState.getLegalVertices();
         Set<Callable<Void>> callables = new LinkedHashSet<>();
         legalVertices.forEach(vertex -> {
@@ -100,7 +81,6 @@ public final class DFSSolverParallel extends AbstractSolver {
                 IntStream.range(0, processorCount).forEach(processor -> {
                     SearchState nextState = new SearchState(searchState, vertex, processor);
                     if(checkAndUpdate(nextState)) {
-                        atomicInteger.incrementAndGet();
                         solving(nextState);
                         atomicInteger.decrementAndGet();
                     }
@@ -108,11 +88,20 @@ public final class DFSSolverParallel extends AbstractSolver {
                 return null;
             });
         });
-        log.info("Callable state -> " + callables.toString());
+        atomicInteger.set(atomicInteger.get() + callables.size());
+        //log.info("Callable state -> " + callables.toString());
         return callables;
     }
 
     private void solving(SearchState currState) {
+        if(atomicInteger.get() < parallelCount) {
+            final Set<Callable<Void>> callables = makeCallables(currState);
+            callables.forEach(callable -> {
+                //atomicInteger.incrementAndGet();
+                executorService.submit(callable);
+            });
+            return;
+        }
         currState.getLegalVertices().forEach(vertex -> IntStream.range(0, processorCount).forEach(processor -> {
             SearchState nextState = new SearchState(currState, vertex, processor);
             if (checkAndUpdate(nextState)) solving(nextState);
