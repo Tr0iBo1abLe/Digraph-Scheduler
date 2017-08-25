@@ -29,18 +29,11 @@ public class SolverFactory {
     /**
      * Picks the solver to use based on the program arguments.
      * <p>
-     * TODO Current ideas:
-     * Get memory available to the JVM (machine dependent)
-     * get average memory size of search state (depends on num vertices)
-     * estimate number of search states (i.e. size of A* queue)
-     * if this exceeds available memory BnB will be selected.
-     * <p>
-     * Fail safe: switch to BnB if A* exceeds heap memory.
-     * <p>
-     * But there are some cases where BnB is faster even when A* terminates:
+     * BnB is faster when:
      * 1 processor
-     * few edges (sparse graph)
-     * .. any more?
+     * few edges (sparse graph), at the moment only picked for 0 edges.
+     * <p>
+     * Note: A* has a fail safe and will switch to DFS when it estimates a memory error is coming.
      */
     public ISolver createSolver() {
         ISolver solver;
@@ -53,7 +46,7 @@ public class SolverFactory {
         else {
             // "AI is just a bunch of if/then statements"
             // These decisions are in priority order
-            if (processorCount == 1) { // BnB since upper bound is that of using one core
+            if (processorCount == 1) { // BnB since upper bound is that of using one core (topological sort)
                 solver = new DFSSolver(graph, processorCount);
             } else if (numEdges < 1) { // No edges, experimenting with this
                 solver = new DFSSolver(graph, processorCount);
@@ -64,5 +57,4 @@ public class SolverFactory {
         }
         return solver;
     }
-    // Reflection is kind of unnecessary here
 }

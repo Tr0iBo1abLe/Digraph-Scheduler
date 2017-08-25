@@ -24,7 +24,6 @@ import java.util.stream.IntStream;
  *
  * @author Dovahkiin Huang, Will Molloy
  */
-
 @Value
 public class SearchState implements Comparable<SearchState>, ISearchState {
     @NonFinal
