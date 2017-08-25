@@ -5,21 +5,21 @@ Build status ![](https://circleci.com/gh/qhua948/SE306.png?circle-token=3c376333
 # Usage
 
 ```
-usage: Scheduler [-h] [-g] [-a {as,bnb}] -p N [-r M] INFILENAME
-                 [OUTFILENAME]
+
+usage: Scheduler [-h] [-v] [-p M] [-o [OUTFILENAME]] INFILENAME P
 
 A GPU Scheduling program
 
 positional arguments:
   INFILENAME             Filename to process
-  OUTFILENAME            Output file name, write to STDOUT if non-specified
+  P                      Processor count
 
 optional arguments:
   -h, --help             show this help message and exit
-  -g, --gui              Choose whether to use  GUI(Not  implemented at the
-                         moment) (default: false)
-  -a {as,bnb}, --algorithm {as,bnb}
-                         Choose the algorithm to use (default: as)
-  -p N, --processors N   Processor count
-  -r M, --parallel M     Use parallel processing (default: [1])
+  -v                     Choose whether to use GUI (default: false)
+  -p M, --parallel M     Use parallel processing (default: [1])
+  -o [OUTFILENAME]       Output file name, write to STDOUT if non-specified
+usage: Scheduler [-h] [-g] [-a {as,bnb}] -p N [-r M] INFILENAME
+                 [OUTFILENAME]
+
 ```
