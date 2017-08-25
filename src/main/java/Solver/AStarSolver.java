@@ -77,10 +77,9 @@ public final class AStarSolver extends AbstractSolver {
 
     private void continueSolveWithBnB() {
         if (timer != null) timer.cancel();
-        log.info("Calling DFSSolver. Queue size: " + queue.size() + " State size: " + currBestState.getNumVertices());
+        log.info("Calling DFSSolver");
 
         // transfer the current optimal state and clear the rest.
-//        DFSSolver dfsSolver = new DFSSolverParallel(graph, processorCount, currBestState);
         DFSSolverParallel dfsSolver = new DFSSolverParallel(graph, processorCount, currBestState);
         queue.clear();
         dfsSolver.setUpdater(getUpdater());
