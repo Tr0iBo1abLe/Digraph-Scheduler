@@ -45,7 +45,7 @@ abstract public class AbstractSolver implements ISolver {
     AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         this.graph = graph;
         this.processorCount = processorCount;
-        SearchState.initialise(graph);
+        SearchState.initialise(graph, processorCount);
         currBestState = new SearchState();
     }
 

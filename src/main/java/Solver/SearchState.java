@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.experimental.NonFinal;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,11 +27,11 @@ import java.util.stream.IntStream;
  */
 
 @Value
-@EqualsAndHashCode(exclude = {"startTimes"})
-// excludes partial schedules where nodes only differ by their processor
 public class SearchState implements Comparable<SearchState>, ISearchState {
     @NonFinal
     private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
+    @NonFinal
+    private static int processorCount;
     private final int[] processors;
     @Getter
     private final int[] startTimes;
@@ -38,6 +40,11 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
     private int numVertices;
     @NonFinal
     private int underestimate;
+
+    static void initialise(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
+        SearchState.graph = graph;
+        SearchState.processorCount = processorCount;
+    }
 
     SearchState() {
         underestimate = 0;
@@ -101,7 +108,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         startTimes[vertex.getAssignedId()] = time;
 
         // Underestimate function
-        int nextPriority = time + vertex.getCost() + vertex.getBottomLevel();
+        int nextPriority = staticCostFunction(time, vertex);
 
         if (underestimate < nextPriority)
             underestimate = nextPriority;
@@ -109,8 +116,8 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         numVertices = prevState.getNumVertices() + 1;
     }
 
-    static void initialise(Graph<Vertex, EdgeWithCost<Vertex>> graph) {
-        SearchState.graph = graph;
+    private int staticCostFunction(int time, Vertex vertex) {
+        return time + vertex.getCost() + vertex.getBottomLevel();
     }
 
     /**
@@ -156,6 +163,73 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
     @Override
     public int compareTo(@NonNull SearchState searchState) {
         return this.underestimate - searchState.underestimate;
+    }
+
+    /**
+     * A* pruning is done here:
+     *
+     * Equals is different depending on the input.
+     * The idea is to ignore mirrored states however this can be done differently:
+     *
+     * Ignoring "processors" causes only the initial states to not be mirrored and its effect is better with a larger
+     * core count, while ignoring "startTimes" has an initial greater number of states it will ignore similar states
+     * later on (for a smaller core count).
+     *
+     * I've come to the conclusion that (generally) with >2 processors for scheduling ignore "processors" is better.
+     * Ignoring startTimes yields (approximately): numInitialLegalVertices * processorCount initial states.
+     * While ignore processors yields: numInitialLegalVertices initial states.
+     * While ignoring both yields: numInitialLegalVertices / processorCount initial states.
+     * However it also depends on number of edges and other things.
+     *
+     * Ignoring both is wrong later into the search because vertices that can be scheduled with startTime 0 can no longer
+     * be due to other nodes taking up those places.
+     * Therefore ignoring both can only be done during the initial iteration, where all vertices that CAN have a startTime of 0
+     * have these states created and are put into the queue.
+     *
+     * A possible problem is many vertices that have no edges (many initial legal vertices) + few vertices with edges
+     * (few dependent vertices) where numInitialLegalVertices > processorCount so not all are considered with startTime of 0
+     * leading to the final schedule to maybe not be optimal. TODO So i'm still experimenting/testing.
+     */
+    @Override
+    public boolean equals(Object obj){
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+
+        SearchState rhs = (SearchState) obj;
+        EqualsBuilder builder =  new EqualsBuilder()
+                .append(lastVertex, rhs.lastVertex)
+                .append(numVertices, rhs.numVertices)
+                .append(underestimate, rhs.underestimate);
+
+        // cut initial size down; leading to a much smaller tree, this significantly changes solve time but can be unstable
+        // we can ignore both "processors" and "startTimes" at the beginning; but need to consider all legalVertices at the start?
+        if (numVertices < processorCount){
+            return builder.isEquals();
+        }
+        if (processorCount > 2){
+            return builder.append(startTimes, rhs.startTimes).isEquals(); // Ignoring "processors"
+        }
+        return builder.append(processors, rhs.processors).isEquals(); // Ignoring "startTimes"
+    }
+
+    /**
+     * Match equals() to improve hash table lookup.
+     */
+    @Override
+    public int hashCode(){
+        HashCodeBuilder builder =  new HashCodeBuilder(37, 59) // primes
+                .append(lastVertex)
+                .append(numVertices)
+                .append(underestimate);
+        if (numVertices < processorCount){
+            return builder.toHashCode();
+        }
+        if (processorCount > 2){
+            return builder.append(startTimes).toHashCode();
+        }
+        return builder.append(processors).toHashCode();
     }
 
 }
