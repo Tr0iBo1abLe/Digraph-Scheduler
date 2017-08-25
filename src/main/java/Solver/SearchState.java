@@ -37,6 +37,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
     private final int[] processors;
     @Getter
     private final int[] startTimes;
+    @Getter
     private Vertex lastVertex;
     @Getter
     private int numVertices;
