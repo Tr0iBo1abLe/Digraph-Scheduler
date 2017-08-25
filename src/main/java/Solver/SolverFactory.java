@@ -53,7 +53,7 @@ public class SolverFactory {
             } else {
                 solver = new AStarSolver(graph, processorCount);
             }
-            log.debug("Initialising: " + solver.getClass().getName());
+            log.info("Initialising: " + solver.getClass().getName());
         }
         return solver;
     }
