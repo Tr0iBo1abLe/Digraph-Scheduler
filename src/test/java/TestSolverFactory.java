@@ -1,7 +1,9 @@
 import CommonInterface.ISolver;
 import Solver.AStarSolver;
 import Solver.DFSSolver;
+import Solver.DFSSolverParallel;
 import Solver.SolverFactory;
+import TestCommon.CommonTester;
 import Util.Helper;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -139,10 +141,11 @@ public class TestSolverFactory {
     }
 
     @Test
-    public void memoryTest48Nodes48Core() {
-        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_48nodes_0edges.dot")), 96, 1).createSolver();
+    public void memoryTest96Nodes96Core() {
+        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_96nodes_0edges.dot")), 96, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
         Assert.assertEquals(3, solver.getFinalTime());
         assertTrue(solver instanceof DFSSolver); // no edges
     }
+
 }
