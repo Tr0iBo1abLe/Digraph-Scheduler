@@ -25,7 +25,7 @@ public final class Main {
 
     private static void callSolver(File file, int procN, int parN, OutputStream os) {
         Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(file);
-        ISolver solver = new SolverFactory(graph, procN).createSolver(); // TODO parallel in factory
+        ISolver solver = new SolverFactory(graph, procN, parN).createSolver();
         solver.doSolveAndCompleteSchedule();
 
         final GraphExporter<Vertex, EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;
@@ -39,28 +39,28 @@ public final class Main {
         ArgumentParser argumentParser = ArgumentParsers.newArgumentParser("Scheduler")
                 .defaultHelp(true)
                 .description("A GPU Scheduling program");
-        argumentParser.addArgument("-g", "--gui")
-                .action(Arguments.storeTrue())
-                .help("Choose whether to use GUI(Not implemented at the moment)");
-        argumentParser.addArgument("-p", "--processors")
-                .metavar("N")
+        argumentParser.addArgument("infile")
+                .metavar("INFILENAME")
+                .nargs(1)
+                .required(true)
+                .help("Filename to process");
+        argumentParser.addArgument("processors")
+                .metavar("P")
                 .required(true)
                 .type(Integer.class)
                 .nargs(1)
                 .help("Processor count");
-        argumentParser.addArgument("-r", "--parallel")
+        argumentParser.addArgument("-v")
+                .action(Arguments.storeTrue())
+                .help("Choose whether to use GUI");
+        argumentParser.addArgument("-p", "--parallel")
                 .metavar("M")
                 .type(Integer.class)
                 .nargs(1)
                 .setDefault(Collections.singletonList(1))
                 .required(false)
                 .help("Use parallel processing");
-        argumentParser.addArgument("infile")
-                .metavar("INFILENAME")
-                .nargs(1)
-                .required(true)
-                .help("Filename to process");
-        argumentParser.addArgument("outfile")
+        argumentParser.addArgument("-o")
                 .metavar("OUTFILENAME")
                 .nargs("?")
                 .required(false)
@@ -88,7 +88,8 @@ public final class Main {
             os = new BufferedOutputStream(System.out);
         } else {
             try {
-                os = new FileOutputStream(new File(outfile));
+                File file = new File(outfile);
+                os = new FileOutputStream(file);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -101,7 +102,7 @@ public final class Main {
 
         if (gui) {
             Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(inputFile);
-            ISolver solver = new SolverFactory(graph, procN).createSolver(); // TODO parallel in factory
+            ISolver solver = new SolverFactory(graph, procN, parN).createSolver(); // TODO parallel in factory
             GUIMain.init(graph, solver);
             new GUIMain().run();
         } else {
