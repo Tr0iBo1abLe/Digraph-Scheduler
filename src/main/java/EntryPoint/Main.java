@@ -2,7 +2,7 @@ package EntryPoint;
 
 import CommonInterface.ISolver;
 import Exporter.GraphExporter;
-import GUI.SwingMain;
+import GUI.GUIMain;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
@@ -14,7 +14,6 @@ import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 
-import javax.swing.*;
 import java.io.*;
 import java.util.Collections;
 
@@ -103,9 +102,9 @@ public final class Main {
 
         if (gui) {
             Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(inputFile);
-            ISolver solver = new Solver.AStarSolver(graph, procN); // TODO DFS with GUI update, then change to SolverFactory
-            SwingMain.init(graph, solver);
-            SwingUtilities.invokeLater(new SwingMain());
+            ISolver solver = new SolverFactory(graph, procN).createSolver(); // TODO parallel in factory
+            GUIMain.init(graph, solver);
+            new GUIMain().run();
         } else {
             callSolver(inputFile, procN, parN, os);
         }

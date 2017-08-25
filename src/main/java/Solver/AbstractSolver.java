@@ -2,7 +2,7 @@ package Solver;
 
 import CommonInterface.ISearchState;
 import CommonInterface.ISolver;
-import GUI.IUpdatableState;
+import GUI.Interfaces.IUpdatableState;
 import Graph.EdgeWithCost;
 import Graph.Exceptions.GraphException;
 import Graph.Graph;
@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.Synchronized;
 
 import java.util.Arrays;
+import java.util.Timer;
 
 /**
  * Represents all Solvers holding the program arguments: graph and processorCount.
@@ -31,6 +32,12 @@ abstract public class AbstractSolver implements ISolver {
     protected SearchState currBestState;
     @Getter
     private int finalTime;
+    @Getter
+    protected boolean isUpdatableProgressBar = false; //make progress bar compatible with both algorithms if necessary
+    @Getter
+    protected static int stateCounter = 0; //essentially a loop counter, used by GUI to update progress bar
+    @Getter
+    protected Timer timer; //the guiTimer
 
     /**
      * This class should only be instantiated by the concrete algorithms.
@@ -62,7 +69,7 @@ abstract public class AbstractSolver implements ISolver {
     abstract void doSolve();
 
     @Synchronized
-    private void scheduleVertices() {
+    protected void scheduleVertices() {
         final int[] processors = Arrays.stream(currBestState.getProcessors()).map(x -> x + 1).toArray();
         final int[] startTimes = currBestState.getStartTimes();
         finalTime = currBestState.getUnderestimate();
@@ -88,8 +95,8 @@ abstract public class AbstractSolver implements ISolver {
             this.ui = ui;
         }
 
-        void update(ISearchState searchState) {
-            ui.updateWithState(searchState);
+        void update(ISearchState searchState, AbstractSolver solver) { //extra Param solver is required by GUI
+            ui.updateWithState(searchState, solver);
         }
     }
 }

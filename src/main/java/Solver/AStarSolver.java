@@ -4,6 +4,7 @@ import Datastructure.FastPriorityQueue;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
+import javafx.application.Platform;
 import Util.Helper;
 import lombok.extern.log4j.Log4j;
 
@@ -23,7 +24,6 @@ import java.util.stream.IntStream;
 public final class AStarSolver extends AbstractSolver {
 
     private final Queue<SearchState> queue;
-    private Timer guiTimer;
 
     public AStarSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
@@ -32,16 +32,17 @@ public final class AStarSolver extends AbstractSolver {
 
     @Override
     void doSolve() {
-        /* This method is blocking, we need a way to notify the GUI */
         if (updater != null) {
             /* We have an updater and a UI to update */
-            guiTimer = new Timer();
-            guiTimer.scheduleAtFixedRate(new TimerTask() {
-                                             @Override
-                                             public void run() {
-                                                 updater.update(queue.peek());
-                                             }
-                                         },
+            isUpdatableProgressBar = true;
+            AbstractSolver solver = this; //provide a reference to GUI classes
+            timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                                          @Override
+                                          public void run() {
+                                              Platform.runLater(()->updater.update(queue.peek(), solver));
+                                          }
+                                      },
                     100, 100);
         }
 
@@ -51,9 +52,9 @@ public final class AStarSolver extends AbstractSolver {
 
             if (currBestState.getNumVertices() == graph.getVertices().size()) {
                 // We have found THE optimal solution
-                if (updater != null && guiTimer != null) {
-                    updater.update(currBestState);
-                    guiTimer.cancel();
+                if (updater != null && timer != null) {
+                    updater.update(currBestState, this);
+                    timer.cancel();
                 }
                 return;
             }
@@ -62,6 +63,10 @@ public final class AStarSolver extends AbstractSolver {
                 SearchState nextSearchState = new SearchState(currBestState, vertex, processor);
                 if (!queue.contains(nextSearchState)) {
                     queue.add(nextSearchState);
+                    //increase the state counter for GUI, process only when there is a GUI to update
+                    if (isUpdatableProgressBar){ //true if there is a GUI progress bar needs to be updated
+                        stateCounter++;
+                    }
                 }
             }));
         }
@@ -69,7 +74,7 @@ public final class AStarSolver extends AbstractSolver {
     }
 
     private void continueSolveWithBnB() {
-        if (guiTimer != null) guiTimer.cancel();
+        if (timer != null) timer.cancel();
         log.debug("Calling DFSSolver");
 
         // transfer the current optimal state and clear the rest.
