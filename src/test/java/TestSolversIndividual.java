@@ -38,7 +38,7 @@ public class TestSolversIndividual {
     @Parameters(name = "{0}") // tester.toString()
     public static Collection data() {
         org.apache.log4j.BasicConfigurator.configure();
-        return Arrays.asList(new CommonTester(DFSSolverParallel.class), new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class), new CommonTester(AStarSolverPar.class)/* , new CommonTester(AStarSolverFiber.class)*/ /* TODO, Add test for new parallels. Note that some class takes actually processor counts */);
+        return Arrays.asList(new CommonTester(DFSSolverParallel.class), new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class), new CommonTester(AStarSolverPar.class), new CommonTester(AStarSolverParallelJavaExecutor.class)/* , new CommonTester(AStarSolverFiber.class)*/ /* TODO, Add test for new parallels. Note that some class takes actually processor counts */);
     }
 
     /**

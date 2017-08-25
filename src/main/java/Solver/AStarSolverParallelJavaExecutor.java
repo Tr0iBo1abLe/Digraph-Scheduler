@@ -34,6 +34,12 @@ public final class AStarSolverParallelJavaExecutor extends AbstractSolver {
     private Timer guiTimer;
     private final int parallelProcN;
 
+    public AStarSolverParallelJavaExecutor(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
+        super(graph, processorCount);
+        queue = new FastPriorityBlockingQueue<>();
+        parallelProcN = 8;
+    }
+
     public AStarSolverParallelJavaExecutor(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, int parallelProcessingProcessorCount) {
         super(graph, processorCount);
         queue = new FastPriorityBlockingQueue<>();
