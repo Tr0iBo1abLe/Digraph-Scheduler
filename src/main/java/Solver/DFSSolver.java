@@ -43,11 +43,9 @@ public final class DFSSolver extends AbstractSolver {
      * Used when transferring state from a AStarSolver
      */
     SearchState completeSolve() {
-        // The upper bound is now the currBestState + that of scheduling the remaining vertices to the same processor.
-        // If there is an edge pointing to these vertices we can assume the 'same' processor is the optimal one
-        // +1 for case where Optimal is actually this, we need to initialise that state.
-        // Preferable to do this rather than call updateLog() many times.
-        currUpperBound = currBestState.getUnderestimate() + currBestState.getTotalCostOfUnassignedVertices()+1;
+        // upperbound could be a topological sort, but A* was picked for >1 processorCount therefore its likely
+        // nodes are already on multiple processors and this would be unnecessary overhead
+        currUpperBound = Integer.MAX_VALUE;
         setupGuiTimer(); //ensure a gui timer if required
         solving(currBestState);
         return currBestState;

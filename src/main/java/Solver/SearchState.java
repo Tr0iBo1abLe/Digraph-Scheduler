@@ -29,6 +29,7 @@ import java.util.stream.IntStream;
  */
 @Log4j
 @Value
+@EqualsAndHashCode
 public class SearchState implements Comparable<SearchState>, ISearchState {
     @NonFinal
     private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
@@ -204,48 +205,47 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
      * + few vertices with edges (few dependent vertices) i.e. numInitialLegalVertices > processorCount with some edges; not all are
      * considered with startTime of 0 leading to the final schedule to maybe not be optimal. TODO still experimenting/testing.
      */
-    @Override
-    public boolean equals(Object obj){
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-
-        SearchState rhs = (SearchState) obj;
-        EqualsBuilder builder =  new EqualsBuilder()
-                .append(lastVertex, rhs.lastVertex)
-                .append(numVertices, rhs.numVertices)
-                .append(underestimate, rhs.underestimate);
-
-        // cut initial size down; leading to a much smaller tree, this significantly changes solve time but can be unstable
-        // we can ignore both "processors" and "startTimes" at the beginning;
-        // TODO ??need to consider legalVertices not just numVertices ??
-        if (numVertices <= processorCount){
-            log.debug("equals: Ignore both");
-            return builder.isEquals();
-        }
-        if (processorCount > 2){
-            return builder.append(startTimes, rhs.startTimes).isEquals(); // Ignoring "processors"
-        }
-        return builder.append(processors, rhs.processors).isEquals(); // Ignoring "startTimes"
-    }
-
-    /**
-     * Match equals() to improve hash table lookup.
-     */
-    @Override
-    public int hashCode(){
-        HashCodeBuilder builder =  new HashCodeBuilder(37, 59) // primes
-                .append(lastVertex)
-                .append(numVertices)
-                .append(underestimate);
-        if (numVertices <= processorCount){
-            return builder.toHashCode();
-        }
-        if (processorCount > 2){
-            return builder.append(startTimes).toHashCode();
-        }
-        return builder.append(processors).toHashCode();
-    }
+//    @Override
+//    public boolean equals(Object obj){
+//        if (obj == null)
+//            return false;
+//        if (getClass() != obj.getClass())
+//            return false;
+//
+//        SearchState rhs = (SearchState) obj;
+//        EqualsBuilder builder =  new EqualsBuilder()
+//                .append(lastVertex, rhs.lastVertex)
+//                .append(numVertices, rhs.numVertices)
+//                .append(underestimate, rhs.underestimate);
+//
+//        // cut initial size down; leading to a much smaller tree, this significantly changes solve time but can be unstable
+//        // we can ignore both "processors" and "startTimes" at the beginning;
+//        if (numVertices <= processorCount && getLegalVertices().size() <= processorCount){
+//            log.debug("equals: Ignore both");
+//            return builder.isEquals();
+//        }
+//        if (processorCount > 2){
+//            return builder.append(startTimes, rhs.startTimes).isEquals(); // Ignoring "processors"
+//        }
+//        return builder.append(processors, rhs.processors).isEquals(); // Ignoring "startTimes"
+//    }
+//
+//    /**
+//     * Match equals() to improve hash table lookup.
+//     */
+//    @Override
+//    public int hashCode(){
+//        HashCodeBuilder builder =  new HashCodeBuilder(37, 59) // primes
+//                .append(lastVertex)
+//                .append(numVertices)
+//                .append(underestimate);
+//        if (numVertices <= processorCount && getLegalVertices().size() <= processorCount){
+//            return builder.toHashCode();
+//        }
+//        if (processorCount > 2){
+//            return builder.append(startTimes).toHashCode();
+//        }
+//        return builder.append(processors).toHashCode();
+//    }
 
 }

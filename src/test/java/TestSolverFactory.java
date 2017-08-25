@@ -1,7 +1,9 @@
 import CommonInterface.ISolver;
 import Solver.AStarSolver;
 import Solver.DFSSolver;
+import Solver.DFSSolverParallel;
 import Solver.SolverFactory;
+import TestCommon.CommonTester;
 import Util.Helper;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -146,14 +148,4 @@ public class TestSolverFactory {
         assertTrue(solver instanceof DFSSolver); // no edges
     }
 
-    /**
-     * Big input, testing for release
-     */
-    @Ignore
-    public void testBigGraphDOT() {
-        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_RELEASE + "big_graph.dot")), 96, 1).createSolver();
-        solver.doSolveAndCompleteSchedule();
-        Assert.assertEquals(3, solver.getFinalTime());
-        assertTrue(solver instanceof DFSSolver); // no edges
-    }
 }

@@ -1,7 +1,5 @@
 package Solver;
 
-import Datastructure.FastPriorityBlockingQueue;
-import Datastructure.FastPriorityQueue;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
@@ -11,14 +9,13 @@ import lombok.extern.log4j.Log4j;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Log4j
 public final class DFSSolverParallel extends AbstractSolver {
 
     private int currUpperBound;
-    private int parallelCount;
+    private static final int parallelCount = Runtime.getRuntime().availableProcessors();
     private ThreadPoolExecutor executorService;
     private Set<Callable<Void>> callables;
 
@@ -26,22 +23,26 @@ public final class DFSSolverParallel extends AbstractSolver {
 
     public DFSSolverParallel(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         super(graph, processorCount);
-        this.parallelCount = 8;
         log.debug("Solver inited");
+        log.info("Parallel processors: " + parallelCount);
         /* Constructuor to allow tests, remove when no longer needed.*/
     }
 
     public DFSSolverParallel(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, int parallelCount) {
         super(graph, processorCount);
-        this.parallelCount = parallelCount;
         log.debug("Solver inited");
     }
 
     DFSSolverParallel(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, int parallelCount, SearchState existingState) {
         super(graph, processorCount);
         currBestState = existingState;
-        this.parallelCount = parallelCount;
         log.debug("Solver inited with an existing state");
+    }
+
+    public DFSSolverParallel(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState currBestState) {
+        super(graph, processorCount);
+        this.currBestState = currBestState;
+        log.info("Parallel processors: " + parallelCount);
     }
 
     /**
