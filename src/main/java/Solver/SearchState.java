@@ -191,7 +191,8 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         // in the search ignoring schedules where tasks are placed with a later startTime.
         // Incorrect for >2 cores because of the case where tasks have multiple inward edges meaning they may be
         // placed with a later startTime first and then the earlier startTime will be ignored.
-        // Also, ignore processors has a better effect for greater processorCount since it all arrangements
+        // Also, ignore processors has a better effect for greater processorCount since it ignores all arrangements
+        // i.e. arrangements is the factorial of processorCount, so ignore processors is better for >2 cores anyway.
         return builder.append(processors, rhs.processors).isEquals();
     }
 
