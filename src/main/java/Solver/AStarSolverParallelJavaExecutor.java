@@ -33,18 +33,10 @@ public final class AStarSolverParallelJavaExecutor extends AbstractSolver {
 
     private final Queue<SearchState> queue;
     private Timer guiTimer = timer;
-    private final int parallelProcN;
 
-    public AStarSolverParallelJavaExecutor(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
-        super(graph, processorCount);
+    public AStarSolverParallelJavaExecutor(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, int parallelProcessorCount) {
+        super(graph, processorCount, parallelProcessorCount);
         queue = new FastPriorityBlockingQueue<>();
-        parallelProcN = 8;
-    }
-
-    public AStarSolverParallelJavaExecutor(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, int parallelProcessingProcessorCount) {
-        super(graph, processorCount);
-        queue = new FastPriorityBlockingQueue<>();
-        parallelProcN = parallelProcessingProcessorCount;
     }
 
     @Override
@@ -62,7 +54,7 @@ public final class AStarSolverParallelJavaExecutor extends AbstractSolver {
                     100, 100);
         }
 
-        ExecutorService executorService = Executors.newFixedThreadPool(parallelProcN);
+        ExecutorService executorService = Executors.newFixedThreadPool(parallelProcessorCount);
 
         queue.add(currBestState);
         while (Helper.getRemainingMemory() > 600_000_000L) { // GB, MB, kB

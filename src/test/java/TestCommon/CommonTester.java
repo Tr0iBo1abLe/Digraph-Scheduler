@@ -48,6 +48,27 @@ public class CommonTester {
         return solver; // so we can analyse output with JUnit
     }
 
+    /**
+     * Initialises a parallel solver with the given processor count, DOT file and number of logical cores to use then calls doSolve().
+     *
+     * @param processorCount, number of cores available to the output schedule
+     * @param parallelProcessorCount, number of logical cores for the solver to use in parallel
+     * @param inputDOTFile,   the input DOT file
+     */
+    public AbstractSolver doParallelTest(int processorCount, int parallelProcessorCount, File inputDOTFile) {
+        Graph graph = Helper.fileToGraph(inputDOTFile);
+
+        try {
+            solver = solverClass.getDeclaredConstructor(Graph.class, int.class, int.class).newInstance(graph, processorCount, parallelProcessorCount);
+            solver.doSolveAndCompleteSchedule();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        assert solver != null;
+        return solver; // so we can analyse output with JUnit
+    }
+
     @Override
     public String toString() {
         return solverClass.getName();

@@ -18,29 +18,19 @@ import java.util.stream.IntStream;
 public final class DFSSolverParallel extends AbstractSolver {
 
     private int currUpperBound;
-    private int parallelCount;
     private ThreadPoolExecutor executorService;
     private Set<Callable<Void>> callables;
 
     private AtomicInteger atomicInteger = new AtomicInteger(0);
 
-    public DFSSolverParallel(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
-        super(graph, processorCount);
-        this.parallelCount = 8;
-        log.debug("Solver inited");
-        /* Constructuor to allow tests, remove when no longer needed.*/
-    }
-
     public DFSSolverParallel(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, int parallelCount) {
-        super(graph, processorCount);
-        this.parallelCount = parallelCount;
+        super(graph, processorCount, processorCount);
         log.debug("Solver inited");
     }
 
     DFSSolverParallel(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, int parallelCount, SearchState existingState) {
-        super(graph, processorCount);
+        super(graph, processorCount, processorCount);
         currBestState = existingState;
-        this.parallelCount = parallelCount;
         log.debug("Solver inited with an existing state");
     }
 
@@ -57,7 +47,7 @@ public final class DFSSolverParallel extends AbstractSolver {
 
     @Override
     void doSolve() {
-        executorService = new ThreadPoolExecutor(parallelCount, parallelCount, 99999999L, TimeUnit.DAYS, new LinkedBlockingQueue<>());
+        executorService = new ThreadPoolExecutor(parallelProcessorCount, parallelProcessorCount, 99999999L, TimeUnit.DAYS, new LinkedBlockingQueue<>());
         currUpperBound = Integer.MAX_VALUE;
         SearchState searchState = new SearchState();
         callables = Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -95,7 +85,7 @@ public final class DFSSolverParallel extends AbstractSolver {
     }
 
     private void solving(SearchState currState) {
-        if(atomicInteger.get() < parallelCount) {
+        if(atomicInteger.get() < parallelProcessorCount) {
             final Set<Callable<Void>> callables = makeCallables(currState);
             callables.forEach(callable -> {
                 //atomicInteger.incrementAndGet();
