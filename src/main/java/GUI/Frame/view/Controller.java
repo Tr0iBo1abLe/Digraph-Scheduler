@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
@@ -98,6 +99,7 @@ public class Controller implements GUIMainInterface {
     public static SolversThread solversThread;
     public static SysInfoMonitoringThread sysInfoMonitoringThread;
 
+    private static AtomicBoolean atomicBoolean = new AtomicBoolean();
 
 	public Controller() {
 
@@ -290,56 +292,71 @@ public class Controller implements GUIMainInterface {
     @Synchronized
 	@Override
 	public void updateWithState(ISearchState searchState, AbstractSolver abstractSolver) {
-        if (searchState == null) return;
-        // Remove the past data
-        visualGraph.getNodeSet().forEach(e -> {
-            e.removeAttribute("ui.class");
-            e.removeAttribute("processor");
-            e.removeAttribute("startTime");
-        });
-        int[] processors = searchState.getProcessors();
-        int[] startTimes = searchState.getStartTimes();
-        List<XYChart.Series> seriesList = new ArrayList<>();
-        visualGraph.getNodeSet().forEach(n -> {
-            int index = n.getIndex();
-            int procOn = processors[index];
-            if (procOn != -1) {
-                XYChart.Series series = new XYChart.Series();
-                n.addAttribute("ui.class", "sched");
-                n.addAttribute("processor", procOn + 1);
-                n.addAttribute("startTime", startTimes[index]);
-
-                Integer cost = null;
-                try {
-                    Double d = n.getAttribute("Weight");
-                    cost = d.intValue();
-                } catch (ClassCastException e) {
-                    cost = n.getAttribute("Weight");
-                    // Weight attr has to be double or int
-                }
-                series.getData().add(new XYChart.Data(startTimes[index]
-                        , procStr + String.valueOf(procOn + 1)
-                        , new ScheduleChart.ExtraData(cost, ColorManager.getColorSetForGanttTasks().get(String.valueOf(procOn + 1)),
-                        ColorManager.getColorSetForGanttTasksBorder().get(String.valueOf(procOn + 1)), n.getId())));
-
-                seriesList.add(series);
-            }
-        });
-
-        viewer.updateNodes(); //update the GS viewer
-
-        int curSize = abstractSolver.getStateCounter();
-        double temp = ((double)curSize/((double)curSize + 100000000d))*100d;
-        if (temp < 99.9d) //avoid progress bar overflow
-        data.setProgress(temp); //update progress bar
-
-        updateLabels(startTimes, searchState); //update labels at top right corner
-
         Platform.runLater(() -> {
+            if (searchState == null) return;
+            // Remove the past data
+            visualGraph.getNodeSet().forEach(e -> {
+                e.removeAttribute("ui.class");
+                e.removeAttribute("processor");
+                e.removeAttribute("startTime");
+            });
+            int[] processors = searchState.getProcessors();
+            int[] startTimes = searchState.getStartTimes();
+            List<XYChart.Series> seriesList = new ArrayList<>();
+            visualGraph.getNodeSet().forEach(n -> {
+                int index = n.getIndex();
+                int procOn = processors[index];
+                if (procOn != -1) {
+                    XYChart.Series series = new XYChart.Series();
+                    n.addAttribute("ui.class", "sched");
+                    n.addAttribute("processor", procOn + 1);
+                    n.addAttribute("startTime", startTimes[index]);
+
+                    Integer cost = null;
+                    try {
+                        Double d = n.getAttribute("Weight");
+                        cost = d.intValue();
+                    } catch (ClassCastException e) {
+                        cost = n.getAttribute("Weight");
+                        // Weight attr has to be double or int
+                    }
+                    series.getData().add(new XYChart.Data(startTimes[index]
+                            , procStr + String.valueOf(procOn + 1)
+                            , new ScheduleChart.ExtraData(cost, ColorManager.getColorSetForGanttTasks().get(String.valueOf(procOn + 1)),
+                            ColorManager.getColorSetForGanttTasksBorder().get(String.valueOf(procOn + 1)), n.getId())));
+
+                    seriesList.add(series);
+                }
+            });
+
+            viewer.updateNodes(); //update the GS viewer
+
+            updateLabels(startTimes, searchState); //update labels at top right corner
+
             scheduleChart.getData().clear();
             XYChart.Series[] seriesArr = new XYChart.Series[seriesList.size()];
             scheduleChart.getData().addAll(seriesList.toArray(seriesArr));
             scheduleChart.setBlockHeight(1000d / Controller.solver.getProcessorCount());
+
+            Platform.runLater(() -> {
+                if ((atomicBoolean.get()) && (!(SolversThread.isStoped))){ //do the following only when the solver is not terminated by Stop()
+                    Platform.runLater(() -> {
+                        //Update colorNode() AND set progress bar to maximum here;
+                        //This is to deal with when there are too many timers created due to multiple solvers switching among one another;
+                        //Make sure Controller can always catch the last timer alive.
+                        viewer.colorNodes(visualGraph);
+                        data.setProgress(100d);
+                    });
+                }else{
+                    Platform.runLater(() -> {
+                        int curSize = abstractSolver.getStateCounter();
+                        double temp = ((double)curSize/((double)curSize + 10000000d))*100d;
+                        if (temp < 99.9d) { //avoid progress bar overflow
+                            data.setProgress(temp); //update progress bar
+                        }
+                    });
+                }
+            });
         });
 	}
 
@@ -349,17 +366,21 @@ public class Controller implements GUIMainInterface {
         data.setFinishingTime(startTimes[searchState.getLastVertex().getAssignedId()] + searchState.getLastVertex().getCost() + "");
     }
 
+    @Synchronized
 	@Override
 	public void notifyOfSolversThreadComplete() {
-	    if (!(SolversThread.isStoped)){ //do the following only when the solver is not terminated by Stop()
-            //Update colorNode AND set progress bar to maximum here;
-            viewer.colorNodes(visualGraph);
-            data.setProgress(100d);
-            start.setDisable(true);
-            pause.setDisable(true);
-            stop.setDisable(true);
-            // print output, graph exporter
-            System.out.println(GraphExporter.exportGraphToString(graph));
+        atomicBoolean.set(true);
+        if (!(SolversThread.isStoped)){ //do the following only when the solver is not terminated by Stop()
+            Platform.runLater(() -> {
+                //Update colorNode AND set progress bar to maximum here;
+                viewer.colorNodes(visualGraph);
+                start.setDisable(true);
+                pause.setDisable(true);
+                stop.setDisable(true);
+                // print output, graph exporter
+                System.out.println(GraphExporter.exportGraphToString(graph));
+                Platform.runLater(() -> data.setProgress(100d));
+            });
         }
 	}
 
