@@ -177,10 +177,11 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
             return false;
 
         SearchState rhs = (SearchState) obj;
-        EqualsBuilder builder = new EqualsBuilder()
-                // Size of the state and length is always important,
-                // lastVertex doesn't matter because all vertices are considered, vertex positions are in the processors/startTimes arrays
-                .append(numVertices, rhs.numVertices).append(underestimate, rhs.underestimate);
+        // Most fields don't matter since all the scheduling information is contained in the "processors" and "startTimes" arrays
+        // lastVertex doesn't matter because all vertices are considered, vertex positions are in the processors/startTimes arrays
+        // underestimate doesn't matter because it is considered in the startTimes array via. the max value
+        // numVertices doesn't matter because this is just the number of non "-1"s in processors/startTimes
+        EqualsBuilder builder = new EqualsBuilder();
 
         if (processorCount > 2) {
             // Ignoring "processors" (assigned processor), ignores shuffled (i.e. mirrored) schedules
@@ -193,7 +194,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         // placed with a later startTime first and then the earlier startTime will be ignored.
         // Also, ignore processors has a better effect for greater processorCount since it ignores all arrangements
         // i.e. arrangements is the factorial of processorCount, so ignore processors is better for >2 cores anyway.
-        return builder.append(processors, rhs.processors).isEquals();
+        return builder.append(underestimate, rhs.underestimate).append(processors, rhs.processors).isEquals(); // underestimate is needed since startTimes is ignored.
     }
 
     /**
@@ -206,12 +207,11 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
      */
     @Override
     public int hashCode() {
-        HashCodeBuilder builder = new HashCodeBuilder(805306457, 1610612741) // primes
-                .append(numVertices).append(underestimate);
+        HashCodeBuilder builder = new HashCodeBuilder(805306457, 1610612741); // primes
+
         if (processorCount > 2) {
             return builder.append(startTimes).toHashCode();
         }
-        return builder.append(processors).toHashCode();
+        return builder.append(underestimate).append(processors).toHashCode();
     }
-
 }
