@@ -377,7 +377,7 @@ public class Controller implements IUpdatableState{
 		data.setTaskId(searchState.getLastVertex().getId());
 		data.setFinishingTime(
 				startTimes[searchState.getLastVertex().getAssignedId()] + searchState.getLastVertex().getCost() + "");
-		data.setConsumingTime(String.valueOf(System.currentTimeMillis()-startTime));
+		data.setConsumingTime(System.currentTimeMillis()-startTime);
 	}
 
 	@Synchronized

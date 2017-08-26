@@ -173,7 +173,10 @@ public class DataVisualization extends GridPane {
 	 * 
 	 * @param
 	 */
-	public void setConsumingTime(String time) {
-		this.runningTime.setText(time + " ms");
+	public void setConsumingTime(long time) {
+		long min = time / 60000;
+		long sec = (time - min * 60000) / 1000;
+		long ms = time - min * 60000 - sec * 1000;
+		this.runningTime.setText(min + " min " + sec + " s " + ms + " ms");
 	}
 }
