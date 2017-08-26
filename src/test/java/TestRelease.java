@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
  * @author Will Molloy
  */
 @Log4j
-@Ignore
+@Ignore // Ignore: Time consuming for CI and other tests are sufficient for ensuring nothing is broken. Run these individually.
 public class TestRelease {
 
     static {
@@ -31,9 +31,9 @@ public class TestRelease {
     private ISolver solver;
 
     /**
-     * Big input, testing for release. Will ensure output is valid + optimal.
+     * Big input, testing for release. Need to ensure output is valid + optimal.
      */
-    @Ignore
+    @Test
     public void test32Nodes() {
         solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_RELEASE + "Nodes_32_Edges_33.dot")), 8, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
@@ -42,14 +42,14 @@ public class TestRelease {
 
     /**
      * Run on 8 processor.
-     * Expected = ??? Current lowest 400. TODO check what actual optimal is and that solver produces valid schedule.
+     * Expected = ??? TODO CHECK Pretty sure its 402, Got this using a pure brute force (7 hour search)
      */
     @Test
     public void test20Nodes() {
         solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_RELEASE + "Nodes_20.dot")), 8, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
-        System.out.println(GraphExporter.exportGraphToString(solver.getGraph())); // log doesnt work
-        Assert.assertEquals(400, solver.getFinalTime());
+        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
+        Assert.assertEquals(402, solver.getFinalTime());
         assertTrue(solver instanceof AStarSolver); // no edges
     }
 

@@ -16,7 +16,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -54,50 +53,48 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
 
     SearchState(SearchState prevState, Vertex vertex, int processor) {
         underestimate = prevState.underestimate;
-        /* clone() is slightly faster */
+        // clone() is slightly faster
         processors = prevState.processors.clone();
         startTimes = prevState.startTimes.clone();
         lastVertex = vertex;
 
-        /*
-         * The Scheduler Folding Function, responsible for figuring out the earliest possible
-         * start time on the given processor ID
-         */
-        F<Integer, F<Vertex, Integer>> schedulerFoldingFn = t -> v -> {
+
+        // The Scheduler Folding Function, responsible for figuring out the earliest possible
+        // start time on the given processor ID
+        F<Integer, F<Vertex, Integer>> schedulerFoldingFn = startTime -> v -> {
             // For each vertex on the SAME processor id, we find the last finish time,
             // which in turn, yields the earliest possible start time.
-            int aid = v.getAssignedId();
-            if (processors[aid] == processor) {
-                int newTime = startTimes[aid] + graph.getVertex(aid).getCost();
-                if (newTime > t) return newTime;
+            int assignedId = v.getAssignedId();
+            if (processors[assignedId] == processor) {
+                int newTime = startTimes[assignedId] + graph.getVertex(assignedId).getCost();
+                if (newTime > startTime) return newTime;
             }
-            return t;
+            return startTime;
         };
 
-        /*
-         * The dependency folding function, responsible for finding out the minimal start time
-         * given the parent is on a different processor.
-         */
-        F<Integer, F<EdgeWithCost<Vertex>, Integer>> dependencyFoldingFn = t -> e -> {
+
+         // The dependency folding function, responsible for finding out the minimal start time
+         // given the parent is on a different processor.
+        F<Integer, F<EdgeWithCost<Vertex>, Integer>> dependencyFoldingFn = startTime -> edge -> {
             // For each edge, we check if the parent task (vertex) has been scheduled and
             // not on the same processor, for this particular state.
             // If it has a parent (dependency) on a different processor, then the cost must include the
             // edge cost as well.
             // This function does not check if the actual dependencies are being satisfied,
             // users should use getLegalVertices() to ensure the Vertex can be scheduled.
-            Vertex v = e.getFrom();
-            int aid = v.getAssignedId();
-            if (processors[aid] != processor) {
-                int newTime = this.startTimes[aid] + v.getCost() + e.getCost();
-                if (newTime > t) return newTime;
+            Vertex v = edge.getFrom();
+            int assignedId = v.getAssignedId();
+            if (processors[assignedId] != processor) {
+                int newTime = this.startTimes[assignedId] + v.getCost() + edge.getCost();
+                if (newTime > startTime) return newTime;
             }
-            return t;
+            return startTime;
         };
 
         int startTime = 0;
-        /* Fold over the vertices and find the minimal cost given the same processor */
+        // Fold over the vertices and find the minimal cost given the same processor
         startTime = IterableW.wrap(graph.getVertices()).foldLeft(schedulerFoldingFn, startTime);
-        /* Fold over the parent vertices and find the minimal cost if there is a parent on another processor */
+        // Fold over the parent vertices and find the minimal cost if there is a parent on another processor
         startTime = graph.getInwardsEdges(vertex).foldLeft(dependencyFoldingFn, startTime);
 
         // Store the result we obtained
@@ -132,47 +129,19 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
      */
     Set<Vertex> getLegalVertices() {
         Set<Vertex> set = new HashSet<>();
-        F<Boolean, F<Vertex, Boolean>> fn = b -> v -> {
-            if (b.equals(true)) return b;
-            return processors[v.getAssignedId()] < 0;
+        F<Boolean, F<Vertex, Boolean>> fn = bool -> vertex -> {
+            if (bool.equals(true)) return bool;
+            return processors[vertex.getAssignedId()] < 0;
         };
-        graph.getVertices().forEach(v -> {
-            if (processors[v.getAssignedId()] < 0) {
+        graph.getVertices().forEach(vertex -> {
+            if (processors[vertex.getAssignedId()] < 0) {
                 // Skip any assigned processor
-                if (graph.getParentVertices(v).foldLeft(fn, false)) return;
+                if (graph.getParentVertices(vertex).foldLeft(fn, false)) return;
                 // Add the available vertex to the set
-                set.add(v);
+                set.add(vertex);
             }
         });
         return set;
-    }
-
-    /**
-     * Get the total cost of Vertices that haven't got an assigned processor (or startTime)
-     * i.e. cost if they were all assigned to the same processor (topologically sorted).
-     *
-     * @return the total cost of the set of un assigned vertices.
-     */
-    int getTotalCostOfUnassignedVertices() {
-        return getUnassignedVertices().stream().mapToInt(vertex -> vertex.getCost()).sum();
-    }
-
-    /**
-     * Get the set of unassigned vertices.
-     *
-     * @return the set of un assigned vertices.
-     */
-    private Set<Vertex> getUnassignedVertices() {
-        return graph.getVertices().stream().filter(vertex -> processors[vertex.getAssignedId()] < 0).collect(Collectors.toSet());
-    }
-
-    /**
-     * Get the set of unassigned vertices.
-     *
-     * @return the set of assigned vertices.
-     */
-    private Set<Vertex> getAssingedVertices() {
-        return graph.getVertices().stream().filter(vertex -> processors[vertex.getAssignedId()] > -1).collect(Collectors.toSet());
     }
 
     /**
@@ -245,7 +214,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         // Credit for primes table: Aaron Krowne
         // http://br.endernet.org/~akrowne/
         // http://planetmath.org/encyclopedia/GoodHashTablePrimes.html
-        HashCodeBuilder builder = new HashCodeBuilder(805306457, 1610612741) // 2147483647, 1610612741, 805306457
+        HashCodeBuilder builder = new HashCodeBuilder(805306457, 1610612741)
                 .append(lastVertex)
                 .append(numVertices)
                 .append(underestimate);
