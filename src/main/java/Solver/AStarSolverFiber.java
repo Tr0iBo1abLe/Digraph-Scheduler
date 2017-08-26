@@ -103,11 +103,11 @@ public final class AStarSolverFiber extends AbstractSolver {
         log.debug("Calling DFSSolver");
 
         // transfer the current optimal state and clear the rest.
-        DFSSolver dfsSolver = new DFSSolver(getGraph(), getProcessorCount(), currBestState);
+        DFSSolver dfsSolver = new DFSSolver(graph, processorCount);
         queue.clear();
         dfsSolver.setUpdater(getUpdater());
         System.gc();
 
-        dfsSolver.completeSolve();
+        currBestState = dfsSolver.completeSolve();
     }
 }

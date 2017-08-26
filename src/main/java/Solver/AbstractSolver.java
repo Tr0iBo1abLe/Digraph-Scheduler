@@ -45,16 +45,8 @@ abstract public class AbstractSolver implements ISolver {
     AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         this.graph = graph;
         this.processorCount = processorCount;
-        SearchState.initialise(graph);
+        SearchState.initialise(graph, processorCount);
         currBestState = new SearchState();
-    }
-
-    /**
-     * Constructor for passing states between algorithms.
-     */
-    AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState existingState) {
-        this(graph, processorCount);
-        currBestState = existingState;
     }
 
     /**
@@ -69,7 +61,7 @@ abstract public class AbstractSolver implements ISolver {
     abstract void doSolve();
 
     @Synchronized
-    protected void scheduleVertices() {
+    private void scheduleVertices() {
         final int[] processors = Arrays.stream(currBestState.getProcessors()).map(x -> x + 1).toArray();
         final int[] startTimes = currBestState.getStartTimes();
         finalTime = currBestState.getUnderestimate();

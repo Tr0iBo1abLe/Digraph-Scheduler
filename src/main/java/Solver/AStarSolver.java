@@ -47,17 +47,8 @@ public final class AStarSolver extends AbstractSolver {
         }
 
         queue.add(currBestState);
-        while (Helper.getRemainingMemory() > 600_000_000L) { // GB, MB, kB
+        do {
             currBestState = queue.remove();
-
-            if (currBestState.getNumVertices() == graph.getVertices().size()) {
-                // We have found THE optimal solution
-                if (updater != null && timer != null) {
-                    Platform.runLater(() -> updater.update(currBestState, this)); // required by FX framework
-                    timer.cancel();
-                }
-                return;
-            }
 
             currBestState.getLegalVertices().forEach(vertex -> IntStream.range(0, processorCount).forEach(processor -> {
                 SearchState nextSearchState = new SearchState(currBestState, vertex, processor);
@@ -69,20 +60,31 @@ public final class AStarSolver extends AbstractSolver {
                     }
                 }
             }));
-        }
+
+            if (currBestState.getNumVertices() == graph.getVertices().size()) {
+                // We have found THE optimal solution
+                if (updater != null && timer != null) {
+                    Platform.runLater(() -> updater.update(currBestState, this)); // required by FX framework
+                    timer.cancel();
+                }
+                log.debug("Final queue size: " + queue.size());
+                return;
+            }
+
+        } while (Helper.getRemainingMemory() > 600_000_000L); // GB, MB, kB
         continueSolveWithBnB();
     }
 
     private void continueSolveWithBnB() {
         if (timer != null) timer.cancel();
-        log.debug("Calling DFSSolver");
+        log.info("Calling DFSSolver");
 
         // transfer the current optimal state and clear the rest.
-        DFSSolver dfsSolver = new DFSSolver(getGraph(), getProcessorCount(), currBestState);
+        DFSSolver dfsSolver = new DFSSolver(graph, processorCount, currBestState);
         queue.clear();
         dfsSolver.setUpdater(getUpdater());
         System.gc();
 
-        dfsSolver.completeSolve();
+        currBestState = dfsSolver.completeSolve();
     }
 }
