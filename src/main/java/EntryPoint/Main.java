@@ -105,8 +105,9 @@ public final class Main {
         if (gui) {
             GUIMain.init(graph, solver);
             new GUIMain().run();
+        } else {
+            callSolver(inputFile, procN, parN, os);
         }
-        callSolver(inputFile, procN, parN, os);
     }
 }
 
