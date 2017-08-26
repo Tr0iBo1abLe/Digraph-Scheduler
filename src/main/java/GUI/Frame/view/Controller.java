@@ -37,7 +37,6 @@ import org.graphstream.ui.swingViewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -74,8 +73,8 @@ public class Controller implements IUpdatableState{
 	private AnchorPane pane;
 
 	private JFXToggleButton switchButton;
-	private Pane graphPane;
-	private Pane solutionPane;
+	private AnchorPane graphPane;
+	private AnchorPane solutionPane;
 
 	
 	private long startTime;
@@ -137,7 +136,6 @@ public class Controller implements IUpdatableState{
 		viewPanel = viewer.addDefaultView(false);
 		viewPanel.addMouseListener(new GMouseManager(viewPanel, visualGraph, viewer));
 		viewPanel.addMouseWheelListener(new GMouseManager(viewPanel, visualGraph, viewer));
-		viewPanel.setPreferredSize(new Dimension(738, 481));
 		swingNode = new SwingNode();
 		SwingUtilities.invokeLater(() -> {
 			swingNode.setContent(viewPanel);
@@ -147,6 +145,10 @@ public class Controller implements IUpdatableState{
 		stackPane.setPrefHeight(481);
 		stackPane.setPrefWidth(738);
 		graphPane.getChildren().add(swingNode);
+		AnchorPane.setBottomAnchor(swingNode, 0d);
+		AnchorPane.setTopAnchor(swingNode, 0d);
+		AnchorPane.setLeftAnchor(swingNode, 0d);
+		AnchorPane.setRightAnchor(swingNode, 0d);
 	}
 
 	public void initChart() {
@@ -190,6 +192,10 @@ public class Controller implements IUpdatableState{
 		scrollPane.setPrefWidth(738);
 		scrollPane.setContent(scheduleChart);
 		solutionPane.getChildren().add(scrollPane);
+		AnchorPane.setBottomAnchor(scrollPane, 0d);
+		AnchorPane.setTopAnchor(scrollPane, 0d);
+		AnchorPane.setLeftAnchor(scrollPane, 0d);
+		AnchorPane.setRightAnchor(scrollPane, 0d);
 	}
 
 	private void initDataPane() {
@@ -244,10 +250,10 @@ public class Controller implements IUpdatableState{
 	private void initMainPane() {
 		mainPane.setBackground(
 				new Background(new BackgroundFill(Color.rgb(40, 45, 50), CornerRadii.EMPTY, Insets.EMPTY)));
-		graphPane = new Pane();
+		graphPane = new AnchorPane();
 		graphPane.setBackground(
 				new Background(new BackgroundFill(Color.rgb(255, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
-		solutionPane = new Pane();
+		solutionPane = new AnchorPane();
 		solutionPane.setBackground(
 				new Background(new BackgroundFill(Color.rgb(0, 255, 0), CornerRadii.EMPTY, Insets.EMPTY)));
 
