@@ -1,9 +1,9 @@
 package CommonInterface;
 
 import GUI.Interfaces.IUpdatableState;
-import Graph.Vertex;
 import Graph.EdgeWithCost;
 import Graph.Graph;
+import Graph.Vertex;
 
 import java.util.Timer;
 

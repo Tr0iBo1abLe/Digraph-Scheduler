@@ -6,8 +6,6 @@ import Graph.Vertex;
 import javafx.application.Platform;
 import lombok.extern.log4j.Log4j;
 
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -59,7 +57,7 @@ public final class DFSSolver extends AbstractSolver {
      * This method ensures a gui timer (see #Timer timer in #AbstractSolver) gets initialized if there exists GUI components.
      * No matter the DFS solver starts up on it own or is called by AS to continue on existing tasks
      */
-    private void setupGuiTimer(){
+    private void setupGuiTimer() {
         if (updater != null) {
             /* We have an updater and a UI to update */
             isUpdatableProgressBar = true;
@@ -67,7 +65,11 @@ public final class DFSSolver extends AbstractSolver {
             timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
                                           @Override
-                                          public void run() { Platform.runLater(() -> {updater.update(intermediateState, solver);});} // required by FX framework
+                                          public void run() {
+                                              Platform.runLater(() -> {
+                                                  updater.update(intermediateState, solver);
+                                              });
+                                          } // required by FX framework
                                       },
                     100, 100);
         }
@@ -100,7 +102,7 @@ public final class DFSSolver extends AbstractSolver {
                         return;
                     }
                     //increase the state counter for GUI, process only when there is a GUI to update
-                    if (isUpdatableProgressBar){ //true if there is a GUI progress bar needs to be updated
+                    if (isUpdatableProgressBar) { //true if there is a GUI progress bar needs to be updated
                         stateCounter++;
                     }
                     solving(nextState);

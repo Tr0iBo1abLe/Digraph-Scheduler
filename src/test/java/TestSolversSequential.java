@@ -1,5 +1,6 @@
-import Exporter.GraphExporter;
-import Solver.*;
+import Solver.AStarSolver;
+import Solver.AbstractSolver;
+import Solver.DFSSolver;
 import TestCommon.CommonTester;
 import lombok.extern.log4j.Log4j;
 import org.junit.Test;
@@ -26,12 +27,12 @@ import static junit.framework.TestCase.assertEquals;
  */
 @Log4j
 @RunWith(Parameterized.class)
-public class TestSolversIndividual {
+public class TestSolversSequential {
 
     private AbstractSolver solver;
     private CommonTester tester;
 
-    public TestSolversIndividual(CommonTester tester) {
+    public TestSolversSequential(CommonTester tester) {
         this.tester = tester;
     }
 
@@ -39,13 +40,9 @@ public class TestSolversIndividual {
     public static Collection data() {
         org.apache.log4j.BasicConfigurator.configure();
         return Arrays.asList(
-                new CommonTester(AStarSolver.class)
-//                ,new CommonTester(AStarSolverParallelJavaExecutor.class)
-//                ,new CommonTester(AStarSolverFiber.class)
+                new CommonTester(AStarSolver.class),
 
-                ,new CommonTester(DFSSolverParallel.class)
-//                ,new CommonTester(DFSSolver.class))
-        );
+                new CommonTester(DFSSolver.class));
     }
 
     /**
@@ -54,7 +51,7 @@ public class TestSolversIndividual {
      */
     @Test
     public void testStraightLine() {
-        solver = tester.doTest(6, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_straightline_4nodes.dot"));
+        solver = tester.doSequentialTest(6, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_straightline_4nodes.dot"));
         assertEquals(12, solver.getFinalTime());
     }
 
@@ -63,31 +60,31 @@ public class TestSolversIndividual {
      */
     @Test
     public void testMilestone1Nodes7Processors2() {
-        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_7_OutTree.dot"));
+        solver = tester.doSequentialTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_7_OutTree.dot"));
         assertEquals(28, solver.getFinalTime());
     }
 
     @Test
     public void testMilestone1Nodes8Processors2() {
-        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_8_Random.dot"));
+        solver = tester.doSequentialTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_8_Random.dot"));
         assertEquals(581, solver.getFinalTime());
     }
 
     @Test
     public void testMilestone1Nodes9Processors2() {
-        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_9_SeriesParallel.dot"));
+        solver = tester.doSequentialTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_9_SeriesParallel.dot"));
         assertEquals(55, solver.getFinalTime());
     }
 
     @Test
     public void testMilestone1Nodes10Processors2() {
-        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot"));
+        solver = tester.doSequentialTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot"));
         assertEquals(50, solver.getFinalTime());
     }
 
     @Test
     public void testMilestone1Nodes11Processors2() {
-        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_11_OutTree.dot"));
+        solver = tester.doSequentialTest(2, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_11_OutTree.dot"));
         assertEquals(350, solver.getFinalTime());
     }
 
@@ -96,31 +93,31 @@ public class TestSolversIndividual {
      */
     @Test
     public void testMilestone1Nodes7Processors4() {
-        solver = tester.doTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_7_OutTree.dot"));
+        solver = tester.doSequentialTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_7_OutTree.dot"));
         assertEquals(22, solver.getFinalTime());
     }
 
     @Test
     public void testMilestone1Nodes8Processors4() {
-        solver = tester.doTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_8_Random.dot"));
+        solver = tester.doSequentialTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_8_Random.dot"));
         assertEquals(581, solver.getFinalTime());
     }
 
     @Test
     public void testMilestone1Nodes9Processors4() {
-        solver = tester.doTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_9_SeriesParallel.dot"));
+        solver = tester.doSequentialTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_9_SeriesParallel.dot"));
         assertEquals(55, solver.getFinalTime());
     }
 
     @Test
     public void testMilestone1Nodes10Processors4() {
-        solver = tester.doTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot"));
+        solver = tester.doSequentialTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_10_Random.dot"));
         assertEquals(50, solver.getFinalTime());
     }
 
     @Test
     public void testMilestone1Nodes11Processors4() {
-        solver = tester.doTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_11_OutTree.dot"));
+        solver = tester.doSequentialTest(4, new File(TEST_FILE_PATH + TEST_MILESTONE_1_INPUT_PATH + "Nodes_11_OutTree.dot"));
         assertEquals(227, solver.getFinalTime());
     }
 
@@ -129,22 +126,19 @@ public class TestSolversIndividual {
      */
     @Test
     public void testExcludeProcessorsEdgesWithZeroCost() {
-        solver = tester.doTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_4Nodes_ZeroEdgeCosts.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
+        solver = tester.doSequentialTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_4Nodes_ZeroEdgeCosts.dot"));
         assertEquals(3, solver.getFinalTime());
     }
 
     @Test
     public void testExcludeProcessors6NodeDiamondWithBranch() {
-        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_6nodes_diamond_lowcosts.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
+        solver = tester.doSequentialTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_6nodes_diamond_lowcosts.dot"));
         assertEquals(4, solver.getFinalTime());
     }
 
     @Test
     public void testExcludeStartTimes3NodesCShouldBeCore2() {
-        solver = tester.doTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_3Nodes_test_startTimes.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
+        solver = tester.doSequentialTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_3Nodes_test_startTimes.dot"));
         assertEquals(2, solver.getFinalTime());
     }
 
@@ -160,14 +154,12 @@ public class TestSolversIndividual {
      */
     @Test
     public void test14NodesUoN2Core() {
-        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_203words7dvi_0edgecost.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
+        solver = tester.doSequentialTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_203words7dvi_0edgecost.dot"));
         assertEquals(72, solver.getFinalTime());
     }
 
     public void test14NodeUoN3Core() {
-        solver = tester.doTest(3, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_203words7dvi_0edgecost.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
+        solver = tester.doSequentialTest(3, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_203words7dvi_0edgecost.dot"));
         assertEquals(57, solver.getFinalTime());
     }
 
@@ -184,8 +176,7 @@ public class TestSolversIndividual {
      */
     @Test
     public void test14NodesUoN2CoreWithEdgeCost() {
-        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_3CoreOptimal.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
+        solver = tester.doSequentialTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_3CoreOptimal.dot"));
         assertEquals(96, solver.getFinalTime());
     }
 
@@ -199,8 +190,7 @@ public class TestSolversIndividual {
      */
     @Test
     public void test14NodesUoN2CoreWithEdgeCostV2() {
-        solver = tester.doTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_3CoreOptimal-1.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
+        solver = tester.doSequentialTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_3CoreOptimal-1.dot"));
         assertEquals(96, solver.getFinalTime());
     }
 

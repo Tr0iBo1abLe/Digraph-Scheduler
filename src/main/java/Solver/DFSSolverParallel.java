@@ -6,7 +6,9 @@ import Graph.Vertex;
 import lombok.Synchronized;
 import lombok.extern.log4j.Log4j;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
@@ -15,55 +17,40 @@ import java.util.stream.IntStream;
 public final class DFSSolverParallel extends AbstractSolver {
 
     private int currUpperBound;
-    private static final int parallelCount = Runtime.getRuntime().availableProcessors();
     private ThreadPoolExecutor executorService;
     private Set<Callable<Void>> callables;
 
     private AtomicInteger atomicInteger = new AtomicInteger(0);
 
-    public DFSSolverParallel(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
-        super(graph, processorCount);
-        log.debug("Solver inited");
-        log.info("Parallel processors: " + parallelCount);
-        /* Constructuor to allow tests, remove when no longer needed.*/
-    }
-
     public DFSSolverParallel(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, int parallelCount) {
-        super(graph, processorCount);
+        super(graph, processorCount, processorCount);
         log.debug("Solver inited");
     }
 
     DFSSolverParallel(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, int parallelCount, SearchState existingState) {
-        super(graph, processorCount);
+        super(graph, processorCount, processorCount);
         currBestState = existingState;
         log.debug("Solver inited with an existing state");
-    }
-
-    public DFSSolverParallel(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, SearchState currBestState) {
-        super(graph, processorCount);
-        this.currBestState = currBestState;
-        log.info("Parallel processors: " + parallelCount);
     }
 
     /**
      * Used when transferring state from a AStarSolver
      */
     SearchState completeSolve() {
-        currUpperBound = Integer.MAX_VALUE;
-        makeAndExecuteThreads();
+        // The upper bound is now the currBestState + that of scheduling the remaining vertices to the same processor.
+        // If there is an edge pointing to these vertices we can assume the 'same' processor is the optimal one
+        currUpperBound = currBestState.getUnderestimate();
+        solving(currBestState);
         return currBestState;
     }
 
     @Override
     void doSolve() {
+        executorService = new ThreadPoolExecutor(parallelProcessorCount, parallelProcessorCount, 99999999L, TimeUnit.DAYS, new LinkedBlockingQueue<>());
         currUpperBound = Integer.MAX_VALUE;
-        makeAndExecuteThreads();
-    }
-
-    private void makeAndExecuteThreads(){
-        executorService = new ThreadPoolExecutor(parallelCount, parallelCount, 99999999L, TimeUnit.DAYS, new LinkedBlockingQueue<>());
+        SearchState searchState = new SearchState();
         callables = Collections.newSetFromMap(new ConcurrentHashMap<>());
-        callables.addAll(makeCallables(currBestState));
+        callables.addAll(makeCallables(searchState));
         log.info("Callables count " + callables.size());
         try {
             executorService.invokeAll(callables);
@@ -71,7 +58,7 @@ public final class DFSSolverParallel extends AbstractSolver {
             e.printStackTrace();
         }
         //executorService.shutdown();
-        while(executorService.getActiveCount() != 0);
+        while (executorService.getActiveCount() != 0) ;
     }
 
     @Synchronized
@@ -83,7 +70,7 @@ public final class DFSSolverParallel extends AbstractSolver {
             callables.add(() -> {
                 IntStream.range(0, processorCount).forEach(processor -> {
                     SearchState nextState = new SearchState(searchState, vertex, processor);
-                    if(checkAndUpdate(nextState)) {
+                    if (checkAndUpdate(nextState)) {
                         solving(nextState);
                         atomicInteger.decrementAndGet();
                     }
@@ -97,7 +84,7 @@ public final class DFSSolverParallel extends AbstractSolver {
     }
 
     private void solving(SearchState currState) {
-        if(atomicInteger.get() < parallelCount) {
+        if (atomicInteger.get() < parallelProcessorCount) {
             final Set<Callable<Void>> callables = makeCallables(currState);
             callables.forEach(callable -> {
                 //atomicInteger.incrementAndGet();

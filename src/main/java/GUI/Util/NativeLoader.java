@@ -1,6 +1,7 @@
 package GUI.Util;
 
 import org.apache.log4j.Logger;
+
 import java.io.*;
 
 /**
@@ -41,9 +42,9 @@ public class NativeLoader {
             isLinux = false;
             if (osArch.equalsIgnoreCase("x86")) {
                 name = "sigar-x86-winnt.dll";
-            } else if (osArch.equalsIgnoreCase("amd64")){
+            } else if (osArch.equalsIgnoreCase("amd64")) {
                 name = "sigar-amd64-winnt.dll";
-            }else{
+            } else {
                 throw new UnsupportedOperationException("Platform " + osName + ":" + osArch + " not supported");
             }
         } else if (osName.startsWith("linux")) {
@@ -61,9 +62,9 @@ public class NativeLoader {
         }
         libraryName = name.split("\\.")[0];
         String currentLibPath = System.getProperty("java.library.path");
-        if (isLinux){
+        if (isLinux) {
             System.setProperty("java.library.path", currentLibPath + ":" + this.getClass().getClassLoader().getResource(path).getPath());
-        }else{
+        } else {
             System.setProperty("java.library.path", currentLibPath + ";" + this.getClass().getClassLoader().getResource(path).getPath());
         }
         return path + name;

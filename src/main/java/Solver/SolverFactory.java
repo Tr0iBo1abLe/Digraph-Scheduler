@@ -9,8 +9,6 @@ import lombok.Getter;
 import lombok.Value;
 import lombok.extern.log4j.Log4j;
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
  * Picks the best solver (A*, BnB) to run based on the input.
  * This is required since we cannot manually pick the solver ourselves.
@@ -40,7 +38,7 @@ public class SolverFactory {
         // Getting data about the input
         int numEdges = (int) graph.getInwardEdgeMap().values().parallelStream().filter(List::isNotEmpty).count();
 
-        if(parallelCount > 1) {
+        if (parallelCount > 1) {
             // These decisions are in priority order
             if (processorCount == 1) { // BnB since upper bound is that of using one core (topological sort)
                 solver = new DFSSolverParallel(graph, processorCount, parallelCount);
@@ -49,8 +47,7 @@ public class SolverFactory {
             } else {
                 solver = new AStarSolverParallelJavaExecutor(graph, processorCount, parallelCount);
             }
-        }
-        else {
+        } else {
             if (processorCount == 1) { // BnB since upper bound is that of using one core (topological sort)
                 solver = new DFSSolver(graph, processorCount);
             } else if (numEdges < 1) { // No edges, experimenting with this

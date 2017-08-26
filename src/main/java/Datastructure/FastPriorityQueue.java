@@ -72,7 +72,7 @@ public class FastPriorityQueue<T> implements Queue<T> {
     @Override
     public boolean addAll(Collection<? extends T> collection) {
         collection.forEach(item -> {
-            if(!set.contains(item)) {
+            if (!set.contains(item)) {
                 queue.add(item);
             }
         });

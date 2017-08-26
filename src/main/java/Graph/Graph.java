@@ -3,7 +3,6 @@ package Graph;
 import Graph.Exceptions.GraphException;
 import Graph.Interfaces.IGraph;
 import Parser.Interfaces.IVertexCtor;
-import Solver.SearchState;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.Synchronized;

@@ -6,7 +6,6 @@ import Graph.Graph;
 import Graph.Vertex;
 import fj.F;
 import fj.data.IterableW;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Value;
@@ -29,7 +28,6 @@ import java.util.stream.IntStream;
  */
 @Log4j
 @Value
-@EqualsAndHashCode(exclude = {"",""})
 public class SearchState implements Comparable<SearchState>, ISearchState {
     @NonFinal
     private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
@@ -44,11 +42,6 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
     private int numVertices;
     @NonFinal
     private int underestimate;
-
-    static void initialise(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
-        SearchState.graph = graph;
-        SearchState.processorCount = processorCount;
-    }
 
     SearchState() {
         underestimate = 0;
@@ -120,6 +113,11 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         numVertices = prevState.getNumVertices() + 1;
     }
 
+    static void initialise(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
+        SearchState.graph = graph;
+        SearchState.processorCount = processorCount;
+    }
+
     /**
      * Initial cost set for a state; used as a static priority for picking the next state in the search.
      */
@@ -153,10 +151,28 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
      * Get the total cost of Vertices that haven't got an assigned processor (or startTime)
      * i.e. cost if they were all assigned to the same processor (topologically sorted).
      *
-     * @return the set of un assigned vertices.
+     * @return the total cost of the set of un assigned vertices.
      */
     int getTotalCostOfUnassignedVertices() {
-        return graph.getVertices().stream().filter(vertex -> processors[vertex.getAssignedId()] < 0).mapToInt(vertex -> vertex.getCost()).sum();
+        return getUnassignedVertices().stream().mapToInt(vertex -> vertex.getCost()).sum();
+    }
+
+    /**
+     * Get the set of unassigned vertices.
+     *
+     * @return the set of un assigned vertices.
+     */
+    private Set<Vertex> getUnassignedVertices() {
+        return graph.getVertices().stream().filter(vertex -> processors[vertex.getAssignedId()] < 0).collect(Collectors.toSet());
+    }
+
+    /**
+     * Get the set of unassigned vertices.
+     *
+     * @return the set of assigned vertices.
+     */
+    private Set<Vertex> getAssingedVertices() {
+        return graph.getVertices().stream().filter(vertex -> processors[vertex.getAssignedId()] > -1).collect(Collectors.toSet());
     }
 
     /**
@@ -174,19 +190,19 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
 
     /**
      * A* pruning is done here:
-     *
+     * <p>
      * Equals is different depending on the input.
      * The idea is to ignore redundant states however this has many factors and may not produce optimal schedules.
-     *
+     * <p>
      * Ignoring "processors" causes only the initial states to not be mirrored and its effect is better with a larger
      * core count, while ignoring "startTimes" has an initial greater number of states it will ignore similar states
      * later on due to it having more of an effect when more vertices are scheduled (since it ignores startTimes).
      * However it also depends on number of edges and other things, TODO maybe the pruning should change strategy later in the search.
-     *
+     * <p>
      * I've come to the conclusion that (generally) with >2 processors for scheduling ignore "processors" is better;
      * since the initial number of states depends on the processorCount and reducing initial states has a big effect.
      * Currently testing ignoring both initially to reduce initial states even further.
-     *
+     * <p>
      * Stats:
      * Canvas 11node 2core example:
      * Ignore nothing: 851,119 final states (pure brute force)
@@ -194,59 +210,60 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
      * Ignore processor: 416,688 final states (STABLE)
      * Ignore startTimes: 164,832 final states (STABLE)
      * Custom, ignore both initially then ignore startTimes (since <= 2 cores): 81,091 final states (Not sure if stable)
-     *
+     * <p>
      * Canvas 11node 4core example:
      * Ignore nothing: 69,504 final states (pure brute force)
      * Ignore processor and startTimes: 286 final states (UNSTABLE fails on other inputs) (produces valid schedule but not optimal)
      * Ignore processor: 5043 final states (STABLE)
      * Ignore startTimes: 71,915 final states (STABLE)
      * Custom, ignore both initially then ignore processor (since > 2 cores): 3705 final states (Not sure if stable)
-     *
+     * <p>
      * A possible problem with ignoring both at the start is many vertices that have no edges (many initial legal vertices)
      * + few vertices with edges (few dependent vertices) i.e. numInitialLegalVertices > processorCount with some edges; not all are
      * considered with startTime of 0 leading to the final schedule to maybe not be optimal. TODO still experimenting/testing.
      */
-//    @Override
-//    public boolean equals(Object obj){
-//        if (obj == null)
-//            return false;
-//        if (getClass() != obj.getClass())
-//            return false;
-//
-//        SearchState rhs = (SearchState) obj;
-//        EqualsBuilder builder =  new EqualsBuilder()
-//                .append(lastVertex, rhs.lastVertex)
-//                .append(numVertices, rhs.numVertices)
-//                .append(underestimate, rhs.underestimate);
-//
-//        // cut initial size down; leading to a much smaller tree, this significantly changes solve time but can be unstable
-//        // we can ignore both "processors" and "startTimes" at the beginning;
-//        if (numVertices <= processorCount && getLegalVertices().size() <= processorCount){
-//            log.debug("equals: Ignore both");
-//            return builder.isEquals();
-//        }
-//        if (processorCount > 2){
-//            return builder.append(startTimes, rhs.startTimes).isEquals(); // Ignoring "processors"
-//        }
-//        return builder.append(processors, rhs.processors).isEquals(); // Ignoring "startTimes"
-//    }
-//
-//    /**
-//     * Match equals() to improve hash table lookup.
-//     */
-//    @Override
-//    public int hashCode(){
-//        HashCodeBuilder builder =  new HashCodeBuilder(37, 59) // primes
-//                .append(lastVertex)
-//                .append(numVertices)
-//                .append(underestimate);
-//        if (numVertices <= processorCount && getLegalVertices().size() <= processorCount){
-//            return builder.toHashCode();
-//        }
-//        if (processorCount > 2){
-//            return builder.append(startTimes).toHashCode();
-//        }
-//        return builder.append(processors).toHashCode();
-//    }
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+
+        SearchState rhs = (SearchState) obj;
+        EqualsBuilder builder = new EqualsBuilder()
+                .append(lastVertex, rhs.lastVertex)
+                .append(numVertices, rhs.numVertices)
+                .append(underestimate, rhs.underestimate);
+
+        // cut initial size down; leading to a much smaller tree, this significantly changes solve time but can be unstable
+        // we can ignore both "processors" and "startTimes" at the beginning;
+        if (numVertices <= processorCount && getLegalVertices().size() - getAssingedVertices().size() <= processorCount) {
+            log.debug("equals: Ignore both");
+            return builder.isEquals();
+        }
+        if (processorCount > 2) {
+            return builder.append(startTimes, rhs.startTimes).isEquals(); // Ignoring "processors", ignores mirror schedules
+        }
+        // Ignoring "startTimes", only correct for 2 (or 1) core. Effectively ignores mirrors but will
+        return builder.append(processors, rhs.processors).isEquals();
+    }
+
+    /**
+     * Match equals() to improve hash table lookup.
+     */
+    @Override
+    public int hashCode() {
+        HashCodeBuilder builder = new HashCodeBuilder(37, 59) // primes
+                .append(lastVertex)
+                .append(numVertices)
+                .append(underestimate);
+        if (numVertices <= processorCount && getLegalVertices().size() - getAssingedVertices().size() <= processorCount) {
+            return builder.toHashCode();
+        }
+        if (processorCount > 2) {
+            return builder.append(startTimes).toHashCode();
+        }
+        return builder.append(processors).toHashCode();
+    }
 
 }

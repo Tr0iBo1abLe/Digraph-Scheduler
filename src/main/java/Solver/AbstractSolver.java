@@ -18,13 +18,16 @@ import java.util.Timer;
 /**
  * Represents all Solvers holding the program arguments: graph and processorCount.
  * Contains public method for solving the scheduling problem.
- *
+ * <p>
  * Created by e on 1/08/17.
+ *
  * @author Edward Huang, Will Molloy
  */
 @Data
 abstract public class AbstractSolver implements ISolver {
     @Getter
+    protected static int stateCounter = 0; //essentially a loop counter, used by GUI to update progress bar
+    protected int parallelProcessorCount;
     protected Graph<Vertex, EdgeWithCost<Vertex>> graph;
     protected int processorCount;
     @Getter
@@ -32,13 +35,11 @@ abstract public class AbstractSolver implements ISolver {
     protected GUIUpdater updater;
     protected SearchState currBestState;
     @Getter
-    private int finalTime;
-    @Getter
     protected boolean isUpdatableProgressBar = false; //make progress bar compatible with both algorithms if necessary
     @Getter
-    protected static int stateCounter = 0; //essentially a loop counter, used by GUI to update progress bar
-    @Getter
     protected Timer timer; //the guiTimer
+    @Getter
+    private int finalTime;
 
     /**
      * This class should only be instantiated by the concrete algorithms.
@@ -46,6 +47,17 @@ abstract public class AbstractSolver implements ISolver {
     AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
         this.graph = graph;
         this.processorCount = processorCount;
+        SearchState.initialise(graph, processorCount);
+        currBestState = new SearchState();
+    }
+
+    /**
+     * This class should only be instantiated by the concrete algorithms.
+     */
+    AbstractSolver(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, int parallelProcessorCount) {
+        this.graph = graph;
+        this.processorCount = processorCount;
+        this.parallelProcessorCount = parallelProcessorCount;
         SearchState.initialise(graph, processorCount);
         currBestState = new SearchState();
     }

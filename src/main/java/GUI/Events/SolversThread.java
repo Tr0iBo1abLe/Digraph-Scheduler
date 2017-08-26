@@ -1,13 +1,8 @@
 package GUI.Events;
 
 import CommonInterface.ISolver;
-import Exporter.GraphExporter;
 import GUI.Frame.view.Controller;
-import GUI.GraphViewer;
 import GUI.Interfaces.ThreadCompleteListener;
-import GUI.GUIMain;
-import Graph.Edge;
-import Graph.Vertex;
 import lombok.Getter;
 
 import java.util.Set;
@@ -19,19 +14,19 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * This class is not a part of parallelization it is simply a thread representing the particular connection
  * between solvers and GUI interfaces (see #Controller, #GraphViewer, and #ScheduleChart).
  * It is one of the util threads managed by Controller (see #Controller and #Start button).
+ *
  * @author Mason Shi
  */
 public class SolversThread extends Thread {
 
-    private final Set<ThreadCompleteListener> listeners = new CopyOnWriteArraySet<>();
-
     public static boolean isStoped = false;
+    private final Set<ThreadCompleteListener> listeners = new CopyOnWriteArraySet<>();
     @Getter
     private Controller controller; //Make sure to add listeners
     @Getter
     private ISolver solver;
 
-    public SolversThread(Controller controller, ISolver iSolver){
+    public SolversThread(Controller controller, ISolver iSolver) {
         super();
         this.controller = controller;
         this.solver = iSolver;
@@ -73,14 +68,14 @@ public class SolversThread extends Thread {
      */
     @Override
     public final void run() {
-        try{
+        try {
             doRun();
         } finally {
             notifyListeners();
         }
     }
 
-    public void doRun(){
+    public void doRun() {
         solver.associateUI(controller);
         solver.doSolveAndCompleteSchedule();
     }

@@ -1,5 +1,6 @@
-import Exporter.GraphExporter;
-import Solver.*;
+import Solver.AStarSolverParallelJavaExecutor;
+import Solver.AbstractSolver;
+import Solver.DFSSolverParallel;
 import TestCommon.CommonTester;
 import lombok.extern.log4j.Log4j;
 import org.junit.Test;
@@ -11,9 +12,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static TestCommon.TestConfig.TEST_FILE_PATH;
-import static TestCommon.TestConfig.TEST_MILESTONE_1_INPUT_PATH;
-import static TestCommon.TestConfig.TEST_SOLVER_PATH;
+import static TestCommon.TestConfig.*;
 import static junit.framework.TestCase.assertEquals;
 
 /**
@@ -25,9 +24,9 @@ import static junit.framework.TestCase.assertEquals;
 @RunWith(Parameterized.class)
 public class TestSolversParallel {
 
+    private final int parallelCores = Runtime.getRuntime().availableProcessors(); // Logical cores available
     private AbstractSolver solver;
     private CommonTester tester;
-    private final int parallelCores = Runtime.getRuntime().availableProcessors(); // Logical cores available
 
     public TestSolversParallel(CommonTester tester) {
         this.tester = tester;
@@ -124,21 +123,18 @@ public class TestSolversParallel {
     @Test
     public void testExcludeProcessorsEdgesWithZeroCost() {
         solver = tester.doParallelTest(8, parallelCores, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_4Nodes_ZeroEdgeCosts.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(3, solver.getFinalTime());
     }
 
     @Test
     public void testExcludeProcessors6NodeDiamondWithBranch() {
         solver = tester.doParallelTest(2, parallelCores, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_6nodes_diamond_lowcosts.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(4, solver.getFinalTime());
     }
 
     @Test
     public void testExcludeStartTimes3NodesCShouldBeCore2() {
         solver = tester.doParallelTest(8, parallelCores, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_3Nodes_test_startTimes.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(2, solver.getFinalTime());
     }
 
@@ -155,13 +151,11 @@ public class TestSolversParallel {
     @Test
     public void test14NodesUoN2Core() {
         solver = tester.doParallelTest(2, parallelCores, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_203words7dvi_0edgecost.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(72, solver.getFinalTime());
     }
 
     public void test14NodeUoN3Core() {
         solver = tester.doParallelTest(3, parallelCores, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_203words7dvi_0edgecost.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(57, solver.getFinalTime());
     }
 
@@ -179,7 +173,6 @@ public class TestSolversParallel {
     @Test
     public void test14NodesUoN2CoreWithEdgeCost() {
         solver = tester.doParallelTest(2, parallelCores, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_3CoreOptimal.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(96, solver.getFinalTime());
     }
 
@@ -194,7 +187,6 @@ public class TestSolversParallel {
     @Test
     public void test14NodesUoN2CoreWithEdgeCostV2() {
         solver = tester.doParallelTest(2, parallelCores, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_3CoreOptimal-1.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(96, solver.getFinalTime());
     }
 

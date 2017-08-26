@@ -6,6 +6,7 @@ import Exporter.GraphExporter;
 import GUI.Events.SolversThread;
 import GUI.Events.SysInfoMonitoringThread;
 import GUI.Frame.CustomButton;
+import GUI.Frame.DataVisualization;
 import GUI.GraphViewer;
 import GUI.Interfaces.GUIMainInterface;
 import GUI.Models.GMouseManager;
@@ -14,7 +15,7 @@ import GUI.ScheduleChart;
 import GUI.Util.ColorManager;
 import Graph.Graph;
 import Solver.AbstractSolver;
-import Solver.SearchState;
+import com.jfoenix.controls.JFXToggleButton;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingNode;
@@ -22,10 +23,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-
-import com.jfoenix.controls.JFXToggleButton;
-
-import GUI.Frame.DataVisualization;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -39,11 +36,8 @@ import org.graphstream.ui.view.Viewer;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 /**
@@ -55,80 +49,68 @@ import java.util.stream.IntStream;
  * =====================================================================================================================================
  * THIS IS A UTIL CLASS AND IS USED BY JFX FRAMEWORK IN ITS ON APPLICATION THREAD. DO NOT EVER TRY TO INSTANTIATE IT IN THE MAIN THREAD.
  * =====================================================================================================================================
+ *
  * @author Vincent Chen, Mason Shi
  */
 public class Controller implements GUIMainInterface {
 
-	@FXML
-	private AnchorPane parentPane;
-
-	@FXML
-	private AnchorPane dataPane;
-
-	@FXML
-	private HBox buttonsPane;
-
-	@FXML
-	private AnchorPane mainPane;
-
-	@FXML
-	private AnchorPane pane;
-
-	private JFXToggleButton switchButton;
-	private Pane graphPane;
-	private Pane solutionPane;
-
-	private DataVisualization data;
-
-	private CustomButton start;
-	private CustomButton pause;
-	private CustomButton stop;
-
+    private static final String procStr = "Processor";
     public static org.graphstream.graph.Graph visualGraph;
     public static GraphViewer viewer;
     public static ViewPanel viewPanel;
     public static SwingNode swingNode;
-
-    public ScheduleChart<Number, String> scheduleChart;
-    private static final String procStr = "Processor";
-
     public static ISolver solver;
-
     public static Graph graph;
-
     public static SolversThread solversThread;
     public static SysInfoMonitoringThread sysInfoMonitoringThread;
-
     private static AtomicBoolean atomicBoolean = new AtomicBoolean();
+    public ScheduleChart<Number, String> scheduleChart;
+    @FXML
+    private AnchorPane parentPane;
+    @FXML
+    private AnchorPane dataPane;
+    @FXML
+    private HBox buttonsPane;
+    @FXML
+    private AnchorPane mainPane;
+    @FXML
+    private AnchorPane pane;
+    private JFXToggleButton switchButton;
+    private Pane graphPane;
+    private Pane solutionPane;
+    private DataVisualization data;
+    private CustomButton start;
+    private CustomButton pause;
+    private CustomButton stop;
 
-	public Controller() {
+    public Controller() {
 
-	}
+    }
 
-	@FXML
-	private void initialize() {
+    @FXML
+    private void initialize() {
 
-		initDataPane();
+        initDataPane();
 
-		initButtons();
+        initButtons();
 
-		initMainPane();
+        initMainPane();
 
-		initSwitch();
+        initSwitch();
 
         initGraph();
 
         initChart();
 
         initSysInfoMonitor();
-	}
+    }
 
-	private void initSysInfoMonitor(){
+    private void initSysInfoMonitor() {
         sysInfoMonitoringThread = new SysInfoMonitoringThread(SysInfoModel.getInstance());
         sysInfoMonitoringThread.addListener(Controller.this);
     }
 
-	private void initGraph(){
+    private void initGraph() {
         System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
         viewer = new GraphViewer(visualGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         viewer.initializeLabels(visualGraph);
@@ -149,7 +131,7 @@ public class Controller implements GUIMainInterface {
     }
 
 
-    public void initChart(){
+    public void initChart() {
         final NumberAxis xAxis = new NumberAxis();
         final CategoryAxis yAxis = new CategoryAxis();
         final int procN = solver.getProcessorCount();
@@ -161,7 +143,7 @@ public class Controller implements GUIMainInterface {
             XYChart.Series series = new XYChart.Series();
             seriesArr[i] = series;
             procStrNames[i] = procStr.concat(String.valueOf(i + 1));
-            seriesArr[i].getData().add(new XYChart.Data(0, procStrNames[i], new ScheduleChart.ExtraData(0, "rgba(0,0,0,0), rgba(0,0,0,0)", "rgba(0,0,0,0);","")));
+            seriesArr[i].getData().add(new XYChart.Data(0, procStrNames[i], new ScheduleChart.ExtraData(0, "rgba(0,0,0,0), rgba(0,0,0,0)", "rgba(0,0,0,0);", "")));
         });
         String[] nodeNameArr = new String[visualGraph.getNodeSet().size()];
         for (int i = 0; i < seriesArr.length; i++) {
@@ -191,22 +173,22 @@ public class Controller implements GUIMainInterface {
         solutionPane.getChildren().add(scrollPane);
     }
 
-	private void initDataPane() {
-		data = new DataVisualization();
-		dataPane.getChildren().add(data);
-		AnchorPane.setBottomAnchor(data, 0d);
-		AnchorPane.setTopAnchor(data, 0d);
-		AnchorPane.setLeftAnchor(data, 0d);
-		AnchorPane.setRightAnchor(data, 0d);
-	}
+    private void initDataPane() {
+        data = new DataVisualization();
+        dataPane.getChildren().add(data);
+        AnchorPane.setBottomAnchor(data, 0d);
+        AnchorPane.setTopAnchor(data, 0d);
+        AnchorPane.setLeftAnchor(data, 0d);
+        AnchorPane.setRightAnchor(data, 0d);
+    }
 
-	private void initButtons() {
-		buttonsPane.setBackground(
-				new Background(new BackgroundFill(Color.rgb(40, 45, 50), CornerRadii.EMPTY, Insets.EMPTY)));
-		start = new CustomButton("START");
-		pause = new CustomButton("PAUSE");
-		stop = new CustomButton("STOP");
-		buttonsPane.getChildren().addAll(start, pause, stop);
+    private void initButtons() {
+        buttonsPane.setBackground(
+                new Background(new BackgroundFill(Color.rgb(40, 45, 50), CornerRadii.EMPTY, Insets.EMPTY)));
+        start = new CustomButton("START");
+        pause = new CustomButton("PAUSE");
+        stop = new CustomButton("STOP");
+        buttonsPane.getChildren().addAll(start, pause, stop);
         start.setOnAction(event -> {
             solversThread = new SolversThread(Controller.this, solver);
             solversThread.addListener(Controller.this);
@@ -237,61 +219,61 @@ public class Controller implements GUIMainInterface {
         });
         pause.setDisable(true);
         stop.setDisable(true);
-	}
+    }
 
-	private void initMainPane() {
-		mainPane.setBackground(
-				new Background(new BackgroundFill(Color.rgb(40, 45, 50), CornerRadii.EMPTY, Insets.EMPTY)));
-		graphPane = new Pane();
-		graphPane.setBackground(
-				new Background(new BackgroundFill(Color.rgb(255, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
-		solutionPane = new Pane();
-		solutionPane.setBackground(
-				new Background(new BackgroundFill(Color.rgb(0, 255, 0), CornerRadii.EMPTY, Insets.EMPTY)));
+    private void initMainPane() {
+        mainPane.setBackground(
+                new Background(new BackgroundFill(Color.rgb(40, 45, 50), CornerRadii.EMPTY, Insets.EMPTY)));
+        graphPane = new Pane();
+        graphPane.setBackground(
+                new Background(new BackgroundFill(Color.rgb(255, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
+        solutionPane = new Pane();
+        solutionPane.setBackground(
+                new Background(new BackgroundFill(Color.rgb(0, 255, 0), CornerRadii.EMPTY, Insets.EMPTY)));
 
-		pane.getChildren().add(graphPane);
-		AnchorPane.setBottomAnchor(graphPane, 0d);
-		AnchorPane.setTopAnchor(graphPane, 0d);
-		AnchorPane.setLeftAnchor(graphPane, 0d);
-		AnchorPane.setRightAnchor(graphPane, 0d);
-	}
+        pane.getChildren().add(graphPane);
+        AnchorPane.setBottomAnchor(graphPane, 0d);
+        AnchorPane.setTopAnchor(graphPane, 0d);
+        AnchorPane.setLeftAnchor(graphPane, 0d);
+        AnchorPane.setRightAnchor(graphPane, 0d);
+    }
 
-	private void initSwitch() {
-		switchButton = new JFXToggleButton();
-		switchButton.setText("Graph");
-		switchButton.setTextFill(Color.rgb(255, 255, 255));
-		switchButton.setOnAction(new EventHandler<ActionEvent>() {
+    private void initSwitch() {
+        switchButton = new JFXToggleButton();
+        switchButton.setText("Graph");
+        switchButton.setTextFill(Color.rgb(255, 255, 255));
+        switchButton.setOnAction(new EventHandler<ActionEvent>() {
 
-			@Override
-			public void handle(ActionEvent arg0) {
-				if (switchButton.getText().equals("Graph")) {
-					switchButton.setText("Current Optimal Solution");
-					pane.getChildren().remove(graphPane);
-					pane.getChildren().add(solutionPane);
-					AnchorPane.setBottomAnchor(solutionPane, 0d);
-					AnchorPane.setTopAnchor(solutionPane, 0d);
-					AnchorPane.setLeftAnchor(solutionPane, 0d);
-					AnchorPane.setRightAnchor(solutionPane, 0d);
-				} else {
-					switchButton.setText("Graph");
-					pane.getChildren().remove(solutionPane);
-					pane.getChildren().add(graphPane);
-					AnchorPane.setBottomAnchor(graphPane, 0d);
-					AnchorPane.setTopAnchor(graphPane, 0d);
-					AnchorPane.setLeftAnchor(graphPane, 0d);
-					AnchorPane.setRightAnchor(graphPane, 0d);
-				}
-			}
-		});
-		mainPane.getChildren().add(switchButton);
-		AnchorPane.setTopAnchor(switchButton, 5d);
-		AnchorPane.setLeftAnchor(switchButton, 25d);
+            @Override
+            public void handle(ActionEvent arg0) {
+                if (switchButton.getText().equals("Graph")) {
+                    switchButton.setText("Current Optimal Solution");
+                    pane.getChildren().remove(graphPane);
+                    pane.getChildren().add(solutionPane);
+                    AnchorPane.setBottomAnchor(solutionPane, 0d);
+                    AnchorPane.setTopAnchor(solutionPane, 0d);
+                    AnchorPane.setLeftAnchor(solutionPane, 0d);
+                    AnchorPane.setRightAnchor(solutionPane, 0d);
+                } else {
+                    switchButton.setText("Graph");
+                    pane.getChildren().remove(solutionPane);
+                    pane.getChildren().add(graphPane);
+                    AnchorPane.setBottomAnchor(graphPane, 0d);
+                    AnchorPane.setTopAnchor(graphPane, 0d);
+                    AnchorPane.setLeftAnchor(graphPane, 0d);
+                    AnchorPane.setRightAnchor(graphPane, 0d);
+                }
+            }
+        });
+        mainPane.getChildren().add(switchButton);
+        AnchorPane.setTopAnchor(switchButton, 5d);
+        AnchorPane.setLeftAnchor(switchButton, 25d);
 
-	}
+    }
 
     @Synchronized
-	@Override
-	public void updateWithState(ISearchState searchState, AbstractSolver abstractSolver) {
+    @Override
+    public void updateWithState(ISearchState searchState, AbstractSolver abstractSolver) {
         Platform.runLater(() -> {
             if (searchState == null) return;
             // Remove the past data
@@ -339,7 +321,7 @@ public class Controller implements GUIMainInterface {
             scheduleChart.setBlockHeight(1000d / Controller.solver.getProcessorCount());
 
             Platform.runLater(() -> {
-                if ((atomicBoolean.get()) && (!(SolversThread.isStoped))){ //do the following only when the solver is not terminated by Stop()
+                if ((atomicBoolean.get()) && (!(SolversThread.isStoped))) { //do the following only when the solver is not terminated by Stop()
                     Platform.runLater(() -> {
                         //Update colorNode() AND set progress bar to maximum here;
                         //This is to deal with when there are too many timers created due to multiple solvers switching among one another;
@@ -347,10 +329,10 @@ public class Controller implements GUIMainInterface {
                         viewer.colorNodes(visualGraph);
                         data.setProgress(100d);
                     });
-                }else{
+                } else {
                     Platform.runLater(() -> {
                         int curSize = abstractSolver.getStateCounter();
-                        double temp = ((double)curSize/((double)curSize + 10000000d))*100d;
+                        double temp = ((double) curSize / ((double) curSize + 10000000d)) * 100d;
                         if (temp < 99.9d) { //avoid progress bar overflow
                             data.setProgress(temp); //update progress bar
                         }
@@ -358,19 +340,19 @@ public class Controller implements GUIMainInterface {
                 }
             });
         });
-	}
+    }
 
-	@Synchronized
-	private void updateLabels(int[] startTimes, ISearchState searchState){
+    @Synchronized
+    private void updateLabels(int[] startTimes, ISearchState searchState) {
         data.setTaskId(searchState.getLastVertex().getId());
         data.setFinishingTime(startTimes[searchState.getLastVertex().getAssignedId()] + searchState.getLastVertex().getCost() + "");
     }
 
     @Synchronized
-	@Override
-	public void notifyOfSolversThreadComplete() {
+    @Override
+    public void notifyOfSolversThreadComplete() {
         atomicBoolean.set(true);
-        if (!(SolversThread.isStoped)){ //do the following only when the solver is not terminated by Stop()
+        if (!(SolversThread.isStoped)) { //do the following only when the solver is not terminated by Stop()
             Platform.runLater(() -> {
                 //Update colorNode AND set progress bar to maximum here;
                 viewer.colorNodes(visualGraph);
@@ -382,25 +364,25 @@ public class Controller implements GUIMainInterface {
                 Platform.runLater(() -> data.setProgress(100d));
             });
         }
-	}
+    }
 
-	@Override
-	public void notifyOfSysInfoThreadUpdate() {
+    @Override
+    public void notifyOfSysInfoThreadUpdate() {
         updateSysInfo(SysInfoModel.getInstance());
-	}
+    }
 
     @Override
     public void updateSysInfo(SysInfoModel sysInfoModel) {
-	    double cpu = sysInfoModel.getCpuPercentage();
-	    double mem = sysInfoModel.getMem().getUsedPercent();
-        if ((cpu != Double.NaN) && (mem != Double.NaN)){
+        double cpu = sysInfoModel.getCpuPercentage();
+        double mem = sysInfoModel.getMem().getUsedPercent();
+        if ((cpu != Double.NaN) && (mem != Double.NaN)) {
             data.setCpu(sysInfoModel.getCpuPercentage());
             data.setRam(sysInfoModel.getMem().getUsedPercent());
         }
     }
 
     @Synchronized
-    private void clearCharts(){
+    private void clearCharts() {
         visualGraph.getNodeSet().stream().forEach(n -> {
             n.removeAttribute("ui.class");
             n.removeAttribute("processor");

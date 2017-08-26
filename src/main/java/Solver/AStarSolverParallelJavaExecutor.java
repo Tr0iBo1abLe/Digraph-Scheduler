@@ -1,13 +1,9 @@
 package Solver;
 
 import Datastructure.FastPriorityBlockingQueue;
-import Datastructure.FastPriorityQueue;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
-import Solver.AbstractSolver;
-import Solver.DFSSolver;
-import Solver.SearchState;
 import Util.Helper;
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.SuspendExecution;
@@ -16,10 +12,10 @@ import javafx.application.Platform;
 import lombok.extern.log4j.Log4j;
 
 import java.util.*;
-import java.util.concurrent.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * A*, uses BFS and a priority queue to ensure the first schedule found is optimal.
@@ -87,7 +83,7 @@ public final class AStarSolverParallelJavaExecutor extends AbstractSolver {
             callables.add(() -> {
                 IntStream.range(0, processorCount).forEach(processor -> {
                     SearchState searchState1 = new SearchState(currBestState, vertex, processor);
-                    if(!queue.contains(searchState1)) queue.add(searchState1);
+                    if (!queue.contains(searchState1)) queue.add(searchState1);
                 });
                 return null;
             });
@@ -102,7 +98,7 @@ public final class AStarSolverParallelJavaExecutor extends AbstractSolver {
             fiberSet.add(new Fiber<Set<SearchState>>() {
                 @Override
                 protected Set<SearchState> run() throws SuspendExecution, InterruptedException {
-                    ThreadLocal<Set<SearchState>>  threadLocal = new TrueThreadLocal<>();
+                    ThreadLocal<Set<SearchState>> threadLocal = new TrueThreadLocal<>();
                     threadLocal.set(new LinkedHashSet<>());
                     Set<SearchState> searchStates = threadLocal.get();
                     IntStream.range(0, processorCount).forEach(processor -> {
