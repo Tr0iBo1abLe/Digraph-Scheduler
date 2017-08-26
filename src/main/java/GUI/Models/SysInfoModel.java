@@ -1,6 +1,8 @@
 package GUI.Models;
 
+import GUI.Util.NativeLoader;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j;
 import org.hyperic.sigar.*;
 
 import java.io.File;
@@ -12,6 +14,7 @@ import java.io.IOException;
  * stores system info fields and methods. This is required by Controller to obtain system info.
  * @author Mason Shi
  */
+@Log4j
 public class SysInfoModel {
 
     private final Sigar sigar;
@@ -41,11 +44,9 @@ public class SysInfoModel {
     }
 
     private SysInfoModel(){
-        String currentLibPath = System.getProperty("java.library.path");
-        File currentDirFile = new File(".");
-        String helper = currentDirFile.getAbsolutePath();
-        String newLibPath = currentLibPath + ":" + helper + "/sigar-bin/slib" + ":" + helper;
-        System.setProperty("java.library.path", newLibPath);
+        log.info("found sigar lib path at: " + this.getClass().getClassLoader().getResource("sigar-bin/slib").getPath());
+        NativeLoader nativeLoader = new NativeLoader();
+        nativeLoader.loadLibrary();
         sigar = new Sigar();
         mem = null;
         cpuPerc = null;
