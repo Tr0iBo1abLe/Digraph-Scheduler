@@ -67,11 +67,11 @@ public final class AStarSolver extends AbstractSolver {
                     Platform.runLater(() -> updater.update(currBestState, this)); // required by FX framework
                     timer.cancel();
                 }
-                log.debug("Final queue size: " + queue.size());
+                log.info("Final queue size: " + queue.size());
                 return;
             }
 
-        } while (Helper.getRemainingMemory() > 600_000_000L); // GB, MB, kB
+        } while (Helper.getRemainingMemory() > 1000_000_000L); // GB, MB, kB
         continueSolveWithBnB();
     }
 
@@ -80,7 +80,6 @@ public final class AStarSolver extends AbstractSolver {
         log.debug("Calling DFSSolver. Queue size: " + queue.size() + " State size: " + currBestState.getNumVertices());
 
         // transfer the current optimal state and clear the rest.
-//        DFSSolver dfsSolver = new DFSSolverParallel(graph, processorCount, currBestState);
         DFSSolver dfsSolver = new DFSSolver(graph, processorCount, currBestState);
         queue.clear();
         dfsSolver.setUpdater(getUpdater());

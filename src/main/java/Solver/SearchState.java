@@ -181,18 +181,10 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
 
         SearchState rhs = (SearchState) obj;
         EqualsBuilder builder = new EqualsBuilder()
-                .append(lastVertex, rhs.lastVertex)
-                .append(numVertices, rhs.numVertices)
-                .append(underestimate, rhs.underestimate);
+                // Size of the state and length is always important,
+                // lastVertex doesn't matter because all vertices are considered, their positions are in the processors/startTimes arrays
+                .append(numVertices, rhs.numVertices).append(underestimate, rhs.underestimate);
 
-        // Note: getLegalVertices() is expensive, so it's short circuited. Two ANDs saves 500ms (20%) for 11node 2core input
-        if (numVertices <= processorCount && getLegalVertices().size() + numVertices <= processorCount) {
-            // Cut initial size down; leading to a much smaller tree significantly reducing solve time
-            // We can ignore both "processors" and "startTimes" at the beginning: provided all the legal vertices can
-            // be scheduled with a startTime of 0.
-            log.debug("equals(): Ignore both");
-            return builder.isEquals();
-        }
         if (processorCount > 2) {
             // Ignoring "processors" (assigned processor), ignores shuffled (i.e. mirrored) schedules
             // i.e. those where vertices have the same startTimes on different cores.
@@ -215,12 +207,8 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         // http://br.endernet.org/~akrowne/
         // http://planetmath.org/encyclopedia/GoodHashTablePrimes.html
         HashCodeBuilder builder = new HashCodeBuilder(805306457, 1610612741)
-                .append(lastVertex)
-                .append(numVertices)
-                .append(underestimate);
-        if (numVertices <= processorCount && getLegalVertices().size() + numVertices <= processorCount) {
-            return builder.toHashCode();
-        }
+                .append(numVertices).append(underestimate);
+
         if (processorCount > 2) {
             return builder.append(startTimes).toHashCode();
         }
