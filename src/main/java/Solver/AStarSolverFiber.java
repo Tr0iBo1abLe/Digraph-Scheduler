@@ -29,8 +29,8 @@ public final class AStarSolverFiber extends AbstractSolver {
     private final Queue<SearchState> queue;
     private Timer guiTimer = timer;
 
-    public AStarSolverFiber(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount) {
-        super(graph, processorCount);
+    public AStarSolverFiber(Graph<Vertex, EdgeWithCost<Vertex>> graph, int processorCount, int parallelProcessorCount) {
+        super(graph, processorCount, parallelProcessorCount);
         queue = new FastPriorityBlockingQueue<>();
     }
 

@@ -41,11 +41,16 @@ public class SolverFactory {
         int numEdges = (int) graph.getInwardEdgeMap().values().parallelStream().filter(List::isNotEmpty).count();
 
         if(parallelCount > 1) {
-            solver = new AStarSolverParallelJavaExecutor(graph, processorCount, parallelCount);
+            // These decisions are in priority order
+            if (processorCount == 1) { // BnB since upper bound is that of using one core (topological sort)
+                solver = new DFSSolverParallel(graph, processorCount, parallelCount);
+            } else if (numEdges < 1) { // No edges, experimenting with this
+                solver = new DFSSolverParallel(graph, processorCount, parallelCount);
+            } else {
+                solver = new AStarSolverParallelJavaExecutor(graph, processorCount, parallelCount);
+            }
         }
         else {
-            // "AI is just a bunch of if/then statements"
-            // These decisions are in priority order
             if (processorCount == 1) { // BnB since upper bound is that of using one core (topological sort)
                 solver = new DFSSolver(graph, processorCount);
             } else if (numEdges < 1) { // No edges, experimenting with this
@@ -53,8 +58,8 @@ public class SolverFactory {
             } else {
                 solver = new AStarSolver(graph, processorCount);
             }
-            log.info("Initialising: " + solver.getClass().getName());
         }
+        log.info("Initialising: " + solver.getClass().getName());
         return solver;
     }
 }
