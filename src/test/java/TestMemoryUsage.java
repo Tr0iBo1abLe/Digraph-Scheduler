@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
  * @author Will Molloy, wmol664
  */
 @RunWith(Parameterized.class)
+@Ignore // these tests are time consuming and I have already documented the results
 public class TestMemoryUsage {
 
     private AbstractSolver solver;
@@ -44,51 +45,41 @@ public class TestMemoryUsage {
         return Arrays.asList(new CommonTester(AStarSolver.class), new CommonTester(DFSSolver.class));
     }
 
-    public void memoryTest96Nodes1Core() {
-        solver = tester.doTest(1, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_96nodes_0edges.dot"));
-        assertEquals(288, solver.getFinalTime());
-    }
-
-    public void memoryTest96Nodes96Core() {
-        solver = tester.doTest(96, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_96nodes_0edges.dot"));
-        assertEquals(3, solver.getFinalTime());
-    }
-
     /**
      * Tests A* correctly switches to DFS solver.
      */
     @Test
     public void memoryTest48Nodes() {
-        solver = tester.doTest(48, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_48nodes_0edges.dot"));
+        solver = tester.doSequentialTest(48, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_48nodes_0edges.dot"));
         assertEquals(3, solver.getFinalTime());
     }
 
     @Test
     public void memoryTest24Nodes() {
-        solver = tester.doTest(24, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_24nodes_0edges.dot"));
+        solver = tester.doSequentialTest(24, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_24nodes_0edges.dot"));
         assertEquals(3, solver.getFinalTime());
     }
 
     @Test
     public void memoryTest16Nodes16Cores() {
-        solver = tester.doTest(16, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_16nodes_0edges.dot"));
+        solver = tester.doSequentialTest(16, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_16nodes_0edges.dot"));
         assertEquals(3, solver.getFinalTime());
     }
 
     @Test
     public void memoryTest16PlusNodes() {
-        solver = tester.doTest(17, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_16PlusNodes_0edges.dot"));
+        solver = tester.doSequentialTest(17, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_16PlusNodes_0edges.dot"));
         assertEquals(3, solver.getFinalTime());
     }
 
     public void memoryTest14Node7Core() {
-        solver = tester.doTest(7, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14nodes_0edges.dot"));
+        solver = tester.doSequentialTest(7, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14nodes_0edges.dot"));
         assertEquals(6, solver.getFinalTime());
     }
 
     // Takes HOURS, huge exploding search space around 15-16 nodes
     public void memoryTest16Nodes8Cores() {
-        solver = tester.doTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_16nodes_0edges.dot"));
+        solver = tester.doSequentialTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_16nodes_0edges.dot"));
         assertEquals(6, solver.getFinalTime());
     }
 

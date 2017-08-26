@@ -100,14 +100,13 @@ public final class Main {
             System.err.println("Can't open file");
         }
 
+        Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(inputFile);
+        ISolver solver = new SolverFactory(graph, procN, parN).createSolver();
         if (gui) {
-            Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(inputFile);
-            ISolver solver = new SolverFactory(graph, procN, parN).createSolver(); // TODO parallel in factory
             GUIMain.init(graph, solver);
             new GUIMain().run();
-        } else {
-            callSolver(inputFile, procN, parN, os);
         }
+        callSolver(inputFile, procN, parN, os);
     }
 }
 

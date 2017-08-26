@@ -139,19 +139,8 @@ public class TestSolverFactory {
     }
 
     @Test
-    public void memoryTest96Nodes96Core() {
-        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_96nodes_0edges.dot")), 96, 1).createSolver();
-        solver.doSolveAndCompleteSchedule();
-        Assert.assertEquals(3, solver.getFinalTime());
-        assertTrue(solver instanceof DFSSolver); // no edges
-    }
-
-    /**
-     * Big input, testing for release
-     */
-    @Ignore
-    public void testBigGraphDOT() {
-        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_RELEASE + "big_graph.dot")), 96, 1).createSolver();
+    public void memoryTest48Nodes48Core() {
+        solver = new SolverFactory(Helper.fileToGraph(new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_48nodes_0edges.dot")), 96, 1).createSolver();
         solver.doSolveAndCompleteSchedule();
         Assert.assertEquals(3, solver.getFinalTime());
         assertTrue(solver instanceof DFSSolver); // no edges
