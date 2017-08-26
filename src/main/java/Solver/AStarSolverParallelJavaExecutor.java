@@ -120,7 +120,7 @@ public final class AStarSolverParallelJavaExecutor extends AbstractSolver {
         log.debug("Calling DFSSolver");
 
         // transfer the current optimal state and clear the rest.
-        DFSSolver dfsSolver = new DFSSolver(graph, processorCount);
+        DFSSolverParallel dfsSolver = new DFSSolverParallel(graph, processorCount, parallelProcessorCount, currBestState);
         queue.clear();
         dfsSolver.setUpdater(getUpdater());
         System.gc();

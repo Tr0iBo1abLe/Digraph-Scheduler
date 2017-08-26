@@ -81,7 +81,7 @@ public final class AStarSolver extends AbstractSolver {
 
         // transfer the current optimal state and clear the rest.
 //        DFSSolver dfsSolver = new DFSSolverParallel(graph, processorCount, currBestState);
-        DFSSolverParallel dfsSolver = new DFSSolverParallel(graph, processorCount, currBestState);
+        DFSSolver dfsSolver = new DFSSolver(graph, processorCount, currBestState);
         queue.clear();
         dfsSolver.setUpdater(getUpdater());
         System.gc();
