@@ -9,8 +9,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-import javax.swing.*;
-
 /**
  * This is an application class to fire the event dispatch thread which loads all the gui component using Controller specified in FXML
  * This is the standard entry point of JavaFX framework.
