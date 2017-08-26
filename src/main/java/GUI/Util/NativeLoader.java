@@ -3,6 +3,16 @@ package GUI.Util;
 import org.apache.log4j.Logger;
 import java.io.*;
 
+/**
+ * @Modifier Mason Shi
+ * Code adapted from stackoverflow. Ref: https://stackoverflow.com/questions/12036607/bundle-native-dependencies-in-runnable-jar-with-maven
+ * This util class is supposed to be able to unpack sigar lib files from within the built jar.
+ * Then it creates a local copy of the specified .so/.dll file depending on the operating platform.
+ * After that it will load the 'tmp' .so/.dll file and setup java.library.path.
+ * This should improve the portability of sigar as it relies on Maven's building phase which moves all the necessary resources into
+ * target directories. All the file finding methods are now using getResource() essentially, which are Maven-dependent.
+ * For more information on usage see #Ref above.
+ */
 public class NativeLoader {
 
     public static final Logger LOG = Logger.getLogger(NativeLoader.class);
