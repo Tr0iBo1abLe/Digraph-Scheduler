@@ -1,13 +1,8 @@
 package GUI.Events;
 
 import CommonInterface.ISolver;
-import Exporter.GraphExporter;
 import GUI.Frame.view.Controller;
-import GUI.GraphViewer;
 import GUI.Interfaces.ThreadCompleteListener;
-import GUI.GUIMain;
-import Graph.Edge;
-import Graph.Vertex;
 import lombok.Getter;
 
 import java.util.Set;
