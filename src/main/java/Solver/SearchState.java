@@ -164,13 +164,10 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
      * Therefore this method needs to be very efficient and A* solve time heavily depends on it.
      * <p>
      * To minimise A* solve time it's best to have as few initial states as possible as each grows into a large subtree.
-     * Therefore more aggressive pruning is done at the beginning of the search:
-     * Both startTimes and processorCount will be ignored initially, meaning once a task is placed on a core its other
-     * positions won't be considered. This is only done for the initial set of legal vertices with the condition the size
-     * of this set is less than or equal to the processorCount to ensure they are all considered with a startTime of 0.
-     * <p>
-     * After this initial set of vertices mirrored/shuffled schedules will be ignored, i.e. once a task is placed on a
-     * core it will only be placed on another core if it's startTime is different.
+     * Mirrored/shuffled schedules will be ignored, i.e. once a task is placed on a core it will only be placed on
+     * another core if it's startTime is different.
+     * If <=2 cores are used a more aggressive style can be used since there are no cases where multiple inward edges
+     * affect the placement of a vertex.
      */
     @Override
     public boolean equals(Object obj) {
