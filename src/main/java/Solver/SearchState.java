@@ -190,37 +190,18 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
 
     /**
      * A* pruning is done here:
+     * equals() will be called whenever queue.contains() is called and will compare the newly created state to ALL other
+     * states in the queue ***this method is called tens of millions of times***.
+     * Therefore this method needs to be very efficient and A* solve time heavily depends on it.
      * <p>
-     * Equals is different depending on the input.
-     * The idea is to ignore redundant states however this has many factors and may not produce optimal schedules.
+     * To minimise A* solve time it's best to have as few initial states as possible as each grows into a large subtree.
+     * Therefore more aggressive pruning is done at the beginning of the search:
+     * Both startTimes and processorCount will be ignored initially, meaning once a task is placed on a core its other
+     * positions won't be considered. This is only done for the initial set of legal vertices with the condition the size
+     * of this set is less than or equal to the processorCount to ensure they are all considered with a startTime of 0.
      * <p>
-     * Ignoring "processors" causes only the initial states to not be mirrored and its effect is better with a larger
-     * core count, while ignoring "startTimes" has an initial greater number of states it will ignore similar states
-     * later on due to it having more of an effect when more vertices are scheduled (since it ignores startTimes).
-     * However it also depends on number of edges and other things, TODO maybe the pruning should change strategy later in the search.
-     * <p>
-     * I've come to the conclusion that (generally) with >2 processors for scheduling ignore "processors" is better;
-     * since the initial number of states depends on the processorCount and reducing initial states has a big effect.
-     * Currently testing ignoring both initially to reduce initial states even further.
-     * <p>
-     * Stats:
-     * Canvas 11node 2core example:
-     * Ignore nothing: 851,119 final states (pure brute force)
-     * Ignore processor and startTimes: 2229 final states (UNSTABLE fails on other inputs) (produces valid schedule but not optimal)
-     * Ignore processor: 416,688 final states (STABLE)
-     * Ignore startTimes: 164,832 final states (STABLE)
-     * Custom, ignore both initially then ignore startTimes (since <= 2 cores): 81,091 final states (Not sure if stable)
-     * <p>
-     * Canvas 11node 4core example:
-     * Ignore nothing: 69,504 final states (pure brute force)
-     * Ignore processor and startTimes: 286 final states (UNSTABLE fails on other inputs) (produces valid schedule but not optimal)
-     * Ignore processor: 5043 final states (STABLE)
-     * Ignore startTimes: 71,915 final states (STABLE)
-     * Custom, ignore both initially then ignore processor (since > 2 cores): 3705 final states (Not sure if stable)
-     * <p>
-     * A possible problem with ignoring both at the start is many vertices that have no edges (many initial legal vertices)
-     * + few vertices with edges (few dependent vertices) i.e. numInitialLegalVertices > processorCount with some edges; not all are
-     * considered with startTime of 0 leading to the final schedule to maybe not be optimal. TODO still experimenting/testing.
+     * After this initial set of vertices mirrored/shuffled schedules will be ignored, i.e. once a task is placed on a
+     * core it will only be placed on another core if it's startTime is different.
      */
     @Override
     public boolean equals(Object obj) {
@@ -235,16 +216,20 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
                 .append(numVertices, rhs.numVertices)
                 .append(underestimate, rhs.underestimate);
 
-        // cut initial size down; leading to a much smaller tree, this significantly changes solve time but can be unstable
-        // we can ignore both "processors" and "startTimes" at the beginning;
-        if (numVertices <= processorCount && getLegalVertices().size() - getAssingedVertices().size() <= processorCount) {
+        // Note: getLegalVertices() is expensive, so it's short circuited. Two ANDs saves 500ms (20%) for 11node 2core input
+        if (numVertices <= processorCount && getLegalVertices().size() + numVertices <= processorCount) {
+            // cut initial size down; leading to a much smaller tree significantly reducing solve time
+            // we can ignore both "processors" and "startTimes" at the beginning: provided all the legal vertices can
+            // be scheduled with a startTime of 0.
             log.debug("equals: Ignore both");
             return builder.isEquals();
         }
         if (processorCount > 2) {
-            return builder.append(startTimes, rhs.startTimes).isEquals(); // Ignoring "processors", ignores mirror schedules
+            // Ignoring "processors" (assigned processor), ignores shuffled schedules
+            // i.e. those where vertices have the same startTimes on different cores.
+            return builder.append(startTimes, rhs.startTimes).isEquals();
         }
-        // Ignoring "startTimes", only correct for 2 (or 1) core. Effectively ignores mirrors but will
+        // Ignoring "startTimes", only correct for 2 (or 1) cores. Effectively ignores mirrors but will
         return builder.append(processors, rhs.processors).isEquals();
     }
 
@@ -253,11 +238,12 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
      */
     @Override
     public int hashCode() {
-        HashCodeBuilder builder = new HashCodeBuilder(37, 59) // primes
+        // primes, these values can SIGNIFICANTLY change solve time since they affect the number of hash collisions
+        HashCodeBuilder builder = new HashCodeBuilder(805306457, 1610612741)
                 .append(lastVertex)
                 .append(numVertices)
                 .append(underestimate);
-        if (numVertices <= processorCount && getLegalVertices().size() - getAssingedVertices().size() <= processorCount) {
+        if (numVertices <= processorCount && getLegalVertices().size() + numVertices <= processorCount) {
             return builder.toHashCode();
         }
         if (processorCount > 2) {
