@@ -181,9 +181,9 @@ public class Controller implements GUIMainInterface {
 
         scheduleChart.getStylesheets().add(DataVisualization.class.getResource("view/GanttChart.css").toExternalForm());
 
-        scheduleChart.setPrefHeight(1080);
-        scheduleChart.setPrefWidth(1920);
-        scheduleChart.setMinWidth(1600);
+        scheduleChart.setPrefHeight(481);
+        scheduleChart.setPrefWidth(738);
+        scheduleChart.setMinWidth(738);
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setPrefHeight(481);
         scrollPane.setPrefWidth(738);
