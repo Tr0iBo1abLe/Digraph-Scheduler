@@ -182,7 +182,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         SearchState rhs = (SearchState) obj;
         EqualsBuilder builder = new EqualsBuilder()
                 // Size of the state and length is always important,
-                // lastVertex doesn't matter because all vertices are considered, their positions are in the processors/startTimes arrays
+                // lastVertex doesn't matter because all vertices are considered, vertex positions are in the processors/startTimes arrays
                 .append(numVertices, rhs.numVertices).append(underestimate, rhs.underestimate);
 
         if (processorCount > 2) {
@@ -192,23 +192,24 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         }
         // Ignoring "startTimes", only correct for 2 (or 1) cores. Effectively ignores mirrors but will be greedy later
         // in the search ignoring schedules where tasks are placed with a later startTime.
-        // Incorrect for >2 cores because of the case where tasks have multiple inward edges meaning they may may be
+        // Incorrect for >2 cores because of the case where tasks have multiple inward edges meaning they may be
         // placed with a later startTime first and then the earlier startTime will be ignored.
+        // Also, ignore processors has a better effect for greater processorCount since it all arrangements
         return builder.append(processors, rhs.processors).isEquals();
     }
 
     /**
      * Match equals() to improve hash table lookup.
+     *
+     * Large primes, these values can SIGNIFICANTLY change solve time since they affect the number of hash collisions
+     * Credit for primes table: Aaron Krowne
+     * http://br.endernet.org/~akrowne/
+     * http://planetmath.org/encyclopedia/GoodHashTablePrimes.html
      */
     @Override
     public int hashCode() {
-        // primes, these values can SIGNIFICANTLY change solve time since they affect the number of hash collisions
-        // Credit for primes table: Aaron Krowne
-        // http://br.endernet.org/~akrowne/
-        // http://planetmath.org/encyclopedia/GoodHashTablePrimes.html
-        HashCodeBuilder builder = new HashCodeBuilder(805306457, 1610612741)
+        HashCodeBuilder builder = new HashCodeBuilder(805306457, 1610612741) // primes
                 .append(numVertices).append(underestimate);
-
         if (processorCount > 2) {
             return builder.append(startTimes).toHashCode();
         }
