@@ -218,18 +218,21 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
 
         // Note: getLegalVertices() is expensive, so it's short circuited. Two ANDs saves 500ms (20%) for 11node 2core input
         if (numVertices <= processorCount && getLegalVertices().size() + numVertices <= processorCount) {
-            // cut initial size down; leading to a much smaller tree significantly reducing solve time
-            // we can ignore both "processors" and "startTimes" at the beginning: provided all the legal vertices can
+            // Cut initial size down; leading to a much smaller tree significantly reducing solve time
+            // We can ignore both "processors" and "startTimes" at the beginning: provided all the legal vertices can
             // be scheduled with a startTime of 0.
-            log.debug("equals: Ignore both");
+            log.debug("equals(): Ignore both");
             return builder.isEquals();
         }
         if (processorCount > 2) {
-            // Ignoring "processors" (assigned processor), ignores shuffled schedules
+            // Ignoring "processors" (assigned processor), ignores shuffled (i.e. mirrored) schedules
             // i.e. those where vertices have the same startTimes on different cores.
             return builder.append(startTimes, rhs.startTimes).isEquals();
         }
-        // Ignoring "startTimes", only correct for 2 (or 1) cores. Effectively ignores mirrors but will
+        // Ignoring "startTimes", only correct for 2 (or 1) cores. Effectively ignores mirrors but will be greedy later
+        // in the search ignoring schedules where tasks are placed with a later startTime.
+        // Incorrect for >2 cores because of the case where tasks have multiple inward edges meaning they may may be
+        // placed with a later startTime first and then the earlier startTime will be ignored.
         return builder.append(processors, rhs.processors).isEquals();
     }
 
@@ -239,7 +242,10 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
     @Override
     public int hashCode() {
         // primes, these values can SIGNIFICANTLY change solve time since they affect the number of hash collisions
-        HashCodeBuilder builder = new HashCodeBuilder(805306457, 1610612741)
+        // Credit for primes table: Aaron Krowne
+        // http://br.endernet.org/~akrowne/
+        // http://planetmath.org/encyclopedia/GoodHashTablePrimes.html
+        HashCodeBuilder builder = new HashCodeBuilder(805306457, 1610612741) // 2147483647, 1610612741, 805306457
                 .append(lastVertex)
                 .append(numVertices)
                 .append(underestimate);
