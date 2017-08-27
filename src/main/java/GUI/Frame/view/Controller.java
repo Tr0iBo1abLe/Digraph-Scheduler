@@ -92,6 +92,7 @@ public class Controller implements IUpdatableState{
 	public ScheduleChart<Number, String> scheduleChart;
 	private static final String procStr = "Processor";
 
+	public static AbstractSolver abstractSolver = null;
 	public static ISolver solver;
 
 	public static Graph graph;
@@ -299,8 +300,9 @@ public class Controller implements IUpdatableState{
 
 	@Synchronized
 	@Override
-	public void updateWithState(ISearchState searchState, AbstractSolver abstractSolver) {
+	public void updateWithState(ISearchState searchState, AbstractSolver abstractsolver) {
 		Platform.runLater(() -> {
+            abstractSolver = abstractsolver;
 			if (searchState == null)
 				return;
 			// Remove the past data
@@ -341,7 +343,7 @@ public class Controller implements IUpdatableState{
 
 			viewer.updateNodes(); // update the GS viewer
 
-			updateLabels(abstractSolver); // update labels at top right corner
+			updateLabels(searchState); // update labels at top right corner
 
 			scheduleChart.getData().clear();
 			XYChart.Series[] seriesArr = new XYChart.Series[seriesList.size()];
@@ -373,17 +375,9 @@ public class Controller implements IUpdatableState{
 	}
 
 	@Synchronized
-	private void updateLabels(AbstractSolver abstractSolver) {
-		data.setFinishingTime(abstractSolver.getFinalTime() + "");
-        visualGraph.getNodeSet().forEach(n -> {
-            if (n.getAttribute("startTime") != null){
-                int finishingTime = (int)n.getAttribute("startTime") + (int)n.getAttribute("Weight");
-                if (finishingTime == abstractSolver.getFinalTime()){
-                    data.setTaskId(n.getAttribute("id") + "");
-                    return;
-                }
-            }
-        });
+	private void updateLabels(ISearchState searchState) {
+		data.setTaskId(searchState.getLastVertex().getId() + "");
+		data.setFinishingTime(searchState.getUnderestimate() + "");
 		data.setConsumingTime(System.currentTimeMillis()-startTime);
 	}
 

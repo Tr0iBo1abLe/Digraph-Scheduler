@@ -50,7 +50,7 @@ public class DataVisualization extends GridPane {
 		VBox progressPart = getGaugeVBox("PROGRESS", Color.rgb(200, 100, 200), progress);
 		VBox idPart = getLabelVBox("Last task ID : ", Color.rgb(150, 200, 50), id);
 		VBox timePart = getLabelVBox("Finishing time : ", Color.rgb(50, 200, 150), finishingTime);
-		VBox timePart2 = getLabelVBox("Time consuming: ", Color.rgb(50, 150, 200), runningTime);
+		VBox timePart2 = getLabelVBox("Time consuming : ", Color.rgb(50, 150, 200), runningTime);
 
 		progress.setBarColor(Color.rgb(200, 100, 200));
 
