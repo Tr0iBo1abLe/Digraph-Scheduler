@@ -341,7 +341,7 @@ public class Controller implements IUpdatableState{
 
 			viewer.updateNodes(); // update the GS viewer
 
-			updateLabels(startTimes, searchState); // update labels at top right corner
+			updateLabels(abstractSolver); // update labels at top right corner
 
 			scheduleChart.getData().clear();
 			XYChart.Series[] seriesArr = new XYChart.Series[seriesList.size()];
@@ -373,10 +373,17 @@ public class Controller implements IUpdatableState{
 	}
 
 	@Synchronized
-	private void updateLabels(int[] startTimes, ISearchState searchState) {
-		data.setTaskId(searchState.getLastVertex().getId());
-		data.setFinishingTime(
-				startTimes[searchState.getLastVertex().getAssignedId()] + searchState.getLastVertex().getCost() + "");
+	private void updateLabels(AbstractSolver abstractSolver) {
+		data.setFinishingTime(abstractSolver.getFinalTime() + "");
+        visualGraph.getNodeSet().forEach(n -> {
+            if (n.getAttribute("startTime") != null){
+                int finishingTime = (int)n.getAttribute("startTime") + (int)n.getAttribute("Weight");
+                if (finishingTime == abstractSolver.getFinalTime()){
+                    data.setTaskId(n.getAttribute("id") + "");
+                    return;
+                }
+            }
+        });
 		data.setConsumingTime(System.currentTimeMillis()-startTime);
 	}
 
