@@ -71,13 +71,13 @@ public final class AStarSolver extends AbstractSolver {
                 return;
             }
 
-        } while (/*currBestState.getNumVertices() < 11 && */Helper.getRemainingMemory() > 1000_000_000L); // GB, MB, kB
+        } while (currBestState.getNumVertices() < 11 && Helper.getRemainingMemory() > 1000_000_000L); // GB, MB, kB
         continueSolveWithBnB();
     }
 
     private void continueSolveWithBnB() {
         if (timer != null) timer.cancel();
-        log.debug("Calling DFSSolver. Queue size: " + queue.size() + " State size: " + currBestState.getNumVertices());
+        log.info("Calling DFSSolver. Queue size: " + queue.size() + " State size: " + currBestState.getNumVertices());
 
         // transfer the current optimal state and clear the rest.
         DFSSolver dfsSolver = new DFSSolver(graph, processorCount, currBestState);
