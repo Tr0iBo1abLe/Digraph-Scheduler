@@ -26,7 +26,7 @@ public class DataVisualization extends GridPane {
 	private Gauge memory;
 	private Gauge progress;
 	private Label id;
-	private Label remainingTime;
+	private Label finishingTime;
 	private Label runningTime;
 
 	/**
@@ -42,15 +42,15 @@ public class DataVisualization extends GridPane {
 		memory = builder.decimals(1).maxValue(100).unit("%").build();
 		progress = builder.decimals(1).maxValue(100).unit("%").build();
 		id = new Label("");
-		remainingTime = new Label("");
+		finishingTime = new Label("");
 		runningTime = new Label("");
 
 		VBox cpuPart = getGaugeVBox("CPU USAGE", Color.rgb(100, 100, 200), cpu);
 		VBox memoryPart = getGaugeVBox("RAM USAGE", Color.rgb(100, 200, 200), memory);
 		VBox progressPart = getGaugeVBox("PROGRESS", Color.rgb(200, 100, 200), progress);
 		VBox idPart = getLabelVBox("Last task ID : ", Color.rgb(150, 200, 50), id);
-		VBox timePart = getLabelVBox("Time remaining : ", Color.rgb(50, 200, 150), remainingTime);
-		VBox timePart2 = getLabelVBox("Time consuming: ", Color.rgb(50, 150, 200), runningTime);
+		VBox timePart = getLabelVBox("Finishing time : ", Color.rgb(50, 200, 150), finishingTime);
+		VBox timePart2 = getLabelVBox("Time consuming : ", Color.rgb(50, 150, 200), runningTime);
 
 		progress.setBarColor(Color.rgb(200, 100, 200));
 
@@ -165,7 +165,7 @@ public class DataVisualization extends GridPane {
 	 * @param
 	 */
 	public void setFinishingTime(String time) {
-		this.remainingTime.setText(time + " ms");
+		this.finishingTime.setText(time);
 	}
 
 	/**
