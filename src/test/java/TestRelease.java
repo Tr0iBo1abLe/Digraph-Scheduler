@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
  * @author Will Molloy
  */
 @Log4j
-@Ignore // Ignore: Time consuming for CI and other tests are sufficient for ensuring nothing is broken. Run these individually.
+ // Ignore: Time consuming for CI and other tests are sufficient for ensuring nothing is broken. Run these individually.
 public class TestRelease {
 
     static {
@@ -44,7 +44,7 @@ public class TestRelease {
 
     /**
      * Run on 8 processor.
-     * Expected = ??? TODO CHECK, sometimes get 397 sometimes get 402.. no idea why
+     * Expected = 397
      */
     @Test
     public void test20Nodes() {

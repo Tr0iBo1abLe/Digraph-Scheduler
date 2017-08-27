@@ -204,7 +204,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         }
         return true;
     }
-    
+
     /**
      * Determines if the given array of POSITIVE integers contains duplicates. I.e. ignores duplicate negative values.
      * Won't be a problem since the only negative value processors can have is -1, i.e. processor un assigned.
