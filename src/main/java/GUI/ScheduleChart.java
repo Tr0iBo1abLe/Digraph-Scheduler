@@ -80,13 +80,13 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
                     } else {
                         return;
                     }
-                    text.setTranslateX(getLength(n.getExtraValue()) * 0.7d);
-                    text.setTranslateY(getBlockHeight() * 0.41d);
+                    text.setTranslateX(getLength(n.getExtraValue()) * 0.5d);
+                    text.setTranslateY(getBlockHeight() * 0.09d);
                     if (!region.getChildren().contains(rect) && !region.getChildren().contains(text)) {
                         region.getChildren().addAll(text);
                     }
-                    rect.setWidth(getLength(n.getExtraValue()) * ((getXAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis) getXAxis()).getScale()) : 1));
-                    rect.setHeight((getBlockHeight() * ((getYAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis) getYAxis()).getScale()) : 1)) * (5d / 6d));
+                    rect.setWidth(getLength( n.getExtraValue()) * ((getXAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis)getXAxis()).getScale()) : 1));
+                    rect.setHeight((getBlockHeight() * ((getYAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis)getYAxis()).getScale()) : 1)) * (1d/6d));
                     y = y - getBlockHeight() * 0.41d;
                     region.setStyle(getStyleClass(n.getExtraValue()).toString());
                     region.setShape(null);
@@ -94,6 +94,7 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
                     region.setScaleShape(false);
                     region.setCenterShape(false);
                     region.setCacheShape(false);
+                    region.setTranslateY(getBlockHeight() * 0.35d);
                     block.setLayoutX(x);
                     block.setLayoutY(y);
                 }
