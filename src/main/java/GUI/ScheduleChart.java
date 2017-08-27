@@ -66,7 +66,7 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
             Rectangle rect;
             @NonNull final String label = getLabel(n.getExtraValue());
             Text text = new Text(label);
-            text.setFont(Font.font("fantasy", FontWeight.EXTRA_BOLD, 25));
+            text.setFont(Font.font ("fantasy", FontWeight.EXTRA_BOLD, 12));
             text.setTranslateX(x);
             text.setTranslateY(getBlockHeight());
             text.setBoundsType(TextBoundsType.VISUAL);
