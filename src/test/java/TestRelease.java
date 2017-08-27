@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
  * @author Will Molloy
  */
 @Log4j
- // Ignore: Time consuming for CI and other tests are sufficient for ensuring nothing is broken. Run these individually.
+@Ignore // Ignore: Time consuming for CI and other tests are sufficient for ensuring nothing is broken. Run these individually.
 public class TestRelease {
 
     static {
