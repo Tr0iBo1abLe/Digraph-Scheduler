@@ -14,6 +14,7 @@ import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.IntStream;
@@ -166,8 +167,6 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
      * To minimise A* solve time it's best to have as few initial states as possible as each grows into a large subtree.
      * Mirrored/shuffled schedules will be ignored, i.e. once a task is placed on a core it will only be placed on
      * another core if it's startTime is different.
-     * If <=2 cores are used a more aggressive style can be used since there are no cases where multiple inward edges
-     * affect the placement of a vertex.
      */
     @Override
     public boolean equals(Object obj) {
@@ -177,28 +176,51 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
             return false;
 
         SearchState rhs = (SearchState) obj;
-        // Most fields don't matter since all the scheduling information is contained in the "processors" and "startTimes" arrays
-        // lastVertex doesn't matter because all vertices are considered, vertex positions are in the processors/startTimes arrays
-        // underestimate doesn't matter because it is considered in the startTimes array via. the max value
-        // numVertices doesn't matter because this is just the number of non "-1"s in processors/startTimes
-        EqualsBuilder builder = new EqualsBuilder();
 
-        if (processorCount > 2) {
-            // Ignoring "processors" (assigned processor), ignores shuffled (i.e. mirrored) schedules
-            // i.e. those where vertices have the same startTimes on different cores.
-            return builder.append(startTimes, rhs.startTimes).isEquals();
-        }
-        // Ignoring "startTimes", only correct for 2 (or 1) cores. Effectively ignores mirrors but will be greedy later
-        // in the search ignoring schedules where tasks are placed with a later startTime.
-        // Incorrect for >2 cores because of the case where tasks have multiple inward edges meaning they may be
-        // placed with a later startTime first and then the earlier startTime will be ignored.
-        // Also, ignore processors has a better effect for greater processorCount since it ignores all arrangements
-        // i.e. arrangements is the factorial of processorCount, so ignore processors is better for >2 cores anyway.
-        return builder.append(underestimate, rhs.underestimate).append(processors, rhs.processors).isEquals(); // underestimate is needed since startTimes is ignored.
+        EqualsBuilder builder = new EqualsBuilder();
+        return builder.append(startTimes, rhs.startTimes).isEquals() && processorsAreShuffled(rhs.processors);
     }
 
     /**
-     * Match equals() to improve hash table lookup.
+     * Determines if processors are shuffled for this SearchState vs. some other SearchState. This is done by checking
+     * if duplicates in the array map to the same value. Therefore detecting if the SearchState is a mirror of the other.
+     * For example:
+     * this.processors = [ 1, 1, 2, 2, 3, 3 ]. other.processors = [ 5, 5, 8, 8, 6, 6 ]. Returns true, all duplicates map to the same value.
+     * this.processors = [ 7, 7, 7, 4, 4, 5 ]. other.processors = [ 8, 8, 8, 5, 6, 7 ]. Returns false, one 4 maps to 5, the other to 6.
+     * this.processors = [ 7, 7, 7, 4, 4, 5 ]. other.processors = [ 8, 8, 8, 5, 5, 8 ]. Returns false, both 7 and 5 map to 8.
+     */
+    private boolean processorsAreShuffled(final int[] otherStateProcessors){
+        int[] processorMap = new int[processorCount]; // to cache the mapped values
+        Arrays.fill(processorMap, -1);
+
+        for (int i = 0; i < processors.length; i++){
+            if (processors[i] < 0) continue; // check vertex has been assigned a processor
+            if (processorMap[processors[i]] < 0){ // check if value is mapped for this processor
+                processorMap[processors[i]] = otherStateProcessors[i]; // initialise
+                if (containsDuplicate(processorMap)) return false; // check no duplicate mappings
+            } else if (processorMap[processors[i]] != otherStateProcessors[i]) { // check mapping is correct
+                return false; // short circuit
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Determines if the given array of POSITIVE integers contains duplicates. I.e. ignores duplicate negative values.
+     * Won't be a problem since the only negative value processors can have is -1, i.e. processor un assigned.
+     */
+    private boolean containsDuplicate(final int[] values) {
+        boolean[] duplicatesMap = new boolean[values.length];
+        for (int i : values) {
+            // if value not positive, continue. If value is mapped to true (i.e. seen), return true.
+            if (i > -1 && !(duplicatesMap[i] ^= true))
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Match equals(), only considers equal if equals() matches hashcode(), very important!
      *
      * Large primes, these values can SIGNIFICANTLY change solve time since they affect the number of hash collisions
      * Credit for primes table: Aaron Krowne
@@ -209,9 +231,6 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
     public int hashCode() {
         HashCodeBuilder builder = new HashCodeBuilder(805306457, 1610612741); // primes
 
-        if (processorCount > 2) {
-            return builder.append(startTimes).toHashCode();
-        }
-        return builder.append(underestimate).append(processors).toHashCode();
+        return builder.append(startTimes).append(processorsAreShuffled(processors)).toHashCode();
     }
 }

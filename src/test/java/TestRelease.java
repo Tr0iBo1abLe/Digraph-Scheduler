@@ -63,10 +63,9 @@ public class TestRelease {
 
     @Test
     public void test3Nodes2Edge() {
-        solver = new CommonTester(AStarSolver.class).doSequentialTest(3, new File(TEST_FILE_PATH + TEST_RELEASE + "Nodes_3_Edges_2.dot"));
+        solver = new CommonTester(AStarSolver.class).doSequentialTest(2, new File(TEST_FILE_PATH + TEST_RELEASE + "Nodes_3_Edges_2.dot"));
         log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
-        Assert.assertEquals(20, solver.getFinalTime());
+        Assert.assertEquals(40, solver.getFinalTime());
     }
-
 
 }
