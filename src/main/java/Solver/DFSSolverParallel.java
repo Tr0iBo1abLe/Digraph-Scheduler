@@ -57,13 +57,11 @@ public final class DFSSolverParallel extends AbstractSolver {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        //executorService.shutdown();
         while (executorService.getActiveCount() != 0) ;
     }
 
     @Synchronized
     private Set<Callable<Void>> makeCallables(SearchState searchState) {
-        //log.info("Making callables");
         Set<Vertex> legalVertices = searchState.getLegalVertices();
         Set<Callable<Void>> callables = new LinkedHashSet<>();
         legalVertices.forEach(vertex -> {
@@ -79,7 +77,6 @@ public final class DFSSolverParallel extends AbstractSolver {
             });
         });
         atomicInteger.set(atomicInteger.get() + callables.size());
-        //log.info("Callable state -> " + callables.toString());
         return callables;
     }
 
@@ -87,7 +84,6 @@ public final class DFSSolverParallel extends AbstractSolver {
         if (atomicInteger.get() < parallelProcessorCount) {
             final Set<Callable<Void>> callables = makeCallables(currState);
             callables.forEach(callable -> {
-                //atomicInteger.incrementAndGet();
                 executorService.submit(callable);
             });
             return;

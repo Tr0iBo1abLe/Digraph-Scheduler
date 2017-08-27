@@ -5,9 +5,6 @@ import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
 import Util.Helper;
-import co.paralleluniverse.fibers.Fiber;
-import co.paralleluniverse.fibers.SuspendExecution;
-import co.paralleluniverse.fibers.TrueThreadLocal;
 import javafx.application.Platform;
 import lombok.extern.log4j.Log4j;
 
@@ -89,26 +86,6 @@ public final class AStarSolverParallelJavaExecutor extends AbstractSolver {
             });
         });
         return callables;
-    }
-
-    private Set<Fiber<Set<SearchState>>> makeFibres(SearchState searchState) {
-        Set<Vertex> legalVertices = searchState.getLegalVertices();
-        Set<Fiber<Set<SearchState>>> fiberSet = new LinkedHashSet<>();
-        legalVertices.forEach(vertex -> {
-            fiberSet.add(new Fiber<Set<SearchState>>() {
-                @Override
-                protected Set<SearchState> run() throws SuspendExecution, InterruptedException {
-                    ThreadLocal<Set<SearchState>> threadLocal = new TrueThreadLocal<>();
-                    threadLocal.set(new LinkedHashSet<>());
-                    Set<SearchState> searchStates = threadLocal.get();
-                    IntStream.range(0, processorCount).forEach(processor -> {
-                        searchStates.add(new SearchState(currBestState, vertex, processor));
-                    });
-                    return searchStates;
-                }
-            });
-        });
-        return fiberSet;
     }
 
     private void continueSolveWithBnB() {

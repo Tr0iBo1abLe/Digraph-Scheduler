@@ -12,12 +12,6 @@
     <dependencies>
         <!-- https://mvnrepository.com/artifact/com.typesafe.akka/akka-actor_2.11 -->
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.16.18</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-actor_2.11</artifactId>
             <version>2.5.3</version>
@@ -126,18 +120,6 @@
             <artifactId>weblaf-ui</artifactId>
             <version>RELEASE</version>
         </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-actor_2.11</artifactId>
-            <version>2.5.3</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/co.paralleluniverse/quasar-core -->
-        <dependency>
-            <groupId>co.paralleluniverse</groupId>
-            <artifactId>quasar-core</artifactId>
-            <version>0.7.9</version>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
         <dependency>
             <groupId>org.jfree</groupId>
