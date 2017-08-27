@@ -71,7 +71,7 @@ public final class AStarSolver extends AbstractSolver {
                 return;
             }
 
-        } while (currBestState.getNumVertices() < 11 && Helper.getRemainingMemory() > 1000_000_000L); // GB, MB, kB
+        } while (Helper.getRemainingMemory() > 1000_000_000L); // GB, MB, kB
         continueSolveWithBnB();
     }
 
