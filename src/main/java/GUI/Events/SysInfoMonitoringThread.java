@@ -12,9 +12,10 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * A timer, essentially, it keeps firing 'events' to request Controller to go over to SysInfoModel and acquire the latest sys info.
+ *
  * @author Mason Shi
  */
-public class SysInfoMonitoringThread extends Thread{
+public class SysInfoMonitoringThread extends Thread {
 
     //Make sure to add listeners
     private final Set<ThreadCompleteListener> listeners = new CopyOnWriteArraySet<>();
@@ -24,7 +25,7 @@ public class SysInfoMonitoringThread extends Thread{
     @lombok.Getter
     private SysInfoModel sysInfoModel;
 
-    public SysInfoMonitoringThread (SysInfoModel sysInfoModel){
+    public SysInfoMonitoringThread(SysInfoModel sysInfoModel) {
         super();
         this.sysInfoModel = sysInfoModel;
         timer = new Timer();
@@ -98,12 +99,13 @@ public class SysInfoMonitoringThread extends Thread{
 
     /**
      * Terminate the run()
+     *
      * @Param long countdown - time to wait before cancelling the timer
      */
-    public void stopTimer(long countdown){
-        if (countdown == 0l){
+    public void stopTimer(long countdown) {
+        if (countdown == 0l) {
             timer.cancel();
-        }else{
+        } else {
             try {
                 wait(countdown);
                 timer.cancel();

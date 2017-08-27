@@ -1,13 +1,12 @@
 package Solver;
 
 import Datastructure.FastPriorityBlockingQueue;
-import Datastructure.FastPriorityQueue;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
 import Util.Helper;
-import co.paralleluniverse.common.util.SystemProperties;
-import co.paralleluniverse.fibers.*;
+import co.paralleluniverse.fibers.Fiber;
+import co.paralleluniverse.fibers.SuspendExecution;
 import javafx.application.Platform;
 import lombok.extern.log4j.Log4j;
 
@@ -88,7 +87,7 @@ public final class AStarSolverFiber extends AbstractSolver {
                 protected Void run() throws SuspendExecution, InterruptedException {
                     IntStream.range(0, processorCount).forEach(processor -> {
                         SearchState searchState1 = new SearchState(currBestState, vertex, processor);
-                        if(!queue.contains(searchState1)) queue.add(searchState1);
+                        if (!queue.contains(searchState1)) queue.add(searchState1);
                     });
                     return null;
                 }

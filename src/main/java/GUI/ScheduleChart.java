@@ -20,9 +20,10 @@ import java.util.List;
 
 /**
  * A Chart component represent the visualization of schedule. Codes are partially adapted from stackoverflow. Ref: https://stackoverflow.com/questions/27975898/gantt-chart-from-scratch
- * @author Edward Huang, Mason Shi
+ *
  * @param <X>
  * @param <Y>
+ * @author Edward Huang, Mason Shi
  */
 public class ScheduleChart<X, Y> extends XYChart<X, Y> {
 
@@ -65,7 +66,7 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
             Rectangle rect;
             @NonNull final String label = getLabel(n.getExtraValue());
             Text text = new Text(label);
-            text.setFont(Font.font ("fantasy", FontWeight.EXTRA_BOLD, 12));
+            text.setFont(Font.font("fantasy", FontWeight.EXTRA_BOLD, 25));
             text.setTranslateX(x);
             text.setTranslateY(getBlockHeight());
             text.setBoundsType(TextBoundsType.VISUAL);
@@ -79,13 +80,13 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
                     } else {
                         return;
                     }
-                    text.setTranslateX(getLength(n.getExtraValue()) * 0.5d);
-                    text.setTranslateY(getBlockHeight() * 0.09d);
+                    text.setTranslateX(getLength(n.getExtraValue()) * 0.7d);
+                    text.setTranslateY(getBlockHeight() * 0.41d);
                     if (!region.getChildren().contains(rect) && !region.getChildren().contains(text)) {
                         region.getChildren().addAll(text);
                     }
-                    rect.setWidth(getLength( n.getExtraValue()) * ((getXAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis)getXAxis()).getScale()) : 1));
-                    rect.setHeight((getBlockHeight() * ((getYAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis)getYAxis()).getScale()) : 1)) * (1d/6d));
+                    rect.setWidth(getLength(n.getExtraValue()) * ((getXAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis) getXAxis()).getScale()) : 1));
+                    rect.setHeight((getBlockHeight() * ((getYAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis) getYAxis()).getScale()) : 1)) * (5d / 6d));
                     y = y - getBlockHeight() * 0.41d;
                     region.setStyle(getStyleClass(n.getExtraValue()).toString());
                     region.setShape(null);
@@ -93,7 +94,6 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
                     region.setScaleShape(false);
                     region.setCenterShape(false);
                     region.setCacheShape(false);
-                    region.setTranslateY(getBlockHeight() * 0.35d);
                     block.setLayoutX(x);
                     block.setLayoutY(y);
                 }
@@ -182,9 +182,9 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
             this.length = lengthMs;
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, ")
-                    .append(color+");\n")
+                    .append(color + ");\n")
                     .append("-fx-border-color: ")
-                    .append(borderColor+"\n")
+                    .append(borderColor + "\n")
                     .append("-fx-border-radius: 30deg;\n")
                     .append("-fx-border-style: solid inside;\n")
                     .append("-fx-border-width: 3px;");

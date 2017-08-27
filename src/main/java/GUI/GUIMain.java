@@ -15,6 +15,7 @@ import javafx.application.Application;
  * This class represents the interception between algorithm module and GUI module.
  * It wraps up the JavaFX entry point in order to be recognized by Main entry and also provides a certain degree of isolation between
  * GUI modules and non-GUI modules.
+ *
  * @author Mason Shi
  */
 public class GUIMain implements Runnable {

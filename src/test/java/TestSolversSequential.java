@@ -1,5 +1,6 @@
-import Exporter.GraphExporter;
-import Solver.*;
+import Solver.AStarSolver;
+import Solver.AbstractSolver;
+import Solver.DFSSolver;
 import TestCommon.CommonTester;
 import lombok.extern.log4j.Log4j;
 import org.junit.Test;
@@ -126,21 +127,18 @@ public class TestSolversSequential {
     @Test
     public void testExcludeProcessorsEdgesWithZeroCost() {
         solver = tester.doSequentialTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_4Nodes_ZeroEdgeCosts.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(3, solver.getFinalTime());
     }
 
     @Test
     public void testExcludeProcessors6NodeDiamondWithBranch() {
         solver = tester.doSequentialTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_6nodes_diamond_lowcosts.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(4, solver.getFinalTime());
     }
 
     @Test
     public void testExcludeStartTimes3NodesCShouldBeCore2() {
         solver = tester.doSequentialTest(8, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_3Nodes_test_startTimes.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(2, solver.getFinalTime());
     }
 
@@ -157,13 +155,11 @@ public class TestSolversSequential {
     @Test
     public void test14NodesUoN2Core() {
         solver = tester.doSequentialTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_203words7dvi_0edgecost.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(72, solver.getFinalTime());
     }
 
     public void test14NodeUoN3Core() {
         solver = tester.doSequentialTest(3, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_203words7dvi_0edgecost.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(57, solver.getFinalTime());
     }
 
@@ -181,7 +177,6 @@ public class TestSolversSequential {
     @Test
     public void test14NodesUoN2CoreWithEdgeCost() {
         solver = tester.doSequentialTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_3CoreOptimal.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(96, solver.getFinalTime());
     }
 
@@ -196,7 +191,6 @@ public class TestSolversSequential {
     @Test
     public void test14NodesUoN2CoreWithEdgeCostV2() {
         solver = tester.doSequentialTest(2, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_3CoreOptimal-1.dot"));
-        log.debug(GraphExporter.exportGraphToString(solver.getGraph()));
         assertEquals(96, solver.getFinalTime());
     }
 

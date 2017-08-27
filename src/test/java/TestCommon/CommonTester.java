@@ -51,9 +51,9 @@ public class CommonTester {
     /**
      * Initialises a parallel solver with the given processor count, DOT file and number of logical cores to use then calls doSolve().
      *
-     * @param processorCount, number of cores available to the output schedule
+     * @param processorCount,         number of cores available to the output schedule
      * @param parallelProcessorCount, number of logical cores for the solver to use in parallel
-     * @param inputDOTFile,   the input DOT file
+     * @param inputDOTFile,           the input DOT file
      */
     public AbstractSolver doParallelTest(int processorCount, int parallelProcessorCount, File inputDOTFile) {
         Graph graph = Helper.fileToGraph(inputDOTFile);

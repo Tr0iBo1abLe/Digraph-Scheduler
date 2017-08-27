@@ -1,17 +1,16 @@
 package Solver;
 
-import Datastructure.FastPriorityBlockingQueue;
-import Datastructure.FastPriorityQueue;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
 import lombok.Synchronized;
 import lombok.extern.log4j.Log4j;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Log4j
@@ -59,7 +58,7 @@ public final class DFSSolverParallel extends AbstractSolver {
             e.printStackTrace();
         }
         //executorService.shutdown();
-        while(executorService.getActiveCount() != 0);
+        while (executorService.getActiveCount() != 0) ;
     }
 
     @Synchronized
@@ -71,7 +70,7 @@ public final class DFSSolverParallel extends AbstractSolver {
             callables.add(() -> {
                 IntStream.range(0, processorCount).forEach(processor -> {
                     SearchState nextState = new SearchState(searchState, vertex, processor);
-                    if(checkAndUpdate(nextState)) {
+                    if (checkAndUpdate(nextState)) {
                         solving(nextState);
                         atomicInteger.decrementAndGet();
                     }
@@ -85,7 +84,7 @@ public final class DFSSolverParallel extends AbstractSolver {
     }
 
     private void solving(SearchState currState) {
-        if(atomicInteger.get() < parallelProcessorCount) {
+        if (atomicInteger.get() < parallelProcessorCount) {
             final Set<Callable<Void>> callables = makeCallables(currState);
             callables.forEach(callable -> {
                 //atomicInteger.incrementAndGet();

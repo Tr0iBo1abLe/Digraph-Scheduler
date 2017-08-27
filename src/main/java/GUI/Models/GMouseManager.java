@@ -3,27 +3,20 @@ package GUI.Models;
 
 import GUI.GraphViewer;
 import lombok.Synchronized;
-import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.graphicGraph.GraphicElement;
-import org.graphstream.ui.graphicGraph.GraphicGraph;
-import org.graphstream.ui.spriteManager.SpriteManager;
 import org.graphstream.ui.view.View;
-import org.graphstream.ui.view.util.DefaultMouseManager;
-
 
 import java.awt.event.*;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A model&control class with respect to MVC pattern.
  * It simply manages the mouse events fired by the visual graph and supports the graph as being its mouse event handler.
+ *
  * @author Mason Shi
  */
-public class GMouseManager implements MouseMotionListener, MouseListener, MouseWheelListener{
+public class GMouseManager implements MouseMotionListener, MouseListener, MouseWheelListener {
 
     private View view;
     private Graph graph;
@@ -51,13 +44,13 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
     @Override
     @Synchronized
     public void mouseClicked(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON3){
+        if (e.getButton() == MouseEvent.BUTTON3) {
             view.getCamera().resetView();
-        }else{
-            if (e.getClickCount()==2){
-                if (!checkpoint){
+        } else {
+            if (e.getClickCount() == 2) {
+                if (!checkpoint) {
                     enableAttrDisplay();
-                }else {
+                } else {
                     disableAttrDisplay();
                 }
                 checkpoint = !checkpoint;
@@ -66,10 +59,10 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
     }
 
     @Synchronized
-    private void enableAttrDisplay(){
+    private void enableAttrDisplay() {
 //        graph.getNodeSet().stream().forEach(n -> n.setAttribute("ui.style", "text-mode: normal;"));
         graphViewer.getSman().forEach(s -> {
-            if (!(graphViewer.getSpriteSet().contains(s))){
+            if (!(graphViewer.getSpriteSet().contains(s))) {
                 s.setAttribute("ui.style", "text-mode: normal;");
             }
         });
@@ -78,10 +71,10 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
 
 
     @Synchronized
-    private void disableAttrDisplay(){
+    private void disableAttrDisplay() {
 //        graph.getNodeSet().stream().forEach(n -> n.setAttribute("ui.style", "text-mode: hidden;"));
         graphViewer.getSman().forEach(s -> {
-            if (!(graphViewer.getSpriteSet().contains(s))){
+            if (!(graphViewer.getSpriteSet().contains(s))) {
                 s.setAttribute("ui.style", "text-mode: hidden;");
             }
         });
@@ -132,13 +125,13 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
     @Override
     @Synchronized
     public void mouseDragged(MouseEvent event) {
-        GraphicElement ge = view.findNodeOrSpriteAt((double)event.getX(), (double)event.getY());
-        if (ge == null){
+        GraphicElement ge = view.findNodeOrSpriteAt((double) event.getX(), (double) event.getY());
+        if (ge == null) {
             int y = event.getY();
             int x = event.getX();
             Point3 p = view.getCamera().getViewCenter();
             Point3 px = view.getCamera().transformGuToPx(p.x, p.y, p.z);
-            Point3 pgu = view.getCamera().transformPxToGu(px.x + ((double)x - (double)previousX)*(-1.00), px.y + ((double)y - (double)previousY)*(-1.00));
+            Point3 pgu = view.getCamera().transformPxToGu(px.x + ((double) x - (double) previousX) * (-1.00), px.y + ((double) y - (double) previousY) * (-1.00));
             view.getCamera().setViewCenter(pgu.x, pgu.y, pgu.z);
             previousX = x;
             previousY = y;
@@ -166,10 +159,10 @@ public class GMouseManager implements MouseMotionListener, MouseListener, MouseW
     @Override
     @Synchronized
     public void mouseWheelMoved(MouseWheelEvent e) {
-        if (e.getWheelRotation()<0){
-            view.getCamera().setViewPercent(view.getCamera().getViewPercent()*0.8);
-        }else if ((e.getWheelRotation()>0)){
-            view.getCamera().setViewPercent(view.getCamera().getViewPercent()*1.5);
+        if (e.getWheelRotation() < 0) {
+            view.getCamera().setViewPercent(view.getCamera().getViewPercent() * 0.8);
+        } else if ((e.getWheelRotation() > 0)) {
+            view.getCamera().setViewPercent(view.getCamera().getViewPercent() * 1.5);
         }
     }
 }
