@@ -42,8 +42,8 @@ public class TestSolversWhiteBox {
         for (int i = 0; i < A.length; i++) {
             if (A[i] < 0) continue; // check vertex has been assigned a processor
             if (processorMap[A[i]] < 0) { // check if value is mapped for this processor
+                if (contains(processorMap, B[i])) return false;
                 processorMap[A[i]] = B[i]; // initialise
-                if (containsDuplicate(processorMap)) return false;
             } else if (processorMap[A[i]] != B[i]) { // check
                 return false; // short circuit
             }
@@ -56,6 +56,13 @@ public class TestSolversWhiteBox {
         for (int i : processorMap) {
             if (i > -1 && !(bitmap[i] ^= true))
                 return true;
+        }
+        return false;
+    }
+
+    private boolean contains(final int[] array, final int value){
+        for (int i : array){
+            if (i == value) return true;
         }
         return false;
     }

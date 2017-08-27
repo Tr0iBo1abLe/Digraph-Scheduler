@@ -196,25 +196,18 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         for (int i = 0; i < processors.length; i++){
             if (processors[i] < 0) continue; // check vertex has been assigned a processor
             if (processorMap[processors[i]] < 0){ // check if value is mapped for this processor
-                processorMap[processors[i]] = otherStateProcessors[i]; // initialise
-                if (containsDuplicate(processorMap)) return false; // check no duplicate mappings
+                if (contains(processorMap, otherStateProcessors[i])) return false; // check for duplicate mapping
+                processorMap[processors[i]] = otherStateProcessors[i]; // if not already mapped, initialise
             } else if (processorMap[processors[i]] != otherStateProcessors[i]) { // check mapping is correct
-                return false; // short circuit
+                return false;
             }
         }
         return true;
     }
 
-    /**
-     * Determines if the given array of POSITIVE integers contains duplicates. I.e. ignores duplicate negative values.
-     * Won't be a problem since the only negative value processors can have is -1, i.e. processor un assigned.
-     */
-    private boolean containsDuplicate(final int[] values) {
-        boolean[] duplicatesMap = new boolean[values.length];
-        for (int i : values) {
-            // if value not positive, continue. If value is mapped to true (i.e. seen), return true.
-            if (i > -1 && !(duplicatesMap[i] ^= true))
-                return true;
+    private boolean contains(final int[] array, final int value){
+        for (int i : array){
+            if (i == value) return true;
         }
         return false;
     }
@@ -229,8 +222,9 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
      */
     @Override
     public int hashCode() {
-        HashCodeBuilder builder = new HashCodeBuilder(805306457, 1610612741); // primes
-
-        return builder.append(startTimes).append(processorsAreShuffled(processors)).toHashCode();
+        return new HashCodeBuilder(805306457, 1610612741) // primes
+                .append(startTimes)
+                .append(processorsAreShuffled(processors))
+                .toHashCode();
     }
 }
