@@ -2,6 +2,7 @@ package GUI.Frame.view;
 
 import CommonInterface.ISearchState;
 import CommonInterface.ISolver;
+import EntryPoint.Main;
 import Exporter.GraphExporter;
 import GUI.Events.SolversThread;
 import GUI.Events.SysInfoMonitoringThread;
@@ -14,6 +15,7 @@ import GUI.Models.SysInfoModel;
 import GUI.ScheduleChart;
 import GUI.Util.ColorManager;
 import Graph.Graph;
+import Graph.*;
 import Solver.AbstractSolver;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -37,6 +39,8 @@ import org.graphstream.ui.swingViewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
 
 import javax.swing.*;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -185,12 +189,12 @@ public class Controller implements IUpdatableState{
 
 		scheduleChart.getStylesheets().add(DataVisualization.class.getResource("view/GanttChart.css").toExternalForm());
 
-		scheduleChart.setPrefHeight(481);
-		scheduleChart.setPrefWidth(738);
-		scheduleChart.setMinWidth(738);
+		scheduleChart.setPrefHeight(595);
+		scheduleChart.setPrefWidth(915);
+		scheduleChart.setMinWidth(915);
 		ScrollPane scrollPane = new ScrollPane();
-		scrollPane.setPrefHeight(481);
-		scrollPane.setPrefWidth(738);
+		scrollPane.setPrefHeight(601);
+		scrollPane.setPrefWidth(951);
 		scrollPane.setContent(scheduleChart);
 		solutionPane.getChildren().add(scrollPane);
 		AnchorPane.setBottomAnchor(scrollPane, 0d);
@@ -360,6 +364,7 @@ public class Controller implements IUpdatableState{
 						// Make sure Controller can always catch the last timer alive.
 						viewer.colorNodes(visualGraph);
 						data.setProgress(100d);
+                        updateLabels(searchState); // catch the last timer tick if any
 					});
 				} else {
 					Platform.runLater(() -> {
@@ -415,8 +420,11 @@ public class Controller implements IUpdatableState{
                 start.setDisable(true);
                 pause.setDisable(true);
                 stop.setDisable(true);
-                // print output, graph exporter
+                // print output, export graph
                 System.out.println(GraphExporter.exportGraphToString(graph));
+                final GraphExporter<Vertex, EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;
+                vertexEdgeWithCostGraphExporter = new GraphExporter<Vertex, EdgeWithCost<Vertex>>();
+                vertexEdgeWithCostGraphExporter.doExport(graph, new BufferedWriter(new OutputStreamWriter(Main.os)));
                 Platform.runLater(() -> data.setProgress(100d));
             });
         }
