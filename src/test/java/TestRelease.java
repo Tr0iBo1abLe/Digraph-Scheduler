@@ -13,7 +13,6 @@ import java.io.File;
 
 import static TestCommon.TestConfig.TEST_FILE_PATH;
 import static TestCommon.TestConfig.TEST_RELEASE;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Test pruning, valid schedules etc. For final release.
@@ -22,7 +21,8 @@ import static org.junit.Assert.assertTrue;
  * @author Will Molloy
  */
 @Log4j
-@Ignore // Ignore: Time consuming for CI and other tests are sufficient for ensuring nothing is broken. Run these individually.
+@Ignore
+// Ignore: Time consuming for CI and other tests are sufficient for ensuring nothing is broken. Run these individually.
 public class TestRelease {
 
     static {

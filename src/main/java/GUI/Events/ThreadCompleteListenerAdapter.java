@@ -6,33 +6,33 @@ import GUI.Models.SysInfoModel;
 
 /**
  * This class implements ThreadCompleteListener
- * 
+ *
  * @author Vincent
  * @see ThreadCompleteListener
  */
 public class ThreadCompleteListenerAdapter implements ThreadCompleteListener {
-	private Controller controller;
+    private Controller controller;
 
-	public ThreadCompleteListenerAdapter(Controller controller) {
-		this.controller = controller;
-	}
+    public ThreadCompleteListenerAdapter(Controller controller) {
+        this.controller = controller;
+    }
 
-	@Override
-	public void notifyOfSysInfoThreadUpdate() {
-		updateSysInfo(SysInfoModel.getInstance());
-	}
+    @Override
+    public void notifyOfSysInfoThreadUpdate() {
+        updateSysInfo(SysInfoModel.getInstance());
+    }
 
-	public void updateSysInfo(SysInfoModel sysInfoModel) {
-		double cpu = sysInfoModel.getCpuPercentage();
-		double mem = sysInfoModel.getMem().getUsedPercent();
-		if ((cpu != Double.NaN) && (mem != Double.NaN)) {
-			controller.setCpu(sysInfoModel.getCpuPercentage());
-			controller.setRam(sysInfoModel.getMem().getUsedPercent());
-		}
-	}
+    public void updateSysInfo(SysInfoModel sysInfoModel) {
+        double cpu = sysInfoModel.getCpuPercentage();
+        double mem = sysInfoModel.getMem().getUsedPercent();
+        if ((cpu != Double.NaN) && (mem != Double.NaN)) {
+            controller.setCpu(sysInfoModel.getCpuPercentage());
+            controller.setRam(sysInfoModel.getMem().getUsedPercent());
+        }
+    }
 
-	@Override
-	public void notifyOfSolversThreadComplete() {
-		controller.completed();
-	}
+    @Override
+    public void notifyOfSolversThreadComplete() {
+        controller.completed();
+    }
 }
