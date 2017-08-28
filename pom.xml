@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>nz.ac.auckland</groupId>
-    <artifactId>SE306Project1</artifactId>
-    <version>Milestone1</version>
+    <artifactId>Scheduler</artifactId>
+    <version>RELEASE</version>
     <packaging>jar</packaging>
 
     <dependencies>
