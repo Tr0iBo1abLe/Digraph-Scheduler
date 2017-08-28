@@ -407,7 +407,6 @@ public class Controller implements IUpdatableState {
                 pause.setDisable(true);
                 stop.setDisable(true);
                 // print output, export graph
-                System.out.println(GraphExporter.exportGraphToString(graph));
                 final GraphExporter<Vertex, EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;
                 vertexEdgeWithCostGraphExporter = new GraphExporter<Vertex, EdgeWithCost<Vertex>>();
                 vertexEdgeWithCostGraphExporter.doExport(graph, new BufferedWriter(new OutputStreamWriter(Main.os)));

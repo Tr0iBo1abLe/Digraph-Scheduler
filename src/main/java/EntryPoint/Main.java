@@ -17,7 +17,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import java.io.*;
 import java.util.Collections;
 
-public final class Main { 
+public final class Main {
 
     //used by gui output because FX is blocking
     public static OutputStream os;
@@ -67,6 +67,8 @@ public final class Main {
                 .metavar("OUTFILENAME")
                 .nargs("?")
                 .required(false)
+                .setDefault("")
+                .setConst("")
                 .help("Output file name, write to STDOUT if non-specified");
 
         try {
@@ -85,13 +87,22 @@ public final class Main {
         procN = (int) ns.getList("processors").get(0);
         parN = (int) ns.getList("parallel").get(0);
         fileName = (String) ns.getList("infile").get(0);
-        String outfile = ns.getString("outfile");
+        String outfile = ns.getString("o");
 
         if (outfile == null) {
             os = new BufferedOutputStream(System.out);
         } else {
+            File file;
             try {
-                File file = new File(outfile);
+                if (outfile.equals("")){
+                    file = new File(fileName.substring(0, fileName.length() - 4) + "-output.dot");
+                } else {
+                    if (outfile.endsWith(".dot")) {
+                        file = new File(outfile);
+                    } else {
+                        file = new File(outfile + ".dot");
+                    }
+                }
                 os = new FileOutputStream(file);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
