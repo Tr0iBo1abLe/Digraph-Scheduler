@@ -18,6 +18,7 @@ public class NativeLoader {
 
     public static final Logger LOG = Logger.getLogger(NativeLoader.class);
     public static String libraryName = "unknown library";
+    public static boolean isLinux;
 
     public NativeLoader() {
     }
@@ -37,7 +38,7 @@ public class NativeLoader {
         String osName = System.getProperty("os.name").toLowerCase();
         String name;
         String path = "sigar-bin/slib/";
-        boolean isLinux = true;
+        isLinux = true;
         if (osName.startsWith("win")) {
             isLinux = false;
             if (osArch.equalsIgnoreCase("x86")) {
@@ -61,15 +62,6 @@ public class NativeLoader {
             throw new UnsupportedOperationException("Platform " + osName + ":" + osArch + " not supported");
         }
         libraryName = name.split("\\.")[0];
-        String currentLibPath = System.getProperty("java.library.path");
-        try {
-            if (isLinux) {
-                System.setProperty("java.library.path", currentLibPath + ":" + this.getClass().getClassLoader().getResource(path).getPath());
-            } else {
-                System.setProperty("java.library.path", currentLibPath + ";" + this.getClass().getClassLoader().getResource(path).getPath());
-            }
-        } catch (Exception e){}
-
         return path + name;
     }
 
@@ -85,7 +77,15 @@ public class NativeLoader {
             if (!tmpDir.exists()) {
                 tmpDir.mkdir();
             }
-            File file = File.createTempFile(this.libraryName + "-", ".tmp", tmpDir);
+            File file;
+            String currentLibPath = System.getProperty("java.library.path");
+            if (isLinux) {
+                file = File.createTempFile(this.libraryName, ".so", tmpDir);
+                System.setProperty("java.library.path", currentLibPath + ":" + file.getAbsolutePath());
+            } else {
+                file = File.createTempFile(this.libraryName, ".dll", tmpDir);
+                System.setProperty("java.library.path", currentLibPath + ";" + file.getAbsolutePath());
+            }
             // Clean up the file when exiting
             file.deleteOnExit();
             out = new FileOutputStream(file);
