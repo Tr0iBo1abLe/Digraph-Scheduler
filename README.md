@@ -12,14 +12,14 @@ Download the latest Scheduler.jar from the release page [here](https://github.co
 Run via. java -jar Scheduler.jar INPUT.dot P [-p N] [-v] [-o [OUTPUT]] [-h]
 
 positional arguments:
-  INFILENAME             Filename to process
-  P                      Processor count
+  INPUT                  Dot file representing a DAG to process
+  P                      Processors available to the schedule
 
 optional arguments:
-  -h, --help             show this help message and exit
+  -h, --help             Show this help message and exit
   -v                     Choose whether to use GUI (default: false)
-  -p M, --parallel M     Use parallel processing (default: [1])
-  -o [OUTFILENAME]       Output file name, write to STDOUT if non-specified
+  -p N, --parallel N     Use parallel processing on N logical cores (default: [1])
+  -o [OUTPUT]            Output file name, write to STDOUT if non-specified
 ```
 
 # How the scheduler was created:
@@ -28,7 +28,7 @@ optional arguments:
 
 # Issues:
 
-[View the issue tab](https://github.com/qhua948/SE306/issues)
+[View the issues tab](https://github.com/qhua948/SE306/issues)
 
 
 # Authors:
