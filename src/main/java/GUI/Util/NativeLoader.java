@@ -27,8 +27,6 @@ public class NativeLoader {
         try {
             System.load(saveLibrary());
         } catch (IOException e) {
-            LOG.warn("Could not find library " + libraryName +
-                    " as resource, trying fallback lookup through System.loadLibrary");
         }
     }
 

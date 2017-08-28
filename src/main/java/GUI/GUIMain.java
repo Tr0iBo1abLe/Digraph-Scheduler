@@ -3,12 +3,21 @@ package GUI;
 import CommonInterface.ISolver;
 import GUI.Frame.GUIEntry;
 import GUI.Frame.view.Controller;
+import GUI.Frame.view.GraphCSS;
 import GUI.Util.ColorManager;
 import Graph.EdgeWithCost;
 import Graph.Graph;
 import Graph.Vertex;
 import Util.Helper;
+import cern.clhep.Units;
+import com.alee.utils.FileUtils;
 import javafx.application.Application;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static cern.clhep.Units.s;
 
 
 /**
@@ -29,8 +38,8 @@ public class GUIMain implements Runnable {
         GUIMain.algorithmType = algorithmType;
         Controller.graph = graph;
         Controller.visualGraph = Helper.convertToGsGraph(graph);
-        Controller.visualGraph.addAttribute("ui.stylesheet", "url('target/classes/GUI/Frame/view/Graph.css')");
         Controller.solver = solveri;
+        Controller.visualGraph.addAttribute("ui.stylesheet", GraphCSS.GRAPH_CSS);
         ColorManager.generateColor(solveri.getProcessorCount());
     }
 
