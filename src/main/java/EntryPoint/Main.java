@@ -67,6 +67,8 @@ public final class Main {
                 .metavar("OUTFILENAME")
                 .nargs("?")
                 .required(false)
+                .setDefault("")
+                .setConst("")
                 .help("Output file name, write to STDOUT if non-specified");
 
         try {
@@ -85,7 +87,7 @@ public final class Main {
         procN = (int) ns.getList("processors").get(0);
         parN = (int) ns.getList("parallel").get(0);
         fileName = (String) ns.getList("infile").get(0);
-        String outfile = ns.getString("outfile");
+        String outfile = ns.getString("o");
 
         if (outfile == null) {
             os = new BufferedOutputStream(System.out);
@@ -93,9 +95,13 @@ public final class Main {
             File file;
             try {
                 if (outfile.equals("")){
-                    file = new File(fileName +"-output.dot");
+                    file = new File(fileName.substring(0, fileName.length() - 4) + "-output.dot");
                 } else {
-                    file = new File(outfile + ".dot");
+                    if (outfile.endsWith(".dot")) {
+                        file = new File(outfile);
+                    } else {
+                        file = new File(outfile + ".dot");
+                    }
                 }
                 os = new FileOutputStream(file);
             } catch (FileNotFoundException e) {
