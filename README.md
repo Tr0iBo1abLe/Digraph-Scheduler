@@ -6,7 +6,7 @@ Build status ![](https://circleci.com/gh/qhua948/SE306.png?circle-token=3c376333
 
 ```
 
-usage: Scheduler [-h] [-v] [-p M] [-o [OUTFILENAME]] INFILENAME P
+usage: Scheduler INPUT.dot P [-p N] [-v] [-o [OUTPUT]]
 
 A GPU Scheduling program
 
