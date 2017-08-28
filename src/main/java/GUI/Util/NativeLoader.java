@@ -62,11 +62,14 @@ public class NativeLoader {
         }
         libraryName = name.split("\\.")[0];
         String currentLibPath = System.getProperty("java.library.path");
-        if (isLinux) {
-            System.setProperty("java.library.path", currentLibPath + ":" + this.getClass().getClassLoader().getResource(path).getPath());
-        } else {
-            System.setProperty("java.library.path", currentLibPath + ";" + this.getClass().getClassLoader().getResource(path).getPath());
-        }
+        try {
+            if (isLinux) {
+                System.setProperty("java.library.path", currentLibPath + ":" + this.getClass().getClassLoader().getResource(path).getPath());
+            } else {
+                System.setProperty("java.library.path", currentLibPath + ";" + this.getClass().getClassLoader().getResource(path).getPath());
+            }
+        } catch (Exception e){}
+
         return path + name;
     }
 

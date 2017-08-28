@@ -56,7 +56,6 @@ public class SolverFactory {
                 solver = new AStarSolver(graph, processorCount);
             }
         }
-        log.info("Initialising: " + solver.getClass().getName());
         return solver;
     }
 }
