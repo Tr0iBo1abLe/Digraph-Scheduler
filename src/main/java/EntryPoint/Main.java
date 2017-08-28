@@ -15,6 +15,7 @@ import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.spi.Configurator;
 
 import java.io.*;
@@ -42,6 +43,7 @@ public final class Main {
 
     public static void main(String[] args) {
         org.apache.log4j.BasicConfigurator.configure();
+        LogManager.getRootLogger().setLevel(Level.OFF);
         log.setLevel(Level.OFF);
 
         Namespace ns = null;
