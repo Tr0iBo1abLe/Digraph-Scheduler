@@ -80,10 +80,10 @@ public class NativeLoader {
             File file;
             String currentLibPath = System.getProperty("java.library.path");
             if (isLinux) {
-                file = File.createTempFile(this.libraryName, ".so", tmpDir);
+                file = File.createTempFile(NativeLoader.libraryName, ".so", tmpDir);
                 System.setProperty("java.library.path", currentLibPath + ":" + file.getAbsolutePath());
             } else {
-                file = File.createTempFile(this.libraryName, ".dll", tmpDir);
+                file = File.createTempFile(NativeLoader.libraryName, ".dll", tmpDir);
                 System.setProperty("java.library.path", currentLibPath + ";" + file.getAbsolutePath());
             }
             // Clean up the file when exiting

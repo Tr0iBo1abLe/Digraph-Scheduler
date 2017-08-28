@@ -20,8 +20,13 @@ import javafx.application.Application;
  */
 public class GUIMain implements Runnable {
 
+    public static String inputFileName;
+    public static String algorithmType;
+
     // static init to feed necessary information to JavaFX entry point.
-    public static void init(Graph<? extends Vertex, ? extends EdgeWithCost> graph, ISolver solveri) {
+    public static void init(Graph<? extends Vertex, ? extends EdgeWithCost> graph, ISolver solveri, String inputFileName, String algorithmType) {
+        GUIMain.inputFileName = inputFileName;
+        GUIMain.algorithmType = algorithmType;
         Controller.graph = graph;
         Controller.visualGraph = Helper.convertToGsGraph(graph);
         Controller.visualGraph.addAttribute("ui.stylesheet", "url('target/classes/GUI/Frame/view/Graph.css')");
