@@ -8,15 +8,19 @@ import Graph.Graph;
 import Graph.Vertex;
 import Solver.SolverFactory;
 import Util.Helper;
+import lombok.extern.log4j.Log4j;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
+import org.apache.log4j.Level;
+import org.apache.log4j.spi.Configurator;
 
 import java.io.*;
 import java.util.Collections;
 
+@Log4j
 public final class Main {
 
     //used by gui output because FX is blocking
@@ -38,10 +42,15 @@ public final class Main {
 
     public static void main(String[] args) {
         org.apache.log4j.BasicConfigurator.configure();
+        log.setLevel(Level.OFF);
+
         Namespace ns = null;
+
         ArgumentParser argumentParser = ArgumentParsers.newArgumentParser("Scheduler")
-                .defaultHelp(true)
+                .defaultHelp(false)
                 .description("A GPU Scheduling program");
+        argumentParser.usage("Scheduler.jar INPUT.dot P [-p N] [-v] [-o [OUTPUT]] [-h]");
+
         argumentParser.addArgument("infile")
                 .metavar("INFILENAME")
                 .nargs(1)
@@ -70,6 +79,7 @@ public final class Main {
                 .setDefault("")
                 .setConst("")
                 .help("Output file name, write to STDOUT if non-specified");
+
 
         try {
             ns = argumentParser.parseArgs(args);

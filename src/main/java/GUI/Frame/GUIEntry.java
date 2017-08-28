@@ -12,6 +12,8 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 /**
  * This is an application class to fire the event dispatch thread which loads all the gui component using Controller specified in FXML
@@ -40,6 +42,10 @@ public class GUIEntry extends Application {
     private void initLayout() {
         try {
             FXMLLoader loader = new FXMLLoader();
+            System.setErr(new PrintStream(new OutputStream() {
+                public void write(int b) {
+                }
+            }));
             loader.setLocation(GUIEntry.class.getResource("view/Layout.fxml"));
             AnchorPane personOverview = loader.load();
 
@@ -57,7 +63,7 @@ public class GUIEntry extends Application {
             primaryStage.show();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
         }
     }
 }
