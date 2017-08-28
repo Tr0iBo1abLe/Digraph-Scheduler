@@ -66,7 +66,7 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
             Rectangle rect;
             @NonNull final String label = getLabel(n.getExtraValue());
             Text text = new Text(label);
-            text.setFont(Font.font ("fantasy", FontWeight.EXTRA_BOLD, 12));
+            text.setFont(Font.font("fantasy", FontWeight.EXTRA_BOLD, 12));
             text.setTranslateX(x);
             text.setTranslateY(getBlockHeight());
             text.setBoundsType(TextBoundsType.VISUAL);
@@ -85,8 +85,8 @@ public class ScheduleChart<X, Y> extends XYChart<X, Y> {
                     if (!region.getChildren().contains(rect) && !region.getChildren().contains(text)) {
                         region.getChildren().addAll(text);
                     }
-                    rect.setWidth(getLength( n.getExtraValue()) * ((getXAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis)getXAxis()).getScale()) : 1));
-                    rect.setHeight((getBlockHeight() * ((getYAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis)getYAxis()).getScale()) : 1)) * (1d/6d));
+                    rect.setWidth(getLength(n.getExtraValue()) * ((getXAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis) getXAxis()).getScale()) : 1));
+                    rect.setHeight((getBlockHeight() * ((getYAxis() instanceof NumberAxis) ? Math.abs(((NumberAxis) getYAxis()).getScale()) : 1)) * (1d / 6d));
                     y = y - getBlockHeight() * 0.41d;
                     region.setStyle(getStyleClass(n.getExtraValue()).toString());
                     region.setShape(null);

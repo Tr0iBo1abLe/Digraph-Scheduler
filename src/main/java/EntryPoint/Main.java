@@ -17,7 +17,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import java.io.*;
 import java.util.Collections;
 
-public final class Main {
+public final class Main { 
 
     //used by gui output because FX is blocking
     public static OutputStream os;
@@ -26,9 +26,9 @@ public final class Main {
         //Ensure this class is not instantiated
     }
 
-    private static void callSolver(File file, int procN, int parN, OutputStream os) {
+    private static void callSolver(File file, int processorCount, int parallelProcessorCount, OutputStream os) {
         Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(file);
-        ISolver solver = new SolverFactory(graph, procN, parN).createSolver();
+        ISolver solver = new SolverFactory(graph, processorCount, parallelProcessorCount).createSolver();
         solver.doSolveAndCompleteSchedule();
 
         final GraphExporter<Vertex, EdgeWithCost<Vertex>> vertexEdgeWithCostGraphExporter;

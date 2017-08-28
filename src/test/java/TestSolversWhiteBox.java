@@ -1,4 +1,3 @@
-import Solver.SearchState;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -60,8 +59,8 @@ public class TestSolversWhiteBox {
         return false;
     }
 
-    private boolean contains(final int[] array, final int value){
-        for (int i : array){
+    private boolean contains(final int[] array, final int value) {
+        for (int i : array) {
             if (i == value) return true;
         }
         return false;

@@ -33,11 +33,12 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
     private static Graph<Vertex, EdgeWithCost<Vertex>> graph;
     @NonFinal
     private static int processorCount;
+    @Getter
+    @NonFinal
+    private static Vertex lastVertex = null;
     private final int[] processors;
     @Getter
     private final int[] startTimes;
-    @Getter
-    private Vertex lastVertex;
     @Getter
     private int numVertices;
     @NonFinal
@@ -74,8 +75,8 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         };
 
 
-         // The dependency folding function, responsible for finding out the minimal start time
-         // given the parent is on a different processor.
+        // The dependency folding function, responsible for finding out the minimal start time
+        // given the parent is on a different processor.
         F<Integer, F<EdgeWithCost<Vertex>, Integer>> dependencyFoldingFn = startTime -> edge -> {
             // For each edge, we check if the parent task (vertex) has been scheduled and
             // not on the same processor, for this particular state.
@@ -189,13 +190,13 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
      * this.processors = [ 7, 7, 7, 4, 4, 5 ]. other.processors = [ 8, 8, 8, 5, 6, 7 ]. Returns false, one 4 maps to 5, the other to 6.
      * this.processors = [ 7, 7, 7, 4, 4, 5 ]. other.processors = [ 8, 8, 8, 5, 5, 8 ]. Returns false, both 7 and 5 map to 8.
      */
-    private boolean processorsAreShuffled(final int[] otherStateProcessors){
+    private boolean processorsAreShuffled(final int[] otherStateProcessors) {
         int[] processorMap = new int[processorCount]; // to cache the mapped values
         Arrays.fill(processorMap, -1);
 
-        for (int i = 0; i < processors.length; i++){
+        for (int i = 0; i < processors.length; i++) {
             if (processors[i] < 0) continue; // check vertex has been assigned a processor
-            if (processorMap[processors[i]] < 0){ // check if value is mapped for this processor
+            if (processorMap[processors[i]] < 0) { // check if value is mapped for this processor
                 if (contains(processorMap, otherStateProcessors[i])) return false; // check for duplicate mapping
                 processorMap[processors[i]] = otherStateProcessors[i]; // if not already mapped, initialise
             } else if (processorMap[processors[i]] != otherStateProcessors[i]) { // check mapping is correct
@@ -205,8 +206,8 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
         return true;
     }
 
-    private boolean contains(final int[] array, final int value){
-        for (int i : array){
+    private boolean contains(final int[] array, final int value) {
+        for (int i : array) {
             if (i == value) return true;
         }
         return false;
@@ -214,7 +215,7 @@ public class SearchState implements Comparable<SearchState>, ISearchState {
 
     /**
      * Match equals(), only considers equal if equals() matches hashcode(), very important!
-     *
+     * <p>
      * Large primes, these values can SIGNIFICANTLY change solve time since they affect the number of hash collisions
      * Credit for primes table: Aaron Krowne
      * http://br.endernet.org/~akrowne/

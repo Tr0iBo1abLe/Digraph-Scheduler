@@ -1,20 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.AnchorPane?>
-
-<AnchorPane fx:id="parentPane" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.Frame.view.Controller">
-   <children>
-      <AnchorPane fx:id="mainPane" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="280.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <AnchorPane fx:id="pane" layoutX="447.0" layoutY="184.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="60.0" />
-         </children></AnchorPane>
-      <AnchorPane fx:id="dataPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1000.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="280.0" AnchorPane.topAnchor="640.0">
-         <children>
-            <HBox fx:id="buttonsPane" alignment="CENTER" layoutX="363.0" layoutY="-20.0" prefHeight="80.0" prefWidth="800.0" spacing="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-         </children></AnchorPane>
-   </children>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="parentPane" prefHeight="720.0" prefWidth="1280.0"
+            xmlns="http://javafx.com/javafx/8" fx:controller="GUI.Frame.view.Controller">
+    <children>
+        <AnchorPane fx:id="mainPane" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="280.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <AnchorPane fx:id="pane" layoutX="447.0" layoutY="184.0" prefHeight="200.0" prefWidth="200.0"
+                            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0"
+                            AnchorPane.topAnchor="60.0"/>
+            </children>
+        </AnchorPane>
+        <AnchorPane fx:id="dataPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1000.0"
+                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="280.0" AnchorPane.topAnchor="640.0">
+            <children>
+                <HBox fx:id="buttonsPane" alignment="CENTER" layoutX="363.0" layoutY="-20.0" prefHeight="80.0"
+                      prefWidth="800.0" spacing="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                      AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+            </children>
+        </AnchorPane>
+    </children>
 </AnchorPane>
