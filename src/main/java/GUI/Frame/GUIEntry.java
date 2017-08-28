@@ -29,7 +29,7 @@ public class GUIEntry extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("Scheduler: " + GUIMain.inputFileName + " - Solving in: " + GUIMain.algorithmType);
+        this.primaryStage.setTitle("Scheduler: " + GUIMain.inputFileName + " - Solving in " + GUIMain.algorithmType);
 
         initLayout();
 
