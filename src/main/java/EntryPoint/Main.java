@@ -127,7 +127,7 @@ public final class Main {
         Graph<Vertex, EdgeWithCost<Vertex>> graph = Helper.fileToGraph(inputFile);
         ISolver solver = new SolverFactory(graph, procN, parN).createSolver();
         if (gui) {
-            GUIMain.init(graph, solver);
+            GUIMain.init(graph, solver, fileName, parN > 1 ? "Parallel" : "Sequential");
             new GUIMain().run();
         } else {
             callSolver(inputFile, procN, parN, os);

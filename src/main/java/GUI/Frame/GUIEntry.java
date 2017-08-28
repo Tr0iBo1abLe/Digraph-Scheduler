@@ -1,11 +1,15 @@
 package GUI.Frame;
 
 import GUI.Frame.view.Controller;
+import GUI.GUIMain;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -25,7 +29,7 @@ public class GUIEntry extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("Scheduler");
+        this.primaryStage.setTitle("Scheduler: " + GUIMain.inputFileName + " - Solving in: " + GUIMain.algorithmType);
 
         initLayout();
 
@@ -47,6 +51,13 @@ public class GUIEntry extends Application {
 
             Scene scene = new Scene(personOverview);
             scene.getStylesheets().add(GUIEntry.class.getResource("view/Style.css").toExternalForm());
+            primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override public void handle(WindowEvent t) {
+                    primaryStage.close();
+                    Platform.exit();
+                    System.exit(0);
+                }
+            });
             primaryStage.setScene(scene);
             primaryStage.setResizable(false);
             primaryStage.show();
