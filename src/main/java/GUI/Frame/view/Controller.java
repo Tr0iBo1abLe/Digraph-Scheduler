@@ -374,7 +374,7 @@ public class Controller implements IUpdatableState {
 
     @Synchronized
     private void clearCharts() {
-        visualGraph.getNodeSet().stream().forEach(n -> {
+        visualGraph.getNodeSet().forEach(n -> {
             n.removeAttribute("ui.class");
             n.removeAttribute("processor");
             n.removeAttribute("startTime");
