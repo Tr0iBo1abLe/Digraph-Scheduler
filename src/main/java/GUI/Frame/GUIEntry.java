@@ -42,10 +42,6 @@ public class GUIEntry extends Application {
     private void initLayout() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            System.setErr(new PrintStream(new OutputStream() {
-                public void write(int b) {
-                }
-            }));
             loader.setLocation(GUIEntry.class.getResource("view/Layout.fxml"));
             AnchorPane personOverview = loader.load();
 

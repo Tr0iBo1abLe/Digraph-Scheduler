@@ -159,7 +159,7 @@ public class TestSolversSequential {
     }
 
     public void test14NodeUoN3Core() {
-        solver = tester.doSequentialTest(3, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_203words7dvi_0edgecost.dot"));
+        solver = tester.doSequentialTest(4, new File(TEST_FILE_PATH + TEST_SOLVER_PATH + "input_14Nodes_203words7dvi_0edgecost.dot"));
         assertEquals(57, solver.getFinalTime());
     }
 

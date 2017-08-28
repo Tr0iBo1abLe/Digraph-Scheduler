@@ -158,7 +158,7 @@ public class Controller implements IUpdatableState {
                     new ScheduleChart.ExtraData(0, "rgba(0,0,0,0), rgba(0,0,0,0)", "rgba(0,0,0,0);", "")));
         });
         String[] nodeNameArr = new String[visualGraph.getNodeSet().size()];
-        for (int i = 0; i < seriesArr.length; i++) {
+        for (int i = 0; i < nodeNameArr.length; i++) {
             nodeNameArr[i] = visualGraph.getNode(i).getId();
         }
 
