@@ -78,7 +78,6 @@ public final class Main {
                 .metavar("OUTFILENAME")
                 .nargs("?")
                 .required(false)
-                .setDefault("")
                 .setConst("")
                 .help("Output file name, write to STDOUT if non-specified");
 
