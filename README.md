@@ -7,7 +7,7 @@ Build status ![](https://circleci.com/gh/qhua948/SE306.png?circle-token=3c376333
 
 # How to run:
 
-Download the latest Scheduler.jar from the release page [here](https://github.com/qhua948/SE306/releases)
+Download the latest Scheduler.jar from the release page [here](https://github.com/wilmol/GPU-Scheduler/releases)
 ```
 Run via. java -jar Scheduler.jar INPUT.dot P [-p N] [-v] [-o [OUTPUT]] [-h]
 
