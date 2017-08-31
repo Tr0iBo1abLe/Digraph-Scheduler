@@ -24,11 +24,11 @@ optional arguments:
 
 # How the scheduler was created:
 
-[View the wiki](https://github.com/qhua948/SE306/wiki)
+[View the wiki](https://github.com/wilmol/GPU-Scheduler/wiki)
 
-# Issues:
+# Current bugs:
 
-[View the issues tab](https://github.com/qhua948/SE306/issues)
+[View the issues tab](https://github.com/wilmol/GPU-Scheduler/issues)
 
 
 # Authors:
